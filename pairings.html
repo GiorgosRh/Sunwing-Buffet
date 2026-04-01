@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flavor Pairings · Helios & Ella</title>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="theme-color" content="#060604"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink:#060604; --ink2:#0e0d09; --ink3:#161410;
+      --gold:#b8962e; --gold2:#d4af55; --gold3:#f0d080;
+      --smoke:#2a2520; --ash:#4a4438; --fog:#8a7e6e;
+      --paper:#f5f0e8;
+      --c1:#2a5a8a; --c2:#7a2a2a; --c3:#3a7a5a;
+      --c4:#5a2a7a; --c5:#7a5a2a; --c6:#2a6a5a;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--ink);color:var(--paper);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;}
+    a{color:var(--gold2);text-decoration:none;}
+    strong{font-weight:500;}
+
+    /* TOPBAR */
+    .topbar{position:sticky;top:0;z-index:100;background:rgba(6,6,4,.95);backdrop-filter:blur(20px);border-bottom:1px solid #ffffff08;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;}
+    .topbar-left{display:flex;align-items:center;gap:16px;}
+    .topbar-brand{font-family:'Playfair Display',serif;font-size:14px;color:var(--gold2);}
+    .topbar-div{width:1px;height:18px;background:var(--smoke);}
+    .topbar-title{font-size:10px;letter-spacing:3px;color:var(--ash);text-transform:uppercase;}
+    .topbar-back{font-size:11px;color:var(--ash);letter-spacing:2px;transition:color .2s;}
+    .topbar-back:hover{color:var(--gold2);}
+
+    /* HERO */
+    .hero{padding:48px 24px 28px;max-width:900px;margin:0 auto;}
+    .eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+    .ey-line{width:28px;height:1px;background:linear-gradient(to right,var(--gold),transparent);}
+    .ey-text{font-size:9px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+    h1{font-family:'Playfair Display',serif;font-size:clamp(30px,7vw,52px);font-weight:400;line-height:1.1;color:var(--paper);}
+    h1 em{font-style:italic;color:var(--gold2);}
+    .hero-sub{font-size:12px;color:var(--fog);margin-top:12px;line-height:1.7;max-width:520px;}
+
+    /* MAIN TABS */
+    .main-tabs-wrap{overflow-x:auto;padding:0 24px 20px;scrollbar-width:none;}
+    .main-tabs-wrap::-webkit-scrollbar{display:none;}
+    .main-tabs{display:flex;gap:6px;width:max-content;}
+    .mtab{padding:9px 18px;border:1px solid var(--smoke);background:var(--ink2);color:var(--ash);font-size:10px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap;}
+    .mtab.active,.mtab:hover{border-color:var(--gold);color:var(--gold);background:#1a1608;}
+
+    /* SEARCH */
+    .search-wrap{padding:0 24px 20px;}
+    .search{width:100%;max-width:900px;padding:10px 16px;background:var(--ink2);border:1px solid var(--smoke);color:var(--paper);font-family:'DM Sans',sans-serif;font-size:12px;outline:none;letter-spacing:1px;}
+    .search:focus{border-color:var(--ash);}
+    .search::placeholder{color:var(--ash);}
+
+    /* CONTENT */
+    .content{padding:0 24px 60px;max-width:900px;margin:0 auto;}
+
+    /* SECTION */
+    .section-hdr{display:flex;align-items:center;gap:14px;margin-bottom:18px;margin-top:8px;}
+    .section-lbl{font-size:9px;letter-spacing:4px;color:var(--ash);text-transform:uppercase;white-space:nowrap;}
+    .section-rule{flex:1;height:1px;background:linear-gradient(to right,var(--smoke),transparent);}
+
+    /* CUISINE GRID */
+    .cuisine-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    @media(max-width:560px){.cuisine-grid{grid-template-columns:1fr;}}
+
+    /* CUISINE CARD */
+    .ccard{background:var(--ink2);border:1px solid var(--smoke);overflow:hidden;transition:border-color .2s;}
+    .ccard:hover{border-color:var(--ash);}
+    .ccard-head{padding:16px 18px 14px;cursor:pointer;display:flex;align-items:flex-start;gap:12px;}
+    .ccard-flag{font-size:24px;flex-shrink:0;margin-top:2px;}
+    .ccard-info{flex:1;}
+    .ccard-cuisine{font-size:8px;letter-spacing:3px;color:var(--ash);text-transform:uppercase;margin-bottom:3px;}
+    .ccard-name{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold2);line-height:1.2;}
+    .ccard-backbone{font-size:10px;color:var(--fog);margin-top:5px;line-height:1.5;}
+    .ccard-toggle{font-size:16px;color:var(--ash);transition:transform .2s;flex-shrink:0;margin-top:2px;}
+    .ccard-toggle.open{transform:rotate(90deg);}
+    .ccard-body{display:none;border-top:1px solid var(--smoke);padding:14px 18px 16px;}
+    .ccard-body.open{display:block;}
+
+    /* PAIRING TABLE */
+    .ptable{width:100%;border-collapse:collapse;}
+    .ptable tr{border-bottom:1px solid var(--ink3);}
+    .ptable tr:last-child{border-bottom:none;}
+    .ptable td{padding:8px 6px;font-size:11px;vertical-align:top;}
+    .ptable .pt-ing{color:var(--gold2);font-weight:500;width:28%;white-space:nowrap;}
+    .ptable .pt-pairs{color:var(--paper);line-height:1.6;}
+    .ptable .pt-pairs span{color:var(--fog);}
+
+    .star-combo{margin-top:12px;padding:10px 14px;background:var(--ink3);border-left:2px solid var(--gold);font-size:11px;color:var(--fog);line-height:1.6;}
+    .star-combo strong{color:var(--gold2);}
+
+    /* SEASONAL */
+    .season-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    @media(max-width:560px){.season-grid{grid-template-columns:1fr;}}
+    .scard{background:var(--ink2);border:1px solid var(--smoke);overflow:hidden;}
+    .scard-head{padding:14px 18px 12px;display:flex;align-items:center;gap:12px;}
+    .scard-icon{font-size:22px;flex-shrink:0;}
+    .scard-info{flex:1;}
+    .scard-season{font-size:8px;letter-spacing:3px;color:var(--ash);text-transform:uppercase;margin-bottom:2px;}
+    .scard-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold2);}
+    .scard-desc{font-size:10px;color:var(--fog);margin-top:2px;}
+    .scard-body{border-top:1px solid var(--smoke);padding:12px 18px 14px;}
+    .scard-row{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--ink3);font-size:11px;}
+    .scard-row:last-child{border-bottom:none;}
+    .scard-ing{color:var(--gold2);font-weight:500;min-width:110px;flex-shrink:0;}
+    .scard-pairs{color:var(--paper);line-height:1.6;}
+
+    /* SPICE GRID */
+    .spice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    @media(max-width:560px){.spice-grid{grid-template-columns:1fr;}}
+    .spice-card{background:var(--ink2);border:1px solid var(--smoke);padding:16px 18px;}
+    .spice-cat{font-size:8px;letter-spacing:3px;color:var(--ash);text-transform:uppercase;margin-bottom:8px;}
+    .spice-name{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold2);margin-bottom:8px;}
+    .spice-ingredients{font-size:11px;color:var(--paper);line-height:1.8;}
+    .spice-ingredients .ing-item{display:inline-block;background:var(--ink3);border:1px solid var(--smoke);padding:2px 8px;margin:2px 3px 2px 0;font-size:10px;color:var(--fog);}
+    .spice-star{display:inline-block;background:#1a1608;border:1px solid var(--gold-dim,#7a6330);color:var(--gold);font-size:8px;letter-spacing:2px;padding:2px 7px;margin-bottom:6px;}
+
+    /* SUBSTITUTION */
+    .sub-table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+    .sub-table th{font-size:8px;letter-spacing:3px;color:var(--ash);text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--smoke);text-align:left;background:var(--ink2);}
+    .sub-table td{padding:10px;font-size:11px;border-bottom:1px solid var(--ink3);vertical-align:top;background:var(--ink2);}
+    .sub-table tr:last-child td{border-bottom:none;}
+    .sub-table .sub-from{color:var(--gold2);font-weight:500;}
+    .sub-table .sub-to{color:var(--paper);}
+    .sub-table .sub-why{color:var(--fog);}
+    .sub-table .sub-keep{color:var(--fog);font-style:italic;}
+    @media(max-width:560px){
+      .sub-table,.sub-table thead{display:none;}
+      .sub-mobile{display:block;}
+    }
+    @media(min-width:561px){.sub-mobile{display:none;}}
+    .sub-mob-item{background:var(--ink2);border:1px solid var(--smoke);padding:12px 14px;margin-bottom:8px;}
+    .sub-mob-from{font-family:'Playfair Display',serif;font-size:15px;color:var(--gold2);margin-bottom:4px;}
+    .sub-mob-to{font-size:11px;color:var(--paper);margin-bottom:4px;}
+    .sub-mob-why{font-size:10px;color:var(--fog);}
+
+    /* UNIVERSAL SAUCES */
+    .sauce-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    @media(max-width:560px){.sauce-grid{grid-template-columns:1fr;}}
+    .sauce-card{background:var(--ink2);border:1px solid var(--smoke);padding:16px 18px;}
+    .sauce-name{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold2);margin-bottom:6px;}
+    .sauce-ings{font-size:11px;color:var(--fog);margin-bottom:6px;line-height:1.6;}
+    .sauce-veg{font-size:10px;color:var(--ash);letter-spacing:1px;}
+
+    .empty{text-align:center;padding:40px;color:var(--ash);}
+
+    /* HIDDEN PANELS */
+    .panel{display:none;}
+    .panel.active{display:block;}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-brand">Helios &amp; Ella</div>
+    <div class="topbar-div"></div>
+    <div class="topbar-title">Flavor Pairings</div>
+  </div>
+  <a href="index.html" class="topbar-back">← Portal</a>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">
+    <div class="ey-line"></div>
+    <div class="ey-text">World Cuisine · Flavor Reference</div>
+  </div>
+  <h1>Flavor <em>Pairings</em></h1>
+  <p class="hero-sub">Συνδυασμοί γεύσεων και υλικών από κουζίνες όλου του κόσμου — οργανωμένοι ανά κουζίνα, εποχή, μπαχαρικά και αντικαταστάσεις.</p>
+</div>
+
+<div class="main-tabs-wrap">
+  <div class="main-tabs" id="mainTabs">
+    <button class="mtab active" data-panel="cuisines-protein">🥩 Κρέας ανά Κουζίνα</button>
+    <button class="mtab" data-panel="cuisines-veg">🥦 Λαχανικά ανά Κουζίνα</button>
+    <button class="mtab" data-panel="seasonal">🌿 Εποχιακά Pairings</button>
+    <button class="mtab" data-panel="spices">🌶️ Spice Blends</button>
+    <button class="mtab" data-panel="sauces">🫙 Universal Sauces</button>
+    <button class="mtab" data-panel="substitutions">🔄 Αντικαταστάσεις</button>
+  </div>
+</div>
+
+<div class="search-wrap">
+  <input class="search" id="searchInput" type="text" placeholder="Αναζήτηση υλικού ή κουζίνας..."/>
+</div>
+
+<div class="content">
+
+<!-- ═══ PANEL: PROTEIN CUISINES ═══ -->
+<div class="panel active" id="panel-cuisines-protein">
+  <div class="section-hdr"><div class="section-lbl">Πρωτεΐνες ανά Κουζίνα</div><div class="section-rule"></div></div>
+  <div class="cuisine-grid" id="grid-protein"></div>
+</div>
+
+<!-- ═══ PANEL: VEG CUISINES ═══ -->
+<div class="panel" id="panel-cuisines-veg">
+  <div class="section-hdr"><div class="section-lbl">Λαχανικά ανά Κουζίνα</div><div class="section-rule"></div></div>
+  <div class="cuisine-grid" id="grid-veg"></div>
+</div>
+
+<!-- ═══ PANEL: SEASONAL ═══ -->
+<div class="panel" id="panel-seasonal">
+  <div class="season-grid" id="grid-seasonal"></div>
+</div>
+
+<!-- ═══ PANEL: SPICES ═══ -->
+<div class="panel" id="panel-spices">
+  <div id="spice-content"></div>
+</div>
+
+<!-- ═══ PANEL: SAUCES ═══ -->
+<div class="panel" id="panel-sauces">
+  <div class="section-hdr"><div class="section-lbl">Universal Sauces που αναβαθμίζουν κάθε λαχανικό</div><div class="section-rule"></div></div>
+  <div class="sauce-grid" id="grid-sauces"></div>
+</div>
+
+<!-- ═══ PANEL: SUBSTITUTIONS ═══ -->
+<div class="panel" id="panel-substitutions">
+  <div id="sub-content"></div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+
+const PROTEIN_CUISINES = [
+  { flag:"🇮🇹", name:"Italian", backbone:"Σκόρδο · Ελαιόλαδο · Βασιλικός · Φασκόμηλο · Μαϊντανός",
+    pairings:[
+      {ing:"Μοσχαράκι (Veal)", pairs:"Prosciutto + φασκόμηλο + βούτυρο"},
+      {ing:"Χοιρινό", pairs:"Μάραθο + σκόρδο + δενδρολίβανο"},
+      {ing:"Μύδια/Αχιβάδες", pairs:"Σκόρδο + λευκό κρασί + μαϊντανός + βούτυρο"},
+      {ing:"Τόνος", pairs:"Αντζούγιες + κάπαρη + ελιές"},
+      {ing:"Αντζούγιες", pairs:"Σκόρδο + ελαιόλαδο + κάπαρη + λεμόνι"},
+    ], star:"Μοσχαράκι + prosciutto + φασκόμηλο — η ψυχή της ρωμαϊκής κουζίνας (Saltimbocca)" },
+
+  { flag:"🇫🇷", name:"French Provençal", backbone:"Θυμάρι · Δενδρολίβανο · Tarragon · Shallots · Βούτυρο · Κρέμα",
+    pairings:[
+      {ing:"Κουνέλι", pairs:"Μουστάρδα + θυμάρι + λευκό κρασί"},
+      {ing:"Πάπια", pairs:"Πορτοκάλι + μέλι + θυμάρι + σκόρδο"},
+      {ing:"Μύδια", pairs:"Σαφράν + μάραθο + λευκό κρασί + κρέμα"},
+      {ing:"Γλώσσα (Sole)", pairs:"Βούτυρο + λεμόνι + κάπαρη + μαϊντανός"},
+      {ing:"Αρνί", pairs:"Φακές + σκόρδο + θυμάρι"},
+    ], star:"Πάπια + πορτοκάλι + μέλι + star anise — Duck à l'orange" },
+
+  { flag:"🇲🇦", name:"Moroccan", backbone:"Κανέλα · Κύμινο · Κόλιαντρος · Τζίντζερ · Σαφράν · Ras el Hanout",
+    pairings:[
+      {ing:"Αρνί", pairs:"Κανέλα + αποξηραμένα βερίκοκα + preserved lemon + καρύδια"},
+      {ing:"Αρνί (2η εκδοχή)", pairs:"Μέλι + δαμάσκηνα + κανέλα + τζίντζερ"},
+      {ing:"Κοτόπουλο", pairs:"Preserved lemon + ελιές + σαφράν + τζίντζερ"},
+      {ing:"Μοσχάρι", pairs:"Κανέλα + ντομάτες + ρεβίθια + κύμινο"},
+      {ing:"Σαρδέλες", pairs:"Κύμινο + πάπρικα + σκόρδο + λεμόνι"},
+    ], star:"Αρνί + κανέλα + μέλι + δαμάσκηνα — το κλασικό tagine" },
+
+  { flag:"🇮🇳", name:"Indian", backbone:"Κάρδαμο · Κύμινο · Κουρκουμάς · Garam Masala · Τζίντζερ · Γιαούρτι",
+    pairings:[
+      {ing:"Αρνί", pairs:"Κάρδαμο + γιαούρτι + κρέμα + τζίντζερ (Rogan Josh)"},
+      {ing:"Κοτόπουλο", pairs:"Σκόρδο + τζίντζερ + garam masala + γιαούρτι (Tikka)"},
+      {ing:"Γαρίδες", pairs:"Κύμινο + κόλιαντρος + κουρκουμάς + coconut milk"},
+      {ing:"Ψάρι", pairs:"Κουρκουμάς + σπόροι μουστάρδας + curry leaves + καρύδα"},
+    ], star:"Κοτόπουλο + γιαούρτι + garam masala + τζίντζερ — Chicken Tikka Masala" },
+
+  { flag:"🇯🇵", name:"Japanese", backbone:"Σόγια · Mirin · Sake · Τζίντζερ · Σουσάμι · Dashi · Miso",
+    pairings:[
+      {ing:"Τόνος", pairs:"Σόγια + wasabi + τζίντζερ (sashimi)"},
+      {ing:"Σολομός", pairs:"Miso + sake + τζίντζερ"},
+      {ing:"Μοσχάρι", pairs:"Σόγια + sake + mirin + τζίντζερ (teriyaki)"},
+      {ing:"Χοιρινό", pairs:"Τζίντζερ + ρυζόκρασο + σόγια"},
+      {ing:"Χτένια", pairs:"Dashi + ιαπωνικά μανιτάρια + miso"},
+    ], star:"Τόνος + σόγια + wasabi — sashimi στην απλότητά του" },
+
+  { flag:"🇨🇳", name:"Chinese", backbone:"Τζίντζερ · Σκόρδο · Σόγια · Five-Spice · Star Anise · Sesame",
+    pairings:[
+      {ing:"Χοιρινό", pairs:"Σόγια + hoisin + five-spice (Char Siu)"},
+      {ing:"Πάπια", pairs:"Five-spice + σόγια + κρεμμυδάκια + αγγούρι (Πεκίνου)"},
+      {ing:"Μοσχάρι", pairs:"Σκόρδο + τζίντζερ + oyster sauce + κρεμμυδάκια"},
+      {ing:"Γαρίδες", pairs:"Σκόρδο + τζίντζερ + chili + κρεμμυδάκια"},
+      {ing:"Ψάρι", pairs:"Τζίντζερ + κρεμμυδάκια + σόγια + σησαμέλαιο (στον ατμό)"},
+    ], star:"Πάπια + five-spice + σόγια + κρεμμυδάκια — Πεκίνου πάπια" },
+
+  { flag:"🇬🇷", name:"Greek", backbone:"Λεμόνι · Ελαιόλαδο · Ρίγανη · Σκόρδο · Δυόσμος · Άνηθος",
+    pairings:[
+      {ing:"Αρνί", pairs:"Σκόρδο + λεμόνι + ρίγανη + δενδρολίβανο"},
+      {ing:"Κοτόπουλο", pairs:"Σκόρδο + λεμόνι + ρίγανη + ελαιόλαδο"},
+      {ing:"Ψάρι", pairs:"Λεμόνι + ελαιόλαδο + άνηθος + κάπαρη"},
+      {ing:"Χταπόδι", pairs:"Λεμόνι + ρίγανη + ελαιόλαδο + κόκκινο ξύδι"},
+      {ing:"Γαρίδες", pairs:"Σκόρδο + λεμόνι + φέτα + ντομάτες"},
+    ], star:"Αρνί + σκόρδο + λεμόνι + ρίγανη — η κλασική πασχαλινή συνταγή" },
+
+  { flag:"🇰🇷", name:"Korean", backbone:"Gochujang · Σουσάμι · Σκόρδο · Σόγια · Τζίντζερ",
+    pairings:[
+      {ing:"Μοσχάρι", pairs:"Σόγια + σουσάμι + σκόρδο + αχλάδι (Bulgogi)"},
+      {ing:"Χοιρινό", pairs:"Gochujang + σκόρδο + τζίντζερ + σουσάμι"},
+      {ing:"Κοτόπουλο", pairs:"Chile + σκόρδο + σόγια + σουσάμι"},
+      {ing:"Τόνος", pairs:"Σησαμέλαιο + σόγια + gochugaru"},
+      {ing:"Γαρίδες", pairs:"Σκόρδο + gochujang + σουσάμι + κρεμμυδάκια"},
+    ], star:"Μοσχάρι + σόγια + σουσάμι + αχλάδι — Bulgogi" },
+
+  { flag:"🌏", name:"Thai / Southeast Asian", backbone:"Fish sauce · Lime · Lemongrass · Kaffir Lime · Galangal · Coconut",
+    pairings:[
+      {ing:"Γαρίδες", pairs:"Lemongrass + lime + fish sauce + chili + coconut"},
+      {ing:"Κοτόπουλο", pairs:"Coconut milk + lemongrass + kaffir lime + galangal"},
+      {ing:"Μοσχάρι", pairs:"Fish sauce + lime + chili + lemongrass (Larb)"},
+      {ing:"Ψάρι", pairs:"Τζίντζερ + lemongrass + lime + fish sauce"},
+      {ing:"Χοιρινό", pairs:"Fish sauce + chili + σκόρδο + lime"},
+    ], star:"Γαρίδες + coconut milk + lemongrass + kaffir lime — Tom Kha" },
+
+  { flag:"🇲🇽", name:"Mexican", backbone:"Chiles (ancho, chipotle, jalapeño) · Κύμινο · Lime · Cilantro",
+    pairings:[
+      {ing:"Χοιρινό", pairs:"Chile + πορτοκάλι + σκόρδο + κύμινο (Carnitas)"},
+      {ing:"Μοσχάρι", pairs:"Chipotle + κύμινο + ντομάτες + σκόρδο"},
+      {ing:"Κοτόπουλο", pairs:"Chiles + σοκολάτα + κανέλα + κύμινο (Mole)"},
+      {ing:"Ψάρι", pairs:"Lime + cilantro + chiles + κύμινο (tacos)"},
+      {ing:"Γαρίδες", pairs:"Chile + lime + cilantro + σκόρδο + κύμινο"},
+    ], star:"Κοτόπουλο + chiles + σοκολάτα + κανέλα — Mole Negro" },
+
+  { flag:"🇪🇸", name:"Spanish", backbone:"Smoked Paprika · Σκόρδο · Ελαιόλαδο · Σαφράν · Sherry · Αμύγδαλα",
+    pairings:[
+      {ing:"Χοιρινό", pairs:"Σκόρδο + smoked paprika + sherry + ελαιόλαδο"},
+      {ing:"Αχιβάδες", pairs:"Σκόρδο + paprika + χοιρινό + λευκό κρασί (Almejas)"},
+      {ing:"Ψάρι", pairs:"Σκόρδο + σαφράν + αμύγδαλα + ντομάτες (Romesco)"},
+      {ing:"Γαρίδες", pairs:"Σκόρδο + ελαιόλαδο + smoked paprika + sherry"},
+      {ing:"Αρνί", pairs:"Σκόρδο + δενδρολίβανο + ελαιόλαδο + λεμόνι"},
+    ], star:"Αχιβάδες + σκόρδο + paprika + χοιρινό — Almejas a la marinera" },
+
+  { flag:"🌿", name:"Middle Eastern", backbone:"Κανέλα · Κύμινο · Κόλιαντρος · Allspice · Sumac · Za'atar · Pomegranate",
+    pairings:[
+      {ing:"Αρνί", pairs:"Κύμινο + κόλιαντρος + κανέλα + γιαούρτι"},
+      {ing:"Αρνί (2)", pairs:"Ρόδι + καρύδια + σκόρδο (Fesenjan)"},
+      {ing:"Κοτόπουλο", pairs:"Sumac + κρεμμύδια + ελαιόλαδο + κύμινο (Musakhan)"},
+      {ing:"Μοσχάρι", pairs:"Κανέλα + allspice + κουκουνάρι + κρεμμύδια"},
+      {ing:"Ψάρι", pairs:"Tahini + λεμόνι + μαϊντανός + κύμινο"},
+    ], star:"Κοτόπουλο + sumac + κρεμμύδια + ελαιόλαδο — Musakhan" },
+
+  { flag:"🇯🇲", name:"Caribbean / Jerk", backbone:"Allspice · Scotch Bonnet · Θυμάρι · Κανέλα · Τζίντζερ · Lime",
+    pairings:[
+      {ing:"Κοτόπουλο", pairs:"Allspice + scotch bonnet + θυμάρι + κανέλα (Jerk)"},
+      {ing:"Χοιρινό", pairs:"Allspice + σκόρδο + scotch bonnet + θυμάρι"},
+      {ing:"Ψάρι", pairs:"Allspice + λάδι + κρεμμύδια + ξύδι (Escabèche)"},
+      {ing:"Γαρίδες", pairs:"Lime + ρούμι + chiles + allspice"},
+    ], star:"Χοιρινό + allspice + scotch bonnet + θυμάρι — Jamaican Jerk" },
+
+  { flag:"🔥", name:"American BBQ / Southern", backbone:"Smoked Paprika · Cayenne · Brown Sugar · Molasses · Cider Vinegar",
+    pairings:[
+      {ing:"Μοσχάρι (ribs)", pairs:"Brown sugar + smoked paprika + cayenne + μουστάρδα + σκόρδο"},
+      {ing:"Χοιρινό (shoulder)", pairs:"Molasses + cider vinegar + brown sugar + cayenne"},
+      {ing:"Κοτόπουλο", pairs:"Cayenne + σκόρδο + cider vinegar + μουστάρδα"},
+      {ing:"Γαρίδες", pairs:"Βούτυρο + σκόρδο + cayenne + λεμόνι (Gulf-style)"},
+    ], star:"Χοιρινό + molasses + cider vinegar + cayenne — Pulled Pork" },
+];
+
+const VEG_CUISINES = [
+  { flag:"🇮🇹", name:"Italian", backbone:"Σκόρδο · Ελαιόλαδο · Βασιλικός · Μαϊντανός · Parmigiano",
+    pairings:[
+      {ing:"Μελιτζάνα", pairs:"Σκόρδο + ελαιόλαδο + ντομάτες + βασιλικός (Caponata)"},
+      {ing:"Κολοκυθάκι", pairs:"Βασιλικός + σκόρδο + Parmesan + λεμόνι"},
+      {ing:"Αγκινάρα", pairs:"Σκόρδο + λεμόνι + ελαιόλαδο + θυμάρι"},
+      {ing:"Porcini", pairs:"Σκόρδο + μαϊντανός + λεμόνι + βαλσάμικο"},
+      {ing:"Ντομάτα", pairs:"Βασιλικός + mozzarella + σκόρδο + ελαιόλαδο + βαλσάμικο"},
+    ], star:"Μελιτζάνα + ντομάτες + σκόρδο + βασιλικός — η ψυχή της Caponata" },
+
+  { flag:"🇫🇷", name:"French Provençal", backbone:"Θυμάρι · Δενδρολίβανο · Herbes de Provence · Tarragon · Shallots",
+    pairings:[
+      {ing:"Ratatouille", pairs:"Μελιτζάνα + κολοκύθι + πιπεριές + σκόρδο + ντομάτα + θυμάρι"},
+      {ing:"Πράσα", pairs:"Κρέμα + θυμάρι + βούτυρο + Gruyère"},
+      {ing:"Αγκινάρα", pairs:"Κρέμα + Parmesan + θυμάρι"},
+      {ing:"Μάραθο", pairs:"Λεμόνι + ελαιόλαδο + πορτοκάλι + ελιές"},
+      {ing:"Σπαράγγια", pairs:"Βούτυρο + tarragon + λεμόνι + shallots"},
+    ], star:"Μελιτζάνα + κολοκύθι + πιπεριές + herbes de Provence — Ratatouille" },
+
+  { flag:"🇲🇦", name:"Moroccan", backbone:"Κανέλα · Κύμινο · Κόλιαντρος · Τζίντζερ · Harissa · Preserved Lemon",
+    pairings:[
+      {ing:"Καρότα", pairs:"Κύμινο + κόλιαντρος + μέλι + πορτοκάλι + harissa"},
+      {ing:"Μελιτζάνα", pairs:"Κανέλα + κύμινο + σκόρδο + ντομάτες + δυόσμος"},
+      {ing:"Κουνουπίδι", pairs:"Κύμινο + κόλιαντρος + κουρκουμάς + σταφίδες + αμύγδαλα"},
+      {ing:"Ρεβίθια", pairs:"Κύμινο + σκόρδο + λεμόνι + ελαιόλαδο + πάπρικα"},
+      {ing:"Γλυκοπατάτα", pairs:"Κανέλα + τζίντζερ + μέλι + preserved lemon"},
+    ], star:"Καρότα + κύμινο + μέλι + harissa — κλασική μαροκινή σαλάτα καρότου" },
+
+  { flag:"🇮🇳", name:"Indian", backbone:"Κύμινο · Κουρκουμάς · Κόλιαντρος · Garam Masala · Mustard Seeds · Ginger",
+    pairings:[
+      {ing:"Κουνουπίδι", pairs:"Κύμινο + κουρκουμάς + κόλιαντρος + τζίντζερ (Aloo Gobi)"},
+      {ing:"Σπανάκι", pairs:"Σκόρδο + τζίντζερ + κύμινο + κρέμα (Saag)"},
+      {ing:"Μελιτζάνα", pairs:"Mustard seeds + σκόρδο + κουρκουμάς + tamarind"},
+      {ing:"Μπάμιες", pairs:"Κύμινο + κόλιαντρος + κουρκουμάς + ντομάτες"},
+      {ing:"Αρακάς", pairs:"Paneer + κύμινο + τζίντζερ + garam masala"},
+    ], star:"Κουνουπίδι + πατάτα + κύμινο + κουρκουμάς + τζίντζερ — Aloo Gobi" },
+
+  { flag:"🇯🇵", name:"Japanese", backbone:"Σόγια · Mirin · Sake · Σουσάμι · Dashi · Miso · Τζίντζερ",
+    pairings:[
+      {ing:"Μελιτζάνα", pairs:"Miso + σουσάμι + mirin + sake (Nasu Dengaku)"},
+      {ing:"Μανιτάρια", pairs:"Σόγια + σουσάμι + dashi + τζίντζερ"},
+      {ing:"Edamame", pairs:"Θαλασσινό αλάτι + σουσάμι + σόγια"},
+      {ing:"Bok Choy", pairs:"Σκόρδο + τζίντζερ + σησαμέλαιο + σόγια"},
+      {ing:"Daikon", pairs:"Σόγια + mirin + dashi (Oden)"},
+    ], star:"Μελιτζάνα + white miso + mirin + σουσάμι — Nasu Dengaku" },
+
+  { flag:"🇬🇷", name:"Greek", backbone:"Λεμόνι · Ελαιόλαδο · Ρίγανη · Σκόρδο · Δυόσμος · Άνηθος · Φέτα",
+    pairings:[
+      {ing:"Μελιτζάνα", pairs:"Σκόρδο + ελαιόλαδο + ντομάτες + ρίγανη (Imam Bayildi)"},
+      {ing:"Κολοκυθάκι", pairs:"Λεμόνι + σκόρδο + άνηθος + φέτα + ελαιόλαδο"},
+      {ing:"Ντομάτα", pairs:"Φέτα + ρίγανη + ελαιόλαδο + αγγούρι + ελιές"},
+      {ing:"Σπανάκι", pairs:"Φέτα + λεμόνι + άνηθος + φύλλο (Spanakopita)"},
+      {ing:"Πιπεριές", pairs:"Φέτα + σκόρδο + ελαιόλαδο + ρίγανη"},
+    ], star:"Σπανάκι + φέτα + άνηθος + φύλλο — Spanakopita" },
+
+  { flag:"🌿", name:"Middle Eastern", backbone:"Κύμινο · Κόλιαντρος · Κανέλα · Sumac · Za'atar · Tahini · Pomegranate",
+    pairings:[
+      {ing:"Μελιτζάνα", pairs:"Tahini + σκόρδο + λεμόνι + κύμινο + μαϊντανός (Baba Ghanoush)"},
+      {ing:"Κουνουπίδι", pairs:"Tahini + λεμόνι + κύμινο + ρόδι + μυρωδικά"},
+      {ing:"Ρεβίθια", pairs:"Tahini + σκόρδο + κύμινο + λεμόνι + ελαιόλαδο (Hummus)"},
+      {ing:"Παντζάρι", pairs:"Γιαούρτι + δυόσμος + sumac + καρύδια + ρόδι"},
+      {ing:"Κολοκυθάκι", pairs:"Δυόσμος + σκόρδο + λεμόνι + ελαιόλαδο + za'atar"},
+    ], star:"Μελιτζάνα + tahini + σκόρδο + λεμόνι + κύμινο — Baba Ghanoush" },
+
+  { flag:"🇲🇽", name:"Mexican", backbone:"Chiles · Κύμινο · Κόλιαντρος · Lime · Cilantro · Epazote",
+    pairings:[
+      {ing:"Καλαμπόκι", pairs:"Βούτυρο + cayenne + lime + cotija cheese (Elote)"},
+      {ing:"Αβοκάντο", pairs:"Jalapeño + cilantro + lime + κύμινο + σκόρδο"},
+      {ing:"Poblano Peppers", pairs:"Σκόρδο + κρέμα + καλαμπόκι + τυρί (Rajas)"},
+      {ing:"Μαύρα φασόλια", pairs:"Κύμινο + σκόρδο + ρίγανη + chipotle + lime"},
+      {ing:"Κολοκύθα", pairs:"Κανέλα + chipotle + lime + pepitas + μέλι"},
+    ], star:"Καλαμπόκι + lime + chili + cotija + mayonnaise — Elote" },
+
+  { flag:"🇰🇷", name:"Korean", backbone:"Gochujang · Σουσάμι · Σκόρδο · Σόγια · Τζίντζερ · Rice Vinegar",
+    pairings:[
+      {ing:"Σπανάκι", pairs:"Σουσάμι + σκόρδο + σόγια + σησαμέλαιο (Sigeumchi Namul)"},
+      {ing:"Bean Sprouts", pairs:"Σουσάμι + σκόρδο + σόγια + gochugaru"},
+      {ing:"Κολοκυθάκι", pairs:"Σκόρδο + gochujang + σουσάμι + κρεμμυδάκια"},
+      {ing:"Μανιτάρια", pairs:"Σόγια + σουσάμι + σκόρδο + τζίντζερ"},
+      {ing:"Λάχανο (Kimchi)", pairs:"Gochujang + σκόρδο + τζίντζερ + fish sauce"},
+    ], star:"Σπανάκι + σουσάμι + σκόρδο + σόγια — κλασικό Korean banchan" },
+
+  { flag:"🌺", name:"Thai", backbone:"Fish sauce · Lime · Lemongrass · Kaffir Lime · Galangal · Chile · Coconut",
+    pairings:[
+      {ing:"Μελιτζάνα", pairs:"Coconut milk + lemongrass + kaffir lime + βασιλικός (Green Curry)"},
+      {ing:"Φασολάκια", pairs:"Σκόρδο + fish sauce + lime + chili + βασιλικός"},
+      {ing:"Γλυκοπατάτα", pairs:"Coconut milk + lemongrass + galangal + kaffir lime"},
+      {ing:"Bok Choy", pairs:"Σκόρδο + oyster sauce + lime + chili"},
+      {ing:"Μανιτάρια", pairs:"Lemongrass + galangal + lime + chili + coconut"},
+    ], star:"Μελιτζάνα + coconut milk + lemongrass + kaffir lime — Thai green curry" },
+];
+
+const SEASONAL = [
+  { icon:"🌱", season:"SPRING", title:"Άνοιξη", desc:"Τρυφερές, φρέσκες γεύσεις — μην τις υπερσκεπάζεις",
+    items:[
+      {ing:"Σπαράγγια", pairs:"Βούτυρο + tarragon + λεμόνι · ή hollandaise + shallots"},
+      {ing:"Σπαράγγια (2)", pairs:"Parmesan + σκόρδο + ελαιόλαδο + κάπαρη"},
+      {ing:"Μπιζέλια", pairs:"Δυόσμος + βούτυρο + κρέμα · ή βασιλικός + mascarpone + Parmesan"},
+      {ing:"Αγκινάρες", pairs:"Σκόρδο + λεμόνι + ελαιόλαδο + θυμάρι"},
+      {ing:"Σπανάκι (μωρό)", pairs:"Λεμόνι + σκόρδο + ελαιόλαδο + κουκουνάρι"},
+      {ing:"Αρνί (άνοιξης)", pairs:"Δυόσμος + μπιζέλια + σκόρδο + λεμόνι"},
+      {ing:"Μοσχαράκι", pairs:"Morel μανιτάρια + σπαράγγια + βούτυρο + tarragon"},
+      {ing:"Σολομός", pairs:"Μπιζέλια + chervil + πράσα + morels + λεμόνι"},
+    ]
+  },
+  { icon:"☀️", season:"SUMMER", title:"Καλοκαίρι", desc:"Τολμηρές γεύσεις — ψητό, ψωμί, ωμό",
+    items:[
+      {ing:"Ντομάτες", pairs:"Βασιλικός + mozzarella + ελαιόλαδο + βαλσάμικο (Caprese)"},
+      {ing:"Καλαμπόκι", pairs:"Βούτυρο + cayenne + lime · ή μπέικον + βασιλικός + jalapeño"},
+      {ing:"Κολοκυθάκι", pairs:"Βασιλικός + σκόρδο + Parmesan + λεμόνι"},
+      {ing:"Μελιτζάνα", pairs:"Σκόρδο + ελαιόλαδο + ντομάτες + βασιλικός"},
+      {ing:"Μοσχάρι (steak)", pairs:"Ρόκα + Parmesan + βαλσάμικο + ντομάτες"},
+      {ing:"Κοτόπουλο", pairs:"Βασιλικός + ντομάτες + σκόρδο + ελαιόλαδο"},
+      {ing:"Χτένια", pairs:"Καλαμπόκι + μπέικον + chives + βασιλικός"},
+      {ing:"Τόνος", pairs:"Αβοκάντο + λεμόνι + σόγια + cilantro + σουσάμι"},
+    ]
+  },
+  { icon:"🍂", season:"AUTUMN", title:"Φθινόπωρο", desc:"Βαθιές, ζεστές γεύσεις — μανιτάρια, ρίζες, κόκκινο κρασί",
+    items:[
+      {ing:"Butternut Squash", pairs:"Φασκόμηλο + βούτυρο + μοσχοκάρυδο · ή μπέικον + maple + δενδρολίβανο"},
+      {ing:"Παντζάρι", pairs:"Κατσικίσιο τυρί + καρύδια + πορτοκάλι + βαλσάμικο"},
+      {ing:"Porcini μανιτάρια", pairs:"Σκόρδο + μαϊντανός + λεμόνι + βαλσάμικο + Parmesan"},
+      {ing:"Chanterelles", pairs:"Βούτυρο + κρέμα + σκόρδο + θυμάρι"},
+      {ing:"Μοσχάρι (short ribs)", pairs:"Κόκκινο κρασί + μανιτάρια + κανέλα + ντομάτες"},
+      {ing:"Πάπια", pairs:"Κανέλα + μέλι + πορτοκάλι + star anise"},
+      {ing:"Χοιρινό (ώμος)", pairs:"Μήλα + μηλόξυδο + φασκόμηλο + μουστάρδα"},
+      {ing:"Αρνί", pairs:"Κανέλα + αποξηραμένα βερίκοκα + καρύδια + preserved lemon"},
+    ]
+  },
+  { icon:"❄️", season:"WINTER", title:"Χειμώνας", desc:"Βαθύ, αργό μαγείρεμα — braising, ψητό, κρέμες",
+    items:[
+      {ing:"Πράσα", pairs:"Κρέμα + θυμάρι + βούτυρο + Gruyère · ή μπέικον + μουστάρδα"},
+      {ing:"Μάραθο", pairs:"Πορτοκάλι + ελαιόλαδο + ελιές + λεμόνι + δυόσμος"},
+      {ing:"Μοσχάρι (oxtail)", pairs:"Κόκκινο κρασί + parsnips + θυμάρι + ντομάτες"},
+      {ing:"Μοσχαράκι (osso buco)", pairs:"Κάπαρη + gremolata + ελιές + λευκό κρασί"},
+      {ing:"Χοιρινό (κοιλιά)", pairs:"Star anise + σόγια + τζίντζερ + κρεμμυδάκια"},
+      {ing:"Κοτόπουλο (braised)", pairs:"Κρέμα + πάπρικα + σκόρδο + μανιτάρια"},
+      {ing:"Αρνί (ώμος)", pairs:"Σκόρδο + δενδρολίβανο + ρίζες + κόκκινο κρασί"},
+      {ing:"Χτένια", pairs:"Κουνουπίδι + κρέμα + σαφράν + πράσα"},
+    ]
+  },
+];
+
+const SPICE_CATEGORIES = [
+  { cat:"Ζεστά Μείγματα", icon:"🌶️", spices:[
+    { name:"Garam Masala", star:true, ings:["κάρδαμο","κανέλα","γαρύφαλλο","κόλιαντρος","κύμινο","ξερά chiles","μάραθο","μοσχοκάρυδο"] },
+    { name:"Ras el Hanout", star:false, ings:["κάρδαμο","κανέλα","γαρύφαλλο","κόλιαντρος","κύμινο","τζίντζερ","τριαντάφυλλο"] },
+    { name:"Five-Spice (Chinese)", star:true, ings:["κανέλα","γαρύφαλλο","σπόρους μάραθο","πιπέρι","star anise"] },
+    { name:"Quatre Épices", star:true, ings:["γαρύφαλλο/allspice","τζίντζερ","μοσχοκάρυδο","πιπέρι"] },
+    { name:"Mulling Spice", star:false, ings:["κανέλα","γαρύφαλλο","τζίντζερ","μοσχοκάρυδο"] },
+    { name:"Chai Blend", star:false, ings:["κάρδαμο","κανέλα","γαρύφαλλο","μαύρο πιπέρι","τζίντζερ"] },
+  ]},
+  { cat:"Savory & Earthy", icon:"🌿", spices:[
+    { name:"Herbes de Provence", star:true, ings:["βασιλικός","σπόροι μάραθο","λεβάντα","μαντζουράνα","δενδρολίβανο","φασκόμηλο","θυμάρι"] },
+    { name:"Bouquet Garni", star:true, ings:["δάφνη","μαϊντανός","θυμάρι"] },
+    { name:"Fines Herbes", star:true, ings:["chervil","σχοινόπρασο","μαϊντανός","tarragon"] },
+    { name:"Za'atar", star:false, ings:["sumac","αλάτι","σουσάμι","θυμάρι"] },
+    { name:"North African Base", star:false, ings:["κόλιαντρος","κύμινο","σκόρδο","κανέλα"] },
+    { name:"Indian Everyday", star:false, ings:["κόλιαντρος","κύμινο","κουρκουμάς"] },
+  ]},
+  { cat:"Φωτεινά & Citrus", icon:"🍋", spices:[
+    { name:"Gremolata", star:true, ings:["σκόρδο","ξύσμα λεμονιού","μαϊντανός"] },
+    { name:"Eastern Mediterranean", star:false, ings:["κανέλα","κόλιαντρος","κύμινο","σκόρδο","κρεμμύδι","μαϊντανός"] },
+    { name:"Turkish Spice", star:false, ings:["κύμινο","λεμόνι","μαϊντανός","μαύρο πιπέρι"] },
+    { name:"Caribbean Jerk Base", star:true, ings:["allspice","κανέλα","γαρύφαλλο","τζίντζερ","θυμάρι"] },
+    { name:"Scandinavian Warm", star:false, ings:["κάρδαμο","κανέλα","γαρύφαλλο","τζίντζερ","μοσχοκάρυδο"] },
+  ]},
+  { cat:"Φωτιά & Καπνός", icon:"🔥", spices:[
+    { name:"Harissa Base", star:true, ings:["chile peppers","σκόρδο","ελαιόλαδο","αλάτι","κύμινο"] },
+    { name:"Korean Spice Base", star:true, ings:["chile peppers","σκόρδο","σουσάμι","σόγια"] },
+    { name:"Cajun Rub", star:false, ings:["cayenne","κόλιαντρος","κύμινο","σκόρδο"] },
+    { name:"Szechuan Base", star:false, ings:["τζίντζερ","Szechuan pepper","star anise"] },
+    { name:"Chipotle-Cumin", star:false, ings:["chipotle","κύμινο","σκόρδο","ντομάτες"] },
+    { name:"Mexican Spice Base", star:false, ings:["cayenne","κόλιαντρος","κύμινο","σκόρδο"] },
+  ]},
+  { cat:"Γλυκά & Αρτοσκευάσματα", icon:"🍰", spices:[
+    { name:"Classic Baking Spice", star:true, ings:["κανέλα","γαρύφαλλο","mace","μοσχοκάρυδο"] },
+    { name:"Apple-Spice", star:true, ings:["allspice","κανέλα","τζίντζερ","μοσχοκάρυδο"] },
+    { name:"Star Anise Dessert", star:false, ings:["star anise","κανέλα","γαρύφαλλο","ξύσμα πορτοκαλιού"] },
+    { name:"Vanilla-Cinnamon", star:false, ings:["κανέλα","κάρδαμο","βανίλια"] },
+    { name:"Coffee-Spice", star:false, ings:["κανέλα","γαρύφαλλο","πορτοκάλι","κάρδαμο"] },
+    { name:"Rum-Spice for Fruits", star:false, ings:["κανέλα","γαρύφαλλο","allspice","star anise"] },
+  ]},
+];
+
+const SAUCES = [
+  { name:"Romesco", ings:"Ψητές κόκκινες πιπεριές + αμύγδαλα + σκόρδο + smoked paprika", veg:"Σπαράγγια, κουνουπίδι, αγκινάρες, πράσα" },
+  { name:"Salsa Verde", ings:"Μαϊντανός + κάπαρη + σκόρδο + λεμόνι + ελαιόλαδο", veg:"Κάθε ψητό ή σχαριστό λαχανικό" },
+  { name:"Tahini Sauce", ings:"Tahini + λεμόνι + σκόρδο + νερό", veg:"Κουνουπίδι, μελιτζάνα, καρότα, παντζάρι" },
+  { name:"Miso Glaze", ings:"White miso + mirin + σουσάμι + τζίντζερ", veg:"Μελιτζάνα, μανιτάρια, bok choy, καλαμπόκι" },
+  { name:"Gremolata", ings:"Ξύσμα λεμονιού + σκόρδο + μαϊντανός", veg:"Braised ή ψητές ρίζες" },
+  { name:"Chermoula", ings:"Κόλιαντρος + κύμινο + σκόρδο + λεμόνι + ελαιόλαδο + μαϊντανός", veg:"Καρότα, κουνουπίδι, κολοκυθάκια, πατάτες" },
+  { name:"Pesto (Κλασικό)", ings:"Βασιλικός + κουκουνάρι + Parmesan + σκόρδο + ελαιόλαδο", veg:"Ντομάτες, κολοκύθι, φασολάκια, μπιζέλια" },
+  { name:"Bagna Cauda", ings:"Αντζούγιες + σκόρδο + βούτυρο + ελαιόλαδο", veg:"Ωμά και ψητά λαχανικά" },
+  { name:"Harissa", ings:"Chiles + κύμινο + σκόρδο + κόλιαντρος + ελαιόλαδο", veg:"Ψητά καρότα, κουνουπίδι, ρεβίθια, γλυκοπατάτα" },
+];
+
+const SUBSTITUTIONS = {
+  protein_protein:[
+    {from:"Μοσχαράκι (Veal)",to:"Χοιρινό φιλέτο",why:"Παρόμοια απαλότητα, ήπια γεύση",keep:"Κάπαρη + λεμόνι + φασκόμηλο + κρέμα"},
+    {from:"Αρνί (ώμος)",to:"Μοσχαρίσιος σβέρκος",why:"Και τα δύο λιπαρά, κατάλληλα για braising",keep:"Κανέλα + δενδρολίβανο + κόκκινο κρασί"},
+    {from:"Στήθος πάπιας",to:"Μηρός κοτόπουλου",why:"Και τα δύο σκούρο, πλούσιο κρέας",keep:"Πορτοκάλι + μέλι + star anise"},
+    {from:"Κουνέλι",to:"Κοτόπουλο κομμάτια",why:"Άσπρο κρέας, παρόμοια υφή",keep:"Μουστάρδα + θυμάρι + λευκό κρασί"},
+    {from:"Ελάφι",to:"Μοσχάρι (λιπαρό κομμάτι)",why:"Άγρια, σφιχτή γεύση",keep:"Juniper + δενδρολίβανο + κόκκινο κρασί"},
+    {from:"Κότσι (osso buco)",to:"Κότσι αρνιού",why:"Και τα δύο πλούσια σε ζελατίνη",keep:"Gremolata + ελιές + λευκό κρασί"},
+  ],
+  fish_fish:[
+    {from:"Σολομός",to:"Πέστροφα",why:"Ίδια λιπαρή υφή",keep:"Άνηθος + λεμόνι + crème fraîche"},
+    {from:"Χαλιμπούτ",to:"Μπακαλιάρος / Sea bass",why:"Σκληρό λευκό ψάρι",keep:"Λεμόνι + σκόρδο + κάπαρη + μαϊντανός"},
+    {from:"Τόνος (φρέσκος)",to:"Ξιφίας",why:"Κρεατώδης, σαν μπριζόλα",keep:"Σόγια + τζίντζερ + σουσάμι"},
+    {from:"Γλώσσα (Sole)",to:"Πλατύψαρο / Flounder",why:"Λεπτό, επίπεδο λευκό ψάρι",keep:"Βούτυρο + λεμόνι + μαϊντανός"},
+    {from:"Μύδια",to:"Αχιβάδες",why:"Και τα δύο δίθυρα, αλμυρά",keep:"Λευκό κρασί + σκόρδο + μαϊντανός"},
+    {from:"Χτένια",to:"Γαρίδες",why:"Και τα δύο λεπτά θαλασσινά",keep:"Μπέικον + κρέμα + tarragon"},
+    {from:"Αστακός",to:"Χτένια / Μεγάλες γαρίδες",why:"Γλυκά, πλούσια θαλασσινά",keep:"Βούτυρο + tarragon + λεμόνι"},
+  ],
+  herb_spice:[
+    {from:"Tarragon",to:"Chervil / φύλλα μάραθου",why:"Ανισέτο / φυτική φρεσκάδα",keep:"Σπαράγγια, αγκινάρες, κοτόπουλο"},
+    {from:"Preserved lemon",to:"Ξύσμα λεμονιού + πρέζα αλάτι",why:"Σύνθετο εσπεριδοειδές",keep:"Αρνί, κοτόπουλο, ψάρι"},
+    {from:"Fish sauce",to:"Σόγια + λίγο λεμόνι",why:"Fermented umami + αλάτι",keep:"Thai, Vietnamese πιάτα"},
+    {from:"Mirin",to:"Ξηρό sherry + λίγη ζάχαρη",why:"Γλυκό + umami γλάσο",keep:"Ιαπωνικές πρωτεΐνες"},
+    {from:"Lemongrass",to:"Ξύσμα λεμονιού + τζίντζερ",why:"Citrus + ζεστή φρεσκάδα",keep:"Thai, ψάρι, θαλασσινά"},
+    {from:"Sumac",to:"Ξύσμα λεμονιού + πρέζα tamarind",why:"Φρουτώδης ξινίλα",keep:"Middle Eastern πιάτα"},
+    {from:"Za'atar",to:"Θυμάρι + σουσάμι + ξύσμα λεμονιού",why:"Φυτικό, καρυκευτό, tart",keep:"Αρνί, κοτόπουλο, ψάρι"},
+    {from:"Pomegranate molasses",to:"Βαλσάμικο + μέλι",why:"Γλυκόξινο βάθος",keep:"Αρνί, πάπια, κυνήγι"},
+    {from:"Saffron",to:"Κουρκουμάς + smoked paprika",why:"Χρυσή ζεστασιά",keep:"Θαλασσινά, κοτόπουλο, ρύζι"},
+    {from:"Harissa",to:"Tomato paste + cayenne + κύμινο",why:"Πικάντικη, καπνιστή ζέστη",keep:"Βορειοαφρικανικά λαχανικά"},
+  ],
+  veg_veg:[
+    {from:"Μελιτζάνα",to:"Κολοκυθάκι",why:"Και τα δύο απορροφούν λάδι, ήπια γεύση",keep:"Σκόρδο + ελαιόλαδο + ντομάτες"},
+    {from:"Αγκινάρα",to:"Celeriac / Μάραθο",why:"Αμυγδαλωτά, κατάλληλα για braising",keep:"Λεμόνι + σκόρδο + θυμάρι"},
+    {from:"Πράσα",to:"Shallots + κρεμμυδάκια",why:"Ίδια οικογένεια allium",keep:"Βούτυρο + κρέμα + θυμάρι"},
+    {from:"Porcini (φρέσκα)",to:"Shiitake + cremini",why:"Earthy, κρεατώδη μανιτάρια",keep:"Σκόρδο + μαϊντανός + βούτυρο"},
+    {from:"Butternut Squash",to:"Κολοκύθα / Kabocha",why:"Γλυκές χειμερινές κολοκύθες",keep:"Φασκόμηλο + βούτυρο + μοσχοκάρυδο"},
+    {from:"Σπαράγγια",to:"Φασολάκια / Broccolini",why:"Και τα δύο λεπτά πράσινα λαχανικά",keep:"Λεμόνι + βούτυρο + tarragon"},
+    {from:"Κέιλ",to:"Swiss chard / Cavolo nero",why:"Όλα ρωμαλέα φυλλώδη",keep:"Σκόρδο + ελαιόλαδο + λεμόνι"},
+    {from:"Μάραθο (βολβός)",to:"Σέλινο + σπόροι γλυκάνισου",why:"Παρόμοια anise γεύση",keep:"Πορτοκάλι + ελιές + λεμόνι"},
+  ],
+};
+
+// ═══════════════════════════════════════════════════════
+// RENDER FUNCTIONS
+// ═══════════════════════════════════════════════════════
+let openCuisines = {};
+
+function renderCuisines(data, containerId) {
+  const container = document.getElementById(containerId);
+  const q = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = data.filter(c =>
+    !q || c.name.toLowerCase().includes(q) ||
+    c.pairings.some(p => p.ing.toLowerCase().includes(q) || p.pairs.toLowerCase().includes(q))
+  );
+  if (!filtered.length) { container.innerHTML='<div class="empty">Δεν βρέθηκαν αποτελέσματα</div>'; return; }
+
+  container.innerHTML = filtered.map(c => {
+    const key = containerId + c.name;
+    const isOpen = openCuisines[key];
+    return `
+    <div class="ccard">
+      <div class="ccard-head" onclick="toggleCuisine('${key}')">
+        <div class="ccard-flag">${c.flag}</div>
+        <div class="ccard-info">
+          <div class="ccard-cuisine">Κουζίνα</div>
+          <div class="ccard-name">${c.name}</div>
+          <div class="ccard-backbone">${c.backbone}</div>
+        </div>
+        <div class="ccard-toggle ${isOpen?'open':''}">›</div>
+      </div>
+      <div class="ccard-body ${isOpen?'open':''}">
+        <table class="ptable">
+          ${c.pairings.map(p=>`
+            <tr>
+              <td class="pt-ing">${p.ing}</td>
+              <td class="pt-pairs">${p.pairs}</td>
+            </tr>
+          `).join('')}
+        </table>
+        <div class="star-combo">★ <strong>Iconic Combo:</strong> ${c.star}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCuisine(key) {
+  openCuisines[key] = !openCuisines[key];
+  renderAll();
+}
+
+function renderSeasonal() {
+  document.getElementById("grid-seasonal").innerHTML = SEASONAL.map(s => `
+    <div class="scard">
+      <div class="scard-head">
+        <div class="scard-icon">${s.icon}</div>
+        <div class="scard-info">
+          <div class="scard-season">${s.season}</div>
+          <div class="scard-title">${s.title}</div>
+          <div class="scard-desc">${s.desc}</div>
+        </div>
+      </div>
+      <div class="scard-body">
+        ${s.items.map(i=>`
+          <div class="scard-row">
+            <div class="scard-ing">${i.ing}</div>
+            <div class="scard-pairs">${i.pairs}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSpices() {
+  document.getElementById("spice-content").innerHTML = SPICE_CATEGORIES.map(cat => `
+    <div>
+      <div class="section-hdr"><div class="section-lbl">${cat.icon} ${cat.cat}</div><div class="section-rule"></div></div>
+      <div class="spice-grid">
+        ${cat.spices.map(s=>`
+          <div class="spice-card">
+            ${s.star ? '<div class="spice-star">★ CLASSIC</div>' : ''}
+            <div class="spice-name">${s.name}</div>
+            <div class="spice-ingredients">
+              ${s.ings.map(i=>`<span class="ing-item">${i}</span>`).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSauces() {
+  document.getElementById("grid-sauces").innerHTML = SAUCES.map(s=>`
+    <div class="sauce-card">
+      <div class="sauce-name">${s.name}</div>
+      <div class="sauce-ings">${s.ings}</div>
+      <div class="sauce-veg">Ταιριάζει: ${s.veg}</div>
+    </div>
+  `).join('');
+}
+
+function renderSubs() {
+  const sections = [
+    { title:"🥩 Αντικαταστάσεις Πρωτεΐνης", data: SUBSTITUTIONS.protein_protein },
+    { title:"🐟 Αντικαταστάσεις Ψαριού & Θαλασσινών", data: SUBSTITUTIONS.fish_fish },
+    { title:"🌿 Αντικαταστάσεις Μυρωδικών & Μπαχαρικών", data: SUBSTITUTIONS.herb_spice },
+    { title:"🥦 Αντικαταστάσεις Λαχανικών", data: SUBSTITUTIONS.veg_veg },
+  ];
+
+  document.getElementById("sub-content").innerHTML = sections.map(sec=>`
+    <div class="section-hdr" style="margin-top:16px"><div class="section-lbl">${sec.title}</div><div class="section-rule"></div></div>
+    <table class="sub-table">
+      <thead><tr>
+        <th>Έχεις</th><th>Αντικατέστησε με</th><th>Γιατί δουλεύει</th><th>Κράτα το ίδιο pairing</th>
+      </tr></thead>
+      <tbody>
+        ${sec.data.map(r=>`
+          <tr>
+            <td class="sub-from">${r.from}</td>
+            <td class="sub-to">${r.to}</td>
+            <td class="sub-why">${r.why}</td>
+            <td class="sub-keep">${r.keep}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    <div class="sub-mobile">
+      ${sec.data.map(r=>`
+        <div class="sub-mob-item">
+          <div class="sub-mob-from">${r.from} → ${r.to}</div>
+          <div class="sub-mob-why">${r.why}</div>
+          <div class="sub-mob-why" style="margin-top:3px;font-style:italic">Κράτα: ${r.keep}</div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function renderAll() {
+  const active = document.querySelector('.panel.active');
+  if (!active) return;
+  const id = active.id.replace('panel-','');
+  if (id === 'cuisines-protein') renderCuisines(PROTEIN_CUISINES, 'grid-protein');
+  else if (id === 'cuisines-veg') renderCuisines(VEG_CUISINES, 'grid-veg');
+}
+
+// TABS
+document.getElementById("mainTabs").addEventListener("click", e => {
+  const btn = e.target.closest('.mtab');
+  if (!btn) return;
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const panelId = 'panel-' + btn.dataset.panel;
+  document.getElementById(panelId).classList.add('active');
+  renderAll();
+});
+
+document.getElementById("searchInput").addEventListener("input", () => renderAll());
+
+// INIT
+renderCuisines(PROTEIN_CUISINES, 'grid-protein');
+renderSeasonal();
+renderSpices();
+renderSauces();
+renderSubs();
+</script>
+</body>
+</html>
