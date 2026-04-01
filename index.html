@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sunwing Buffet · Helios & Ella</title>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-title" content="Helios & Ella"/>
+  <meta name="theme-color" content="#0a0a0a"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Montserrat:wght@200;400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8cb7a;
+      --gold-dim: #7a6330;
+      --bg: #0a0a0a;
+      --surface: #141208;
+      --border: #2a2518;
+      --text: #f0e8d0;
+      --muted: #6a6050;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% -10%, #2a1f0018 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .sun-rays {
+      position: fixed; top: -20vh; left: 50%; transform: translateX(-50%);
+      width: 200vw; height: 80vh; pointer-events: none; z-index: 0; opacity: 0.035;
+    }
+    .sun-rays::before {
+      content: ''; position: absolute; inset: 0;
+      background: repeating-conic-gradient(from 0deg at 50% 0%, #c9a84c 0deg 3deg, transparent 3deg 12deg);
+    }
+
+    .page { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+
+    /* HEADER */
+    header { width: 100%; text-align: center; padding: 52px 24px 28px; }
+
+    .sun-emblem { width: 64px; height: 64px; margin: 0 auto 22px; position: relative; }
+    .sun-circle {
+      width: 34px; height: 34px;
+      background: radial-gradient(circle, var(--gold-light), var(--gold));
+      border-radius: 50%; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 24px #c9a84c44;
+    }
+    .sun-ring {
+      position: absolute; inset: 0; border: 1px solid var(--gold-dim);
+      border-radius: 50%; opacity: 0.35;
+      animation: breathe 4s ease-in-out infinite;
+    }
+    @keyframes breathe { 0%,100%{transform:scale(1);opacity:.35} 50%{transform:scale(1.12);opacity:.1} }
+    .sun-spokes { position: absolute; inset: 0; }
+    .sun-spokes::before {
+      content: ''; position: absolute; inset: 0;
+      background: repeating-conic-gradient(from 0deg at 50% 50%, var(--gold) 0deg 1.5deg, transparent 1.5deg 30deg);
+      border-radius: 50%; opacity: 0.45;
+      mask-image: radial-gradient(circle, transparent 38%, black 52%, transparent 100%);
+      -webkit-mask-image: radial-gradient(circle, transparent 38%, black 52%, transparent 100%);
+    }
+
+    .brand-line {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300; font-size: clamp(30px, 8vw, 54px);
+      letter-spacing: 6px; color: var(--gold-light); line-height: 1;
+    }
+    .brand-amp { font-style: italic; color: var(--gold); }
+    .brand-resort {
+      font-size: 9px; letter-spacing: 5px; color: var(--gold-dim);
+      text-transform: uppercase; margin-top: 10px; font-weight: 200;
+    }
+
+    /* DIVIDER */
+    .divider {
+      width: 100%; max-width: 480px; display: flex; align-items: center;
+      gap: 12px; padding: 0 24px; margin: 16px auto 28px;
+    }
+    .divider-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, var(--gold-dim), transparent); }
+    .divider-diamond { width: 5px; height: 5px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
+
+    /* TODAY */
+    .today-banner {
+      width: calc(100% - 48px); max-width: 480px; margin: 0 auto 24px;
+      padding: 14px 20px; background: var(--surface);
+      border: 1px solid var(--border); border-top: 2px solid var(--gold-dim);
+      display: flex; align-items: center; gap: 14px;
+      animation: fadeUp .5s ease both;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    .today-pulse {
+      width: 8px; height: 8px; background: var(--gold); border-radius: 50%; flex-shrink: 0;
+      box-shadow: 0 0 8px var(--gold); animation: pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 8px var(--gold)} 50%{opacity:.3;box-shadow:0 0 2px var(--gold)} }
+    .today-text { flex: 1; }
+    .today-label { font-size: 8px; letter-spacing: 4px; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 3px; }
+    .today-theme { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--text); letter-spacing: 1px; }
+    .today-date { font-size: 9px; color: var(--muted); letter-spacing: 2px; margin-top: 3px; }
+    .today-flag { font-size: 28px; flex-shrink: 0; }
+
+    /* CARDS */
+    .cards { width: calc(100% - 48px); max-width: 480px; display: flex; flex-direction: column; gap: 10px; margin: 0 auto; }
+
+    .card {
+      display: block; text-decoration: none; background: var(--surface);
+      border: 1px solid var(--border); position: relative; overflow: hidden;
+      transition: border-color .2s, transform .15s;
+      animation: fadeUp .5s ease both;
+    }
+    .card:nth-child(1) { animation-delay: .1s; }
+    .card:nth-child(2) { animation-delay: .2s; }
+    .card::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      opacity: 0; transition: opacity .2s;
+    }
+    .card:hover { border-color: var(--gold-dim); transform: translateY(-1px); }
+    .card:hover::after { opacity: 1; }
+    .card:active { transform: scale(.99); }
+
+    .card-inner { padding: 22px 20px; display: flex; align-items: center; gap: 16px; }
+    .card-icon {
+      width: 50px; height: 50px; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0; background: #0f0d06;
+    }
+    .card-body { flex: 1; min-width: 0; }
+    .card-tag { font-size: 8px; letter-spacing: 4px; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 4px; }
+    .card-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--gold-light); letter-spacing: 1px; margin-bottom: 5px; }
+    .card-desc { font-size: 11px; color: var(--muted); line-height: 1.6; font-weight: 200; }
+    .card-arrow { color: var(--gold-dim); font-size: 20px; flex-shrink: 0; transition: transform .2s, color .2s; }
+    .card:hover .card-arrow { transform: translateX(4px); color: var(--gold); }
+
+    /* WEEK GRID */
+    .week-section {
+      width: calc(100% - 48px); max-width: 480px; margin: 24px auto 0;
+      animation: fadeUp .5s .3s ease both;
+    }
+    .week-label { font-size: 8px; letter-spacing: 4px; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; text-align: center; }
+    .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .week-day {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 8px 2px; background: var(--surface); border: 1px solid var(--border);
+    }
+    .week-day.active { border-color: var(--gold-dim); background: #1a160a; }
+    .wflag { font-size: 14px; }
+    .wname { font-size: 8px; color: var(--muted); letter-spacing: .5px; }
+    .week-day.active .wname { color: var(--gold); }
+
+    /* FOOTER */
+    footer { margin-top: auto; padding: 32px 24px 28px; text-align: center; animation: fadeUp .5s .4s ease both; }
+    .footer-name { font-family: 'Cormorant Garamond', serif; font-size: 15px; letter-spacing: 3px; color: var(--gold-dim); margin-bottom: 5px; }
+    .footer-sub { font-size: 9px; letter-spacing: 3px; color: var(--muted); opacity: .55; }
+  </style>
+</head>
+<body>
+<div class="sun-rays"></div>
+<div class="page">
+
+  <header>
+    <div class="sun-emblem">
+      <div class="sun-spokes"></div>
+      <div class="sun-ring"></div>
+      <div class="sun-circle"></div>
+    </div>
+    <div class="brand-line">HELIOS <span class="brand-amp">&amp;</span> ELLA</div>
+    <div class="brand-resort">Sunwing Family Resorts · Buffet · Rhodes 2026</div>
+  </header>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-diamond"></div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="today-banner">
+    <div class="today-pulse"></div>
+    <div class="today-text">
+      <div class="today-label">Απόψε</div>
+      <div class="today-theme" id="todayTheme">—</div>
+      <div class="today-date" id="todayDate">—</div>
+    </div>
+    <div class="today-flag" id="todayFlag"></div>
+  </div>
+
+  <div class="cards">
+    <a href="menu.html" class="card">
+      <div class="card-inner">
+        <div class="card-icon">🍽️</div>
+        <div class="card-body">
+          <div class="card-tag">Εβδομαδιαίο Πρόγραμμα</div>
+          <div class="card-title">Buffet Menu</div>
+          <div class="card-desc">Πλήρες μενού ανά ημέρα — θεματικές βραδιές, σταθμοί, γεύμα &amp; δείπνο</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </div>
+    </a>
+
+    <a href="kitchen.html" class="card">
+      <div class="card-inner">
+        <div class="card-icon">📋</div>
+        <div class="card-body">
+          <div class="card-tag">Διαχείριση Κουζίνας</div>
+          <div class="card-title">Task Manager</div>
+          <div class="card-desc">Λίστες εργασιών ανά σταθμό, mise en place, χρονοδιάγραμμα βάρδιας</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="week-section">
+    <div class="week-label">Εβδομαδιαίες Θεματικές Βραδιές</div>
+    <div class="week-grid" id="weekGrid"></div>
+  </div>
+
+  <footer>
+    <div class="footer-name">Helios &amp; Ella</div>
+    <div class="footer-sub">F&amp;B Operations · Kitchen Management</div>
+  </footer>
+
+</div>
+
+<script>
+  const THEMES = [
+    { day:"ΚΥΡ", name:"Italian Buffet",       flag:"🇮🇹", js:0 },
+    { day:"ΔΕΥ", name:"Greek Buffet",          flag:"🇬🇷", js:1 },
+    { day:"ΤΡΙ", name:"South American Buffet", flag:"🌮",  js:2 },
+    { day:"ΤΕΤ", name:"International Buffet",  flag:"🌍",  js:3 },
+    { day:"ΠΕΜ", name:"Asian Buffet",          flag:"🥢",  js:4 },
+    { day:"ΠΑΡ", name:"BBQ Buffet",            flag:"🔥",  js:5 },
+    { day:"ΣΑΒ", name:"Rhodian Buffet",        flag:"🏛️", js:6 },
+  ];
+  const MONTHS   = ["Ιαν","Φεβ","Μαρ","Απρ","Μαΐ","Ιουν","Ιουλ","Αυγ","Σεπ","Οκτ","Νοε","Δεκ"];
+  const DAYS_GR  = ["Κυριακή","Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή","Σάββατο"];
+
+  const now = new Date();
+  const dow = now.getDay();
+  const today = THEMES.find(t => t.js === dow);
+
+  document.getElementById("todayTheme").textContent = today.name;
+  document.getElementById("todayFlag").textContent  = today.flag;
+  document.getElementById("todayDate").textContent  =
+    DAYS_GR[dow] + ", " + now.getDate() + " " + MONTHS[now.getMonth()] + " " + now.getFullYear();
+
+  const grid  = document.getElementById("weekGrid");
+  [1,2,3,4,5,6,0].forEach(d => {
+    const t   = THEMES.find(x => x.js === d);
+    const div = document.createElement("div");
+    div.className = "week-day" + (d === dow ? " active" : "");
+    div.innerHTML = `<span class="wflag">${t.flag}</span><span class="wname">${t.day}</span>`;
+    grid.appendChild(div);
+  });
+</script>
+</body>
+</html>

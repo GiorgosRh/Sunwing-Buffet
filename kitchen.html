@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kitchen Task Manager — Sunwing Rhodes</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Kitchen Tasks" />
+  <meta name="theme-color" content="#0f0f0f" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0f0f0f; color: #e5e5e5; font-family: 'Courier New', Courier, monospace; }
+    button { font-family: 'Courier New', Courier, monospace; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #1a1a1a; }
+    ::-webkit-scrollbar-thumb { background: #333; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useCallback } = React;
+
+    const MENU_DATA = {
+      dinner: {
+        MONDAY: {
+          theme: "GREEK BUFFET", flag: "🇬🇷",
+          meat: ["Oven Baked Lamb", "Pork Tigania", "Stew Beef Stifado", "Moussaka"],
+          fish: ["Spetsiota Fish", "Shrimps Saganaki", "Fried Fish"],
+          veg: ["Chickpeas With Tomato Sauce & Vegetables", "Zucchini Balls", "Briam Greek Vegetables Stew", "Green Beans Stew", "Spinach Pie"],
+          garnish: ["Oven Potatoes With Lemon And Cumin", "French Fries", "Pitta Bread", "Feta Cheese With Honey", "Rice With Kritharaki"],
+          action: ["Souvlaki", "Greek Village Sausages", "Grilled Peppers"],
+          soup: ["Fish Soup"],
+        },
+        TUESDAY: {
+          theme: "SOUTH AMERICAN BUFFET", flag: "🌮",
+          meat: ["Crispy Cajun Chicken", "Chicken Poblano", "Beef Lomo Saltado / Barbacoa", "Caramelized Pancetta", "Chilli Con Carne", "Beef Ribs"],
+          fish: ["Fish Moqueca", "Cajun Shrimps", "Salmon With Chimichurri"],
+          veg: ["Broccoli Au Gratin", "Empanadas", "Wedges Potatoes With Cajun Spices And Cheddar Cheese", "Zucchini Stew With Tomato Saffran Sauce", "Quesadillas With Vegetables"],
+          garnish: ["Nachos", "Burritos", "Mexican Rice", "Fried Tortillas", "French Fries"],
+          action: ["Chicken", "Chorizo Sausages", "Pulled Beef"],
+          soup: ["Pozole Soup (Pork Soup With Vegetables And Kidney Beans)"],
+        },
+        WEDNESDAY: {
+          theme: "INTERNATIONAL BUFFET", flag: "🌍",
+          meat: ["Creamy Chicken Enchiladas", "Sofrito Veal", "Pork Kontosouvli", "Chicken Drumsticks With Sweet Chilli And Lemongrass"],
+          fish: ["Baked Fish With Lemon Sauce", "Baked Fish With Curry Sauce With Dried Nuts", "Shrimps And Mussels Saganaki With Feta Cheese"],
+          veg: ["Cauliflower Ragout-Kapama With Graviera Cheese", "Imam Bayildi", "Fresh Peas Stew", "Baby Potatoes With Dill", "Lasagna With Vegetables"],
+          garnish: ["Rice with Tomatoes And Aubergines", "Carrot Puree", "Samosa With Vegetables", "French Fries", "Steamed Brussels And Sweet Corn"],
+          action: ["Kebab", "Chicken or Pork Neck Peruvian spices", "Pork Gyros"],
+          soup: ["Pumpkin Soup"],
+        },
+        THURSDAY: {
+          theme: "ASIAN BUFFET", flag: "🥢",
+          meat: ["Mongolian Beef", "Sweet And Sour Chicken", "Chicken Wings With Teriyaki Sauce", "Moo Shu Pork", "Korean Pork"],
+          fish: ["Salmon With Teriyaki Sauce", "Cod With Tomato Miso Sauce", "Curry Shrimps / Thai Stew"],
+          veg: ["Veggies Chop Suey", "Spring Rolls", "Stir-Fried Rice", "Potato Curry Stew", "Miso-Glazed Carrots", "Pineapples With Sweet Chilli"],
+          garnish: ["Basmati Rice", "Prawn Crackers", "Dumplings", "French Fries", "Stir Fry Baby Corn"],
+          action: ["Vietnamese Style Duck", "Chicken Satay Skewers"],
+          soup: ["Thai Coconut Soup (Tom Kha Gai)"],
+        },
+        FRIDAY: {
+          theme: "BBQ BUFFET", flag: "🔥",
+          meat: ["Chicken Kentucky", "BBQ Spare Ribs", "Roasted Turkey Meat Loaf", "Pork Loin with Tomato Unagi Garlic Sauce"],
+          fish: ["Grilled Fish", "Perch With Green Mojo Sauce", "Squid Stew With Vegetables"],
+          veg: ["Grilled Sweet Corn", "Sweet Potatoes With Caramelized Chickpeas", "Cauliflower With Curry & Bacon", "Dollar Potatoes", "Stew Mushrooms Stifado"],
+          garnish: ["Rice With Sweet Corn And Red Pepper", "Corn Tacos", "Wheat Tortilla", "French Fries", "Steamed Carrots"],
+          action: ["Ribeye", "Pork", "Roasted Pork Leg"],
+          soup: ["Onion Soup"],
+        },
+        SATURDAY: {
+          theme: "RHODIAN BUFFET", flag: "🏛️",
+          meat: ["Chicken Kontosouvli", "Lamb Lakani", "Pork Bekri Meze With Graviera Cheese", "Soutzoukakia"],
+          fish: ["Savoro Fish", "Calamares Tempura", "Fish With Vegetables"],
+          veg: ["Cheese Pie", "Stuffed Vine Leaves", "Pitaroudia", "Aubergines With Pomegranate", "Giant Beans With Spinach And Mushrooms", "Roasted Potatoes With Rhodian Herbs And Orange Garlic"],
+          garnish: ["Feta Cheese Bougiourdi", "Ladopita", "Rice With Mince Meat & Pinecone", "Sauteed Green Beans", "French Fries"],
+          action: ["Chicken Kebab", "Sheftalia Pork Sausages", "Haloumi Cheese", "Chicken Souvlaki"],
+          soup: ["Trachanas Soup"],
+        },
+        SUNDAY: {
+          theme: "ITALIAN BUFFET", flag: "🇮🇹",
+          meat: ["Porchetta", "Chicken Cacciatore", "Spezzatino Italian Stew With Sundried Tomato", "Tuscan Chicken"],
+          fish: ["Cod Livornese", "Garlic Mussels", "Grilled Fish Lemon Sauce"],
+          veg: ["Baked Aubergines With Cheese & Tomatoes", "Aubergines Caponata With Peppers And Pesto Basil Sauce", "Potatoes Au Gratin With Provolone Cheese", "Celeriac/Cauliflower Puree", "Artichoke With Lemon Saffron Sauce"],
+          garnish: ["Polenta", "Rice with Green Beans And Sundried Tomatoes", "Basmati Rice", "Steamed Vegetables", "French Fries"],
+          action: ["Entrecôte", "Pancetta", "Pasta Cacio Pepe", "Risotto"],
+          soup: ["Tomato Soup With Fresh Ricotta"],
+        },
+      },
+      lunch: {
+        MONDAY: {
+          theme: "LUNCH", flag: "☀️",
+          meat: ["Chicken Tigania", "Kebab Giaourtlou", "Greek Lemon Pork Stew"],
+          fish: ["Pie with Salmon & Roquefort", "Perch with Vegetables"],
+          veg: ["Mushroom Pie", "Gemista Greek Stuffed Vegetables", "Roasted Potato With Herbs", "Greek Stuffed Vine Leaves - Dolmades"],
+          garnish: ["Rice With Almonds And Parsley", "French Fries", "Cyprus Pitta Bread", "Tortillas", "Steamed Sweet Corn"],
+          action: ["Brisket"], grill: ["Chicken Fillet"], soup: ["Minestrone Soup"],
+        },
+        TUESDAY: {
+          theme: "LUNCH", flag: "☀️",
+          meat: ["Pork a la Creme", "Chicken Drumstick BBQ Sauce", "Soutzoukakia Greek Meat Balls", "Pastitsio"],
+          fish: ["Cod Plaki", "Shrimps Noodles"],
+          veg: ["Artichokes Alla Polita", "Aubergines with Tomato Sauce Feta & Walnuts", "Potato With Onions", "Zucchini Pie"],
+          garnish: ["Rice with Corn", "Steam Broccoli", "French Fries", "Chicken Crepes"],
+          action: ["Roasted Turkey"], grill: ["Beef"], soup: ["Meat Soup"],
+        },
+        WEDNESDAY: {
+          theme: "LUNCH", flag: "☀️",
+          meat: ["Chicken Meat Loaf", "Oven Baked Lamb", "Chicken Meat Balls"],
+          fish: ["Swordfish Lemon Sauce", "Calamares Stifado"],
+          veg: ["Cheese Pie", "Sweet Peppers With Feta & Balsamico Vinegar", "Greek Baked Giant Beans - Gigantes", "Fried Vegetables Balls"],
+          garnish: ["Rice With Peas And Bacon", "French Fries", "Steamed Brussels Cabbage", "Cyprus Pitta Bread"],
+          action: ["Chicken Burrito"], grill: ["Pancetta"], soup: ["Hot & Sour Soup"],
+        },
+        THURSDAY: {
+          theme: "LUNCH", flag: "☀️",
+          meat: ["Stew Beef With Rosemary", "Chicken Lemonato", "Sausages Spetsofai"],
+          fish: ["Fish Spetsiota", "Greek Mussels Saganaki"],
+          veg: ["Lahanorizo Greek Cabbage With Rice", "Fried Vegetables", "Wedges With Cheddar Creamy Sauce", "Zucchini Stew"],
+          garnish: ["Rice Pilafi", "French Fries", "Potato Puree", "Steamed Cauliflower"],
+          action: ["Hot Dog"], grill: ["Kebab"], soup: ["Lobster Soup"],
+        },
+        FRIDAY: {
+          theme: "LUNCH", flag: "☀️",
+          meat: ["Roasted Pancetta", "Chicken Tikka Masala", "Gyros"],
+          fish: ["Fried Sole Fish", "Seafood Stifado"],
+          veg: ["Spinach Pie", "Cheese Balls", "Mc N Cheese Au Gratin", "Chickpeas With Spinach And Saffron Sauce"],
+          garnish: ["Rice With Dried Fruits", "French Fries", "Steamed Carrots", "Small Pitta Breads"],
+          action: ["Roasted Chicken"], grill: ["Chicken"], soup: ["Chicken Soup"],
+        },
+        SATURDAY: {
+          theme: "LUNCH", flag: "☀️",
+          meat: ["Meatballs With Tomato Sauce", "Beef Hoisin", "Roasted Lamb Meat Loaf Mediterranean Sauce", "Moussaka"],
+          fish: ["Fish With Curry Sauce And Vegetables", "Fish Fingers"],
+          veg: ["Sauted Baby Potato", "Greens Beans Stew", "Onion Rings"],
+          garnish: ["Basmati Rice", "French Fries", "Steamed Mix Vegetables"],
+          action: ["Hamburger"], grill: ["Pork Meat"], soup: ["Mushrooms Soup"],
+        },
+        SUNDAY: {
+          theme: "LUNCH", flag: "☀️",
+          meat: ["Chicken Wings With BBQ Sauce", "Beef With Pasta Kritharaki", "Chicken Curry Stew"],
+          fish: ["Fish With Espaniol Sauce", "Fried Calamari"],
+          veg: ["Fresh Peas With Lemon Sauce", "Spring Rolls Sweet Chilli Sauce", "Potato Croquettes Garlic Mayo Sauce", "Spanakorizo Greek Spinach And Rice"],
+          garnish: ["Rice With Vegetables", "French Fries", "Steamed Fresh Beans", "Carrot Puree"],
+          action: ["Roasted Pork Loin With Black Bean Garlic Sauce"],
+          grill: ["Sheftalia Cypriot Pork Sausage"], soup: ["Creamy Vegetables Soup"],
+        },
+      },
+    };
+
+    const STATIONS = [
+      { id: "all", label: "Όλοι", icon: "👨‍🍳" },
+      { id: "hot_kitchen", label: "Hot Kitchen", icon: "🍳" },
+      { id: "grill", label: "Grill / Action", icon: "🔥" },
+      { id: "fish", label: "Fish Station", icon: "🐟" },
+      { id: "veg", label: "Vegetarian / Garnish", icon: "🥦" },
+      { id: "soup_pasta", label: "Soup & Pasta", icon: "🍝" },
+    ];
+
+    const DAYS = ["MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY","SUNDAY"];
+    const DAY_GR = { MONDAY:"Δευτέρα", TUESDAY:"Τρίτη", WEDNESDAY:"Τετάρτη", THURSDAY:"Πέμπτη", FRIDAY:"Παρασκευή", SATURDAY:"Σάββατο", SUNDAY:"Κυριακή" };
+
+    function App() {
+      const [service, setService] = useState("dinner");
+      const [day, setDay] = useState("MONDAY");
+      const [station, setStation] = useState("all");
+      const [tasks, setTasks] = useState(null);
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState(null);
+      const [checkedTasks, setCheckedTasks] = useState({});
+
+      const menuForDay = MENU_DATA[service][day];
+
+      const generateTasks = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        setTasks(null);
+        setCheckedTasks({});
+
+        const stationLabel = STATIONS.find(s => s.id === station)?.label || "Όλοι";
+        const menuSummary = `Σέρβις: ${service === "dinner" ? "Βραδινό" : "Μεσημεριανό"}
+Μέρα: ${DAY_GR[day]} — ${menuForDay.theme}
+Κρεατικά: ${menuForDay.meat?.join(", ") || "-"}
+Ψάρια: ${menuForDay.fish?.join(", ") || "-"}
+Λαχανικά: ${menuForDay.veg?.join(", ") || "-"}
+Garnish: ${menuForDay.garnish?.join(", ") || "-"}
+Action: ${menuForDay.action?.join(", ") || "-"}
+Σούπα: ${menuForDay.soup?.join(", ") || "-"}
+Σταθμός: ${stationLabel}`;
+
+        const systemPrompt = `Εισαι sous chef manager σε buffet resort hotel στη Ροδο. Φτιαχνεις λιστες εργασιων βασει μενου.
+
+Απαντα ΜΟΝΟ σε JSON, χωρις markdown, χωρις backticks, χωρις κανενα αλλο κειμενο.
+
+{"shift_start":"ωρα","sections":[{"time":"ΩΩ:ΩΩ-ΩΩ:ΩΩ","title":"τιτλος","tasks":[{"id":"t1","task":"εργασια","priority":"high","duration":"Χ λεπτα"}]}],"tips":["tip1","tip2"]}
+
+Κανονες:
+- dinner: εναρξη 14:00, σερβις 17:30. lunch: εναρξη 08:00, σερβις 12:00
+- ΑΚΡΙΒΩΣ 3 sections, ΑΚΡΙΒΩΣ 4 tasks ανα section, ΑΚΡΙΒΩΣ 2 tips
+- Tasks στα ελληνικα, max 7 λεξεις, χωρις τονους
+- priority: high=slow cook/φουρνος, medium=προετοιμασια, low=φινιρισμα
+- Εστιασε στον σταθμο: ${stationLabel}
+- ΜΟΝΟ διπλα εισαγωγικα. Αποκλειστικα εγκυρο JSON.`;
+
+        try {
+          const res = await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "anthropic-dangerous-direct-browser-access": "true",
+            },
+            body: JSON.stringify({
+              model: "claude-haiku-4-5-20251001",
+              max_tokens: 1000,
+              system: systemPrompt,
+              messages: [{ role: "user", content: menuSummary }],
+            }),
+          });
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(`HTTP ${res.status}: ${errData?.error?.message || res.statusText}`);
+          }
+          const data = await res.json();
+          let text = data.content?.map(b => b.text || "").join("") || "";
+          text = text.replace(/```json\s*/gi, "").replace(/```\s*/g, "").trim();
+          const jsonMatch = text.match(/\{[\s\S]*\}/);
+          if (!jsonMatch) throw new Error("Δεν βρέθηκε JSON στην απάντηση");
+          const parsed = JSON.parse(jsonMatch[0]);
+          setTasks(parsed);
+        } catch (e) {
+          setError(`Σφάλμα: ${e.message}`);
+        } finally {
+          setLoading(false);
+        }
+      }, [service, day, station, menuForDay]);
+
+      const toggleTask = (si, taskId) => {
+        const key = `${si}-${taskId}`;
+        setCheckedTasks(prev => ({ ...prev, [key]: !prev[key] }));
+      };
+
+      const totalTasks = tasks?.sections?.reduce((a, s) => a + s.tasks.length, 0) || 0;
+      const doneTasks = Object.values(checkedTasks).filter(Boolean).length;
+      const progress = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+      const priColor = { high: "#ef4444", medium: "#f59e0b", low: "#22c55e" };
+      const priLabel = { high: "URGENT", medium: "NORMAL", low: "FLEX" };
+
+      return (
+        <div style={{ minHeight:"100vh", background:"#0f0f0f", color:"#e5e5e5", fontFamily:"'Courier New', Courier, monospace" }}>
+
+          {/* Header */}
+          <div style={{ background:"#1a1a1a", borderBottom:"2px solid #333", padding:"16px 20px" }}>
+            <div style={{ fontSize:"10px", letterSpacing:"4px", color:"#555" }}>SUNWING FAMILY RESORTS · RHODES</div>
+            <div style={{ fontSize:"18px", fontWeight:"bold", color:"#fff", letterSpacing:"1px" }}>🍽️ KITCHEN TASK MANAGER</div>
+          </div>
+
+          <div style={{ padding:"16px 20px", maxWidth:"680px", margin:"0 auto" }}>
+
+            {/* Service Toggle */}
+            <div style={{ display:"flex", gap:"8px", marginBottom:"16px" }}>
+              {["dinner","lunch"].map(s => (
+                <button key={s} onClick={() => setService(s)} style={{
+                  flex:1, padding:"10px", border: service===s ? "2px solid #f59e0b" : "2px solid #333",
+                  background: service===s ? "#1c1500" : "#1a1a1a", color: service===s ? "#f59e0b" : "#555",
+                  fontSize:"12px", letterSpacing:"2px", cursor:"pointer", textTransform:"uppercase", fontWeight:"bold",
+                }}>
+                  {s === "dinner" ? "🌙 ΔΕΙΠΝΟ" : "☀️ ΓΕΥΜΑ"}
+                </button>
+              ))}
+            </div>
+
+            {/* Day Selector */}
+            <div style={{ marginBottom:"16px" }}>
+              <div style={{ fontSize:"10px", letterSpacing:"3px", color:"#555", marginBottom:"8px" }}>ΗΜΕΡΑ</div>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:"4px" }}>
+                {DAYS.map(d => (
+                  <button key={d} onClick={() => setDay(d)} style={{
+                    padding:"8px 2px", border: day===d ? "2px solid #f59e0b" : "2px solid #2a2a2a",
+                    background: day===d ? "#1c1500" : "#181818", color: day===d ? "#f59e0b" : "#555",
+                    fontSize:"10px", cursor:"pointer", textAlign:"center",
+                  }}>
+                    <div style={{ fontSize:"13px", marginBottom:"2px" }}>{MENU_DATA[service][d].flag}</div>
+                    <div style={{ fontWeight:"bold" }}>{DAY_GR[d].slice(0,3).toUpperCase()}</div>
+                  </button>
+                ))}
+              </div>
+              <div style={{ marginTop:"6px", padding:"8px 12px", background:"#181818", border:"1px solid #2a2a2a", fontSize:"12px", color:"#aaa" }}>
+                {menuForDay.flag} <span style={{ color:"#f59e0b", fontWeight:"bold" }}>{DAY_GR[day]}</span> — {menuForDay.theme}
+              </div>
+            </div>
+
+            {/* Station Selector */}
+            <div style={{ marginBottom:"20px" }}>
+              <div style={{ fontSize:"10px", letterSpacing:"3px", color:"#555", marginBottom:"8px" }}>ΣΤΑΘΜΟΣ</div>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"6px" }}>
+                {STATIONS.map(st => (
+                  <button key={st.id} onClick={() => setStation(st.id)} style={{
+                    padding:"10px 4px", border: station===st.id ? "2px solid #f59e0b" : "2px solid #2a2a2a",
+                    background: station===st.id ? "#1c1500" : "#181818",
+                    color: station===st.id ? "#f59e0b" : "#555",
+                    fontSize:"11px", cursor:"pointer", textAlign:"center",
+                  }}>
+                    <div style={{ fontSize:"15px", marginBottom:"3px" }}>{st.icon}</div>
+                    <div>{st.label}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Generate Button */}
+            <button onClick={generateTasks} disabled={loading} style={{
+              width:"100%", padding:"15px", background: loading ? "#2a2a2a" : "#f59e0b",
+              color: loading ? "#555" : "#000", border:"none",
+              fontSize:"13px", fontWeight:"bold", letterSpacing:"3px",
+              cursor: loading ? "not-allowed" : "pointer", textTransform:"uppercase",
+              marginBottom:"24px", transition:"all 0.2s",
+            }}>
+              {loading ? "⚙️  ΠΑΡΑΓΩΓΗ ΛΙΣΤΑΣ..." : "▶  ΔΗΜΙΟΥΡΓΙΑ ΛΙΣΤΑΣ ΕΡΓΑΣΙΩΝ"}
+            </button>
+
+            {error && (
+              <div style={{ padding:"12px", background:"#1a0000", border:"1px solid #ef4444", color:"#ef4444", fontSize:"11px", marginBottom:"16px" }}>
+                ⚠ {error}
+              </div>
+            )}
+
+            {/* Output */}
+            {tasks && (
+              <div>
+                {/* Progress */}
+                <div style={{ marginBottom:"20px" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", fontSize:"11px", color:"#555", marginBottom:"6px" }}>
+                    <span style={{ letterSpacing:"2px" }}>ΠΡΟΟΔΟΣ</span>
+                    <span style={{ color: progress===100 ? "#22c55e" : "#f59e0b" }}>{doneTasks}/{totalTasks} — {progress}%</span>
+                  </div>
+                  <div style={{ height:"4px", background:"#2a2a2a" }}>
+                    <div style={{ height:"100%", width:`${progress}%`, background: progress===100 ? "#22c55e" : "#f59e0b", transition:"width 0.4s" }} />
+                  </div>
+                </div>
+
+                {tasks.shift_start && (
+                  <div style={{ fontSize:"11px", letterSpacing:"3px", color:"#f59e0b", marginBottom:"16px", textAlign:"center" }}>
+                    ⏰ ΕΝΑΡΞΗ ΒΑΡΔΙΑΣ: {tasks.shift_start}
+                  </div>
+                )}
+
+                {tasks.sections?.map((section, si) => (
+                  <div key={si} style={{ marginBottom:"20px" }}>
+                    <div style={{ borderBottom:"1px solid #2a2a2a", paddingBottom:"8px", marginBottom:"10px" }}>
+                      <span style={{ color:"#f59e0b", fontSize:"11px", letterSpacing:"2px" }}>{section.time}</span>
+                      <div style={{ fontSize:"14px", color:"#fff", fontWeight:"bold", marginTop:"2px" }}>{section.title}</div>
+                    </div>
+                    {section.tasks?.map((task, ti) => {
+                      const key = `${si}-${task.id||ti}`;
+                      const done = checkedTasks[key];
+                      return (
+                        <div key={ti} onClick={() => toggleTask(si, task.id||ti)} style={{
+                          display:"flex", alignItems:"flex-start", gap:"10px",
+                          padding:"10px 12px", marginBottom:"5px",
+                          background: done ? "#0a1a0a" : "#141414",
+                          border:`1px solid ${done ? "#1a3a1a" : "#222"}`,
+                          cursor:"pointer", opacity: done ? 0.6 : 1,
+                        }}>
+                          <div style={{
+                            width:"18px", height:"18px", border:`2px solid ${done ? "#22c55e" : "#444"}`,
+                            background: done ? "#22c55e" : "transparent", flexShrink:0, marginTop:"1px",
+                            display:"flex", alignItems:"center", justifyContent:"center", fontSize:"11px", color:"#000",
+                          }}>
+                            {done ? "✓" : ""}
+                          </div>
+                          <div style={{ flex:1 }}>
+                            <div style={{ fontSize:"13px", color: done ? "#555" : "#ddd", textDecoration: done ? "line-through" : "none" }}>
+                              {task.task}
+                            </div>
+                            {task.duration && <div style={{ fontSize:"10px", color:"#444", marginTop:"3px" }}>⏱ {task.duration}</div>}
+                          </div>
+                          <div style={{
+                            fontSize:"9px", letterSpacing:"1px", padding:"2px 6px", flexShrink:0,
+                            color: priColor[task.priority]||"#555", border:`1px solid ${priColor[task.priority]||"#333"}`,
+                            opacity: done ? 0.4 : 1,
+                          }}>
+                            {priLabel[task.priority]||"—"}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+
+                {tasks.tips?.length > 0 && (
+                  <div style={{ padding:"14px", background:"#0d1117", border:"1px solid #1e3a5f", marginTop:"8px" }}>
+                    <div style={{ fontSize:"10px", letterSpacing:"3px", color:"#3b82f6", marginBottom:"10px" }}>💡 ΣΥΜΒΟΥΛΕΣ CHEF</div>
+                    {tasks.tips.map((tip, i) => (
+                      <div key={i} style={{ fontSize:"12px", color:"#7ca3d4", marginBottom:"6px", lineHeight:"1.5" }}>→ {tip}</div>
+                    ))}
+                  </div>
+                )}
+
+                {progress === 100 && (
+                  <div style={{ marginTop:"14px", padding:"16px", background:"#0a1a0a", border:"1px solid #22c55e", textAlign:"center" }}>
+                    <div style={{ fontSize:"20px", marginBottom:"6px" }}>✅</div>
+                    <div style={{ fontSize:"12px", letterSpacing:"3px", color:"#22c55e" }}>MISE EN PLACE COMPLETE</div>
+                  </div>
+                )}
+              </div>
+            )}
+
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

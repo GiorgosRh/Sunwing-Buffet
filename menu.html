@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sunwing — Weekly Buffet Assortment 2025</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#FFF4E6}
+  ::-webkit-scrollbar{width:6px}
+  ::-webkit-scrollbar-track{background:#1C1008}
+  ::-webkit-scrollbar-thumb{background:#F7941D;border-radius:3px}
+  button{font-family:'Segoe UI',Arial,sans-serif}
+  @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const B = {
+  orange:"#F7941D", dark:"#1C1008", amber:"#C97A0A", sand:"#FFF4E6",
+  white:"#FFFFFF", slate:"#4A3728", coral:"#E8632A", sky:"#2A7FA8",
+  mint:"#3A8A6A", mist:"#F0E4D4", warmGrey:"#8A7060",
+};
+
+const WaveMark = ({ size=48, color="white" }) => (
+  <svg width={size} height={size*0.5} viewBox="0 0 120 60" fill="none">
+    <path d="M10 15 Q35 5 60 15 Q85 25 110 15" stroke={color} strokeWidth="7" strokeLinecap="round" fill="none"/>
+    <path d="M10 30 Q35 20 60 30 Q85 40 110 30" stroke={color} strokeWidth="7" strokeLinecap="round" fill="none"/>
+    <path d="M10 45 Q35 35 60 45 Q85 55 110 45" stroke={color} strokeWidth="7" strokeLinecap="round" fill="none"/>
+  </svg>
+);
+
+const DINNER_THEMES = {
+  MON:{label:"Greek Buffet",         color:"#1a4a8b",bg:"linear-gradient(135deg,#1a4a8b,#0d2a5a)",icon:"🇬🇷"},
+  TUE:{label:"South American Buffet",color:"#8a3500",bg:"linear-gradient(135deg,#8a3500,#5a2000)",icon:"🌮"},
+  WED:{label:"International Buffet", color:"#2d5a2d",bg:"linear-gradient(135deg,#2d5a2d,#1a3a1a)",icon:"🌍"},
+  THU:{label:"Asian Buffet",         color:"#8b0000",bg:"linear-gradient(135deg,#8b0000,#5a0000)",icon:"🥢"},
+  FRI:{label:"Rhodian Buffet",       color:"#1a4a5a",bg:"linear-gradient(135deg,#1a4a5a,#0d2a3a)",icon:"🏛️"},
+  SAT:{label:"BBQ Buffet",           color:"#7a2a00",bg:"linear-gradient(135deg,#7a2a00,#4a1800)",icon:"🔥"},
+  SUN:{label:"Italian Buffet",       color:"#4a1a6a",bg:"linear-gradient(135deg,#4a1a6a,#2a0a4a)",icon:"🍝"},
+};
+
+const STATIONS = {
+  lunch:[
+    {name:"Bread Station",note:"Random daily selection",icon:"🥖",items:["White Baguette","Whole Meal Vienna",'Brown "Polysporo" Loaf',"Brown Mini Baguette","White Mini Baguette","White Rolls",'"Paparounosporos" Rolls',"Knäckebröd"]},
+    {name:"Plain Salads Station",note:"Random daily selection",icon:"🥗",items:["Lettuce, Rosso, Rucola","Iceberg, Rocca, Lola Rossa","White/Red Beans · Chick Peas · Lentils","Sliced Cucumber","Three Peppers (tricolore)","Tomato Wedges","Shredded Carrots","Sweet Corn","Onions"]},
+    {name:"Sauces, Dressings & Spreads",note:"Random daily selection",icon:"🫙",items:["Balsamic Vinegar","White Rice Vinegar","Olive Oil","Lemon/Ginger Oil","Garlic/Chilli/Black Pepper","Oregano/Thyme/Rosemary","Aioli","Caesar Dressing","Blue Cheese Dressing","Vinaigrette","Honey Mustard","Yogurt Dressing","Butter","Margarine","Black Olive Paste","Green Olive Paste","Houmous"]},
+    {name:"Appetizers Station",note:"Random daily selection",icon:"🫒",items:["Black Olives","Green Olives","Capers","Red Sweet Peppers (Florina)","Pickled Vegetables","Pickled Cucumber","Artichokes","Dried Tomatoes","Dried Fruits","Nuts","Compote Fruits","Red Beans"]},
+    {name:"Herbs & Spices",note:"Random daily selection",icon:"🌿",items:["Ground Black Pepper","Ground White Pepper","Onion Powder","Cayenne","Dried Onion Flakes","Mint","Oregano"]},
+    {name:"Fruits Station",note:"Seasonal daily selection",icon:"🍉",items:["Apples","Watermelon","Melon","Cherries","Pineapple","Nectarines","Grapes","Plums","Bananas","Kiwi","Oranges"]},
+  ],
+  dinner:[
+    {name:"Bread Station",note:"Random daily selection",icon:"🥖",items:["White Baguette","Whole Meal Vienna",'Brown "Polysporo" Loaf',"Brown Mini Baguette","White Mini Baguette","White Rolls",'"Paparounosporos" Rolls',"Knäckebröd"]},
+    {name:"Plain Salads Station",note:"Random daily selection",icon:"🥗",items:["Lettuce, Rosso, Rucola","Iceberg, Rocca, Lola Rossa","Beans · Chick Peas · Lentils","Sliced Cucumber","Three Peppers","Tomato Wedges","Shredded Carrots","Sweet Corn","Onions"]},
+    {name:"Sauces, Dressings & Spreads",note:"Random daily selection",icon:"🫙",items:["Balsamic Vinegar","Olive Oil","Aioli","Caesar","Blue Cheese","Vinaigrette","Honey Mustard","Yogurt","Butter","Margarine","Black Olive Paste","Green Olive Paste","Houmous"]},
+    {name:"Appetizers Station",note:"Random daily selection",icon:"🫒",items:["Black Olives","Green Olives","Capers","Red Sweet Peppers","Pickled Vegetables","Pickled Cucumber","Artichokes","Dried Tomatoes","Dried Fruits","Nuts","Compote Fruits","Red Beans"]},
+    {name:"Cheese & Antipasti",note:"Dinner exclusive station",icon:"🧀",items:["Blue Cheese","Parmigiano Reggiano","Edam Cheese","Gouda Cheese","Salami","Turkey","Ham"]},
+    {name:"Herbs & Spices",note:"Random daily selection",icon:"🌿",items:["Ground Black Pepper","Ground White Pepper","Onion Powder","Cayenne","Dried Onion Flakes","Mint","Oregano"]},
+    {name:"Fruits Station",note:"Seasonal daily selection",icon:"🍉",items:["Apples","Watermelon","Melon","Cherries","Pineapple","Nectarines","Grapes","Plums"]},
+  ],
+};
+
+const P=["Bolognaise Sauce","Napolitana Sauce"];
+const PIZ={MON:["Pizza with Bacon","Pizza Margarita"],TUE:["Pizza Pineapple & Cheese","Pizza Margarita"],WED:["Pizza Capricciosa","Pizza Margarita"],THU:["Pizza Salami","Pizza Margarita"],FRI:["Pizza Hawaii","Pizza Margarita"],SAT:["Pizza Margarita"],SUN:["Pizza Margarita"]};
+
+const LUNCH={
+  MON:{salads:["Groats, Quinoa, Pomegranate & Fresh Herbs","Potato Salad with Tuna","Greek Salad","Chicken Salad with Cabbage","Salad with Strawberries & Manouri","Tzatziki"],pasta:[...P,"Spaghetti","Penne"],meat:["Chicken 'Tigania'","Kebab Giaourtlou","Chicken Burrito","Fried Vegetables"],fish:["Pie with Salmon & Roquefort","Perch with Vegetables"],action:["Brisket","Pepper Sauce"],grill:["Chicken Fillet"],veg:["Briam","Stuffed Vegetables","Spinach Pie"],gar:["Fried Rice","Fried Vegetables","French Fries","Cyprus Pitta Bread","Tortillas"],soup:["Tomato Soup"],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Chocolate Pie","Panna Cotta","Cheesecake Caramel","Monde","Refrigerator Sweet","Cake Sinek"]},
+  TUE:{salads:["Potato Salad with Chicken","Pasta Salad with Broccoli","Grilled Peppers Salad with Mango","Seafood Salad","Greek Salad","Tzatziki"],pasta:[...P,"Spaghetti","Farfalle","Lasagna"],meat:["Pork à la Crème","Pulled Pork","Meat Balls"],fish:["Cod","Shrimps Noodles"],action:[],grill:["Beef"],veg:["Artichokes","Aubergines with Tomato Sauce"],gar:["Rice with Corn","Steam Broccoli","French Fries","Burger Buns"],soup:["Corn Soup"],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Chocolate Pie","Panna Cotta","Babadakia","Cheesecake Nutella","Monde","Sharlote"]},
+  WED:{salads:["Lentils & Bean Sprouts Salad","Greek Salad","Noodles Salad with Chicken","Meli Melo Salad with Walnuts & Parmesan","Tomato, Mozzarella & Pesto","Tzatziki"],pasta:[...P,"Spaghetti","Penne"],meat:["Sweet & Sour Chicken","Oven Baked Lamb","Meat Balls with Tomato Sauce","Chorizo Sausages"],fish:["Steam Mussels","Calamari 'Stifado'"],action:[],grill:["Pancetta"],veg:["Cheese Pie","Sweet Peppers with Feta & Balsamic"],gar:["Rice","French Fries","Brussels Sprouts","Cyprus Pitta Bread","Hot Dog Buns"],soup:["Hot & Sour Soup"],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Chocolate Pie","Panna Cotta","Small Cornets","Cheesecake Peanuts","Fruit Tarte","Red Velvet Cake"]},
+  THU:{salads:["Wild Rice, Chicken, Pineapple & Curry","Rocket, Parmesan & Cherry Tomatoes","Greek Salad","Pesto Pasta Salad","Seafood Salad","Tzatziki"],pasta:[...P,"Spaghetti","Penne"],meat:["Stew Beef","Chicken Crêpes","Chicken 'Lemonato'","Sausages 'Spetsofai'"],fish:["Swordfish"],action:[],grill:["Grill + Gravy Sauce"],veg:["Spinach Pie","Stuffed Vine Leaves"],gar:["Rice 'Pilafi'","French Fries","Potato Purée","Baked Baby Potatoes"],soup:["Lobster Soup"],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Chocolate Pie","Panna Cotta","Cheesecake Oreo","Cake Sinek","Caramel Tarte","Refrigerator Sweet"]},
+  FRI:{salads:["Chef's Salad","Green Salad with Blue Cheese","Cucumber Salad with Grapefruit","Potato Salad","Tzatziki"],pasta:[...P,"Spaghetti","Penne"],meat:["Stew Beef","Chicken Roll","Kebab","Gyros"],fish:["Fried Sole Fish"],action:[],grill:["Chicken + Mustard Sauce"],veg:["Spinach Pie","Spring Rolls"],gar:["Vermicelli Rice","Purée","French Fries","Brussels Sprouts","Small Pitta Breads"],soup:[],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Chocolate Pie","Panna Cotta","White Chocolate Cake","Monde","Two-Colour Brownies","Cream Tarte"]},
+  SAT:{salads:["Green Salad with Avocado & Shrimps","Pasta Salad with Blue Cheese & Orange","Quinoa with Grilled Vegetables","Greek Salad","Beetroot Salad with Yogurt","Tzatziki"],pasta:[...P,"Spaghetti","Penne","Pasta 'Pastitsio'"],meat:["Chicken Curry","Beef Hoisin","Pulled Pork"],fish:["Swordfish","Fish Fingers"],action:[],grill:["Pork Meat + Thyme Sauce"],veg:["Omelette with Vegetables","Steam Fresh Beans","Fried Vegetables"],gar:["Basmati Rice","French Fries","Hamburger Buns"],soup:["Mushroom Soup"],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Chocolate Pie","Panna Cotta","Refrigerator Sweet","Monde","Millefeuille","Cake Sinek"]},
+  SUN:{salads:["Pasta & Salmon Salad","Caesar Salad","Greek Salad","Waldorf Salad","Mexican Salad","Tzatziki"],pasta:[...P,"Spaghetti","Farfalle"],meat:["Chicken Wings with BBQ Sauce","Beef with Pasta 'Kritharaki'","Hot Dog"],fish:["Fish Spetsiota"],action:[],grill:["Rib Eye"],veg:["Beetroot with Garlic","Cheese Balls","Baked Tomatoes with White Cheese"],gar:["Rice","French Fries","Steamed Fresh Beans","Fried Zucchini"],soup:[],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Chocolate Pie","Panna Cotta","Kokakia","Monde","Biscuit Bar","Fruit Cake"]},
+};
+
+const DINNER={
+  MON:{salads:["Potato Salad","Beetroot with Yogurt","Tirokafteri","Eggplant Salad","Greek Salad","Tzatziki"],pasta:[...P,"Spaghetti","Penne","Pasta with Chicken 'Stir-Fried'"],meat:["Stew Lamb with Chickpeas","Moussaka","Meat Balls","Oven Baked Lamb","Pork 'Tigania'","Stew Beef 'Stifado'"],fish:["Spetsiota Fish","Perch with Chimichurri","White Fish with Lemon","Shrimps Saganaki"],action:[],grill:["Souvlaki"],veg:["Stew Mushrooms","Chickpeas with Curry & Vegetables","Zucchini Balls","Feta Cheese with Honey","Beans Soup","Rice 'Pilafi' with Mushrooms","Feta 'Bougiourdi'","Giant Beans","Fried Feta Cheese","Cabbage with Rice"],gar:["Oven Potatoes with Lemon","Sauté Vegetables","French Fries","Pitta Bread","Steam Fresh Beans","Basmati","Purée"],soup:["Fish Soup"],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Baklava","Kataifi Ekmek","Saragli","Trigono Panoramatos","Afali","Florentines","Loukoumi","Malibu Cake","Halvas"]},
+  TUE:{salads:["Chili Chicken Salad","Quinoa & Groats Salad","Potato Salad","Mexican Salad","Greek Salad","Tzatziki"],pasta:[...P,"Spaghetti","Penne","Penne with Avocado & Cream"],meat:["Chilli Con Carne","Pulled Beef","Fish Cajun","Chicken Poblano","Creamy Chicken Enchiladas","Beef Burrito","Deep-Fried Beef Burrito with Rice","Taco Meat Sauce","Beef Lomo Saltado"],fish:["Salmon with Green Curry","Fish Cajun","Fish Sticks"],action:[],grill:["Chicken",'"Chorizo" Sausages'],veg:["Empanadas","Quesadillas with Vegetables","French Fries"],gar:["Mexican Rice","French Fries","Fried Tortillas","Fried Pitta Bread","Nachos","Baby Potatoes with Cheddar","Arabic Pittas"],soup:["Corn Soup"],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Brownies","Red Velvet Cake","White Chocolate Cake","Carrot Cake","Monde","Warm Cheesecake","Donuts"]},
+  WED:{salads:["International rotating — from Salad Station"],pasta:[...P,"Spaghetti","Penne"],meat:["Caramelized Pancetta with Forest Fruit Sauce","Toscane Chicken","Lamb Loaf","Brisket with Red Wine Sauce","Pork Gyros","Kebab","Chicken Nuggets"],fish:["Paella","Dover Sole Fish","Perch with Chervil Sauce"],action:[],grill:[],veg:["Vegetables Lasagna","Baked Cauliflower with Beans"],gar:["Ratatouille","French Fries","Gratin Potatoes","Basmati"],soup:["Tomato Soup"],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Profiteroles","Mosaic","Monde","Coloured Cake","Biscuit Bars","Red Cookies","Crème Caramel"]},
+  THU:{salads:["Eggs with Soya","Coleslaw Salad","Kidney Beans Salad","Cabbage Salad","Greek Salad","Tzatziki"],pasta:[...P,"Spaghetti","Penne","Noodles with Vegetables","Noodles with Chicken"],meat:["Moo Shu Pork","Chicken with Pineapple","Korean Pork","Honey & Lemon Chicken","Cocktail Sausages","Mongolian Beef","Chicken 'Tikka Masala'","Spare Ribs Teriyaki"],fish:["Shrimps Chips","Salmon with Soya","Fish with Mango"],action:[],grill:["Chicken","Rib Eye"],veg:["Cauliflower Tempura","Veggies Chop Suey","Dumplings"],gar:["Rice with Noodles","Tortillas","Basmati Rice","Pineapple with Sweet Chilli"],soup:["Asian Chicken Soup"],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Cariocas","Fejientin","Kokaki","White Brownies","Chocolate Bars","Panna Cotta","Banofie"]},
+  FRI:{salads:["Seafood Mix Salad","Tirokafteri","Green Salad","Greek Potato Salad","Greek Salad","Frorina Red Peppers","Tzatziki"],pasta:[...P,"Spaghetti","Penne"],meat:["Roasted Chicken","Moussaka","Meat Balls","Roasted Lamb","Lamb Lakani"],fish:["Salmon with Vegetables","Savoro Fish","Calamari Tempura"],action:[],grill:["Souvlaki"],veg:["Risotto with Mushrooms","Aubergines with Pomegranate","Mushrooms à la Crème","Giant Beans","Peas Soup","Cheese Pie","Stuffed Vine Leaves","'Pitaroudia'"],gar:["Steam Vegetables","Basmati Rice","French Fries","Rice with Mince Meat & Pinecone","Pittas","Potatoes with Alioli"],soup:["Trachanas Soup"],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Walnut Pie","Ravani","Ravani Politiko","Orange Pie","Florentines","Loukoumia","Chocolate Tarte","Fruit Cake"]},
+  SAT:{salads:["Cabbage Salad","Swedish Potato Salad","Chickpeas Salad","Cucumber with Eggs Salad","Greek Salad","Tzatziki"],pasta:[...P,"Spaghetti","Penne","Lobster Pasta","Macaroni & Cheese"],meat:["Chicken Kentucky","BBQ Spare Ribs","Kebab","Grilled Sausages","Stuffed Potatoes with Gyros","Baked Chicken Wings","Chicken Nuggets"],fish:["Perch with Pesto","Salmon with Ouzo"],action:[],grill:["Pancetta / Entrecôte","Rib Eye / Pancetta"],veg:["Grilled Sweet Corn","Cauliflower with Curry & Bacon","Sweet Corn with Soya","Sweet Potatoes with Caramelized Chickpeas"],gar:["Sauté Vegetables","Rice with Mushrooms","French Fries","Purée","Basmati"],soup:["Onion Soup"],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Lemon Pie","Small Sous","Missisipi","Pouting","Monde","Chocolate Bars","Paris Breast"]},
+  SUN:{salads:["Artichoke Salad","Caprese Salad","Green Salad with Prosciutto","Pasta Salad","Caesar Salad","Bruschetta with Parma Ham","Greek Salad","Tzatziki"],pasta:[...P,"Carbonara Sauce","Spaghetti","Penne","Seafood Pasta","Lasagna","Tortellini with Pesto"],meat:["Porchetta","Chicken Cacciatore","Ossobuco","Cocktail Sausages","Hamburgers"],fish:["Cod Livornese","Perch à la Crème with Mussels"],action:[],grill:[],veg:["Potatoes Provolone","Polenta","Risotto with Saffron","Frittata","Gnocchi with Saffron","Mushrooms à la Crème","Baked Aubergines with Cheese & Tomatoes","Cauliflower Purée"],gar:["Baby Potatoes","Mix Vegetables","Basmati","Dollar Potatoes"],soup:["Minestrone Soup"],des:["Mousse","Jelly","Cakes","Small Pastries","Small Tartes","Panna Cotta Nutella","Crème Brûlée","Cheesecake","Fejientin","Tiramisù","Cannoli","Small Cornets","Éclairs","Pavlova","Macarons"]},
+};
+
+const CATS=[
+  {key:"salads",label:"Salads & Appetizers",icon:"🥗",color:"#3A8A6A"},
+  {key:"pizza", label:"Pizza",              icon:"🍕",color:"#E8632A"},
+  {key:"pasta", label:"Pasta",             icon:"🍝",color:"#7a4a9a"},
+  {key:"meat",  label:"Meat & Chicken",    icon:"🥩",color:"#E8632A"},
+  {key:"fish",  label:"Fish & Seafood",    icon:"🐟",color:"#2A7FA8"},
+  {key:"action",label:"Action Station",   icon:"⚡",color:"#C97A0A"},
+  {key:"grill", label:"Grill",             icon:"🔥",color:"#C43A00"},
+  {key:"veg",   label:"Vegetarian",       icon:"🌱",color:"#3A8A6A"},
+  {key:"gar",   label:"Garniture",        icon:"🥔",color:"#8A7060"},
+  {key:"soup",  label:"Soup",             icon:"🍲",color:"#2A7FA8"},
+  {key:"des",   label:"Desserts",         icon:"🍰",color:"#C97AAA"},
+];
+
+const DAYS=[{key:"MON",label:"Monday"},{key:"TUE",label:"Tuesday"},{key:"WED",label:"Wednesday"},{key:"THU",label:"Thursday"},{key:"FRI",label:"Friday"},{key:"SAT",label:"Saturday"},{key:"SUN",label:"Sunday"}];
+
+function RecipeModal({ dish, onClose }) {
+  const [recipe, setRecipe] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchRecipe = async () => {
+    setLoading(true); setError(null); setRecipe(null);
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "x-api-key": window.ANTHROPIC_API_KEY || "",
+          "anthropic-version":"2023-06-01",
+          "anthropic-dangerous-direct-browser-access":"true",
+        },
+        body: JSON.stringify({
+          model:"claude-sonnet-4-20250514",
+          max_tokens:1000,
+          system:`You are a professional hotel chef at Sunwing Family Resorts in Rhodes, Greece.
+Return ONLY a valid JSON object, no markdown, no code fences, no extra text:
+{"emoji":"one emoji","serves":"~20 guests","prep":"XX min","cook":"XX min","difficulty":"Easy|Medium|Advanced","description":"One appetising sentence.","ingredients":[{"qty":"amount","item":"ingredient"}],"steps":["step1","step2"],"tip":"One chef tip.","allergens":["Gluten"]}`,
+          messages:[{role:"user",content:`Buffet-scale recipe for: ${dish}`}]
+        })
+      });
+      if(!res.ok){const t=await res.text();throw new Error(`API ${res.status}: ${t}`);}
+      const data=await res.json();
+      const raw=data.content?.[0]?.text||"";
+      const clean=raw.replace(/```json|```/gi,"").trim();
+      setRecipe(JSON.parse(clean));
+    } catch(e){ setError(e.message||"Unknown error"); }
+    finally{ setLoading(false); }
+  };
+
+  useEffect(()=>{ fetchRecipe(); },[dish]);
+
+  const dc = !recipe?B.amber:recipe.difficulty==="Easy"?B.mint:recipe.difficulty==="Medium"?B.amber:B.coral;
+
+  return (
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(28,16,8,0.88)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16,backdropFilter:"blur(5px)"}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:B.sand,maxWidth:640,width:"100%",maxHeight:"90vh",overflowY:"auto",boxShadow:"0 32px 100px rgba(0,0,0,0.6)",animation:"fadeIn 0.2s ease"}}>
+        {/* Header */}
+        <div style={{background:`linear-gradient(135deg,${B.dark},#3a1a08)`,padding:"20px 24px",position:"sticky",top:0,zIndex:10}}>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <div style={{width:42,height:42,borderRadius:"50%",background:B.orange,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>
+              {loading?"⏳":error?"⚠️":recipe?.emoji||"🍽️"}
+            </div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.26em",textTransform:"uppercase",color:B.orange,marginBottom:2}}>Recipe Card · Sunwing Resorts</div>
+              <div style={{fontSize:17,fontWeight:700,color:B.white,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{dish}</div>
+            </div>
+            <button onClick={onClose} style={{background:"rgba(255,255,255,0.1)",border:"none",color:B.white,width:34,height:34,borderRadius:"50%",cursor:"pointer",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
+          </div>
+        </div>
+        {/* Loading */}
+        {loading&&<div style={{padding:"60px 24px",textAlign:"center"}}>
+          <div style={{fontSize:40,display:"inline-block",animation:"spin 1.2s linear infinite"}}>🍳</div>
+          <div style={{fontFamily:"monospace",fontSize:11,letterSpacing:"0.24em",textTransform:"uppercase",color:B.amber,marginTop:16}}>Generating Recipe…</div>
+          <div style={{fontSize:13,color:B.warmGrey,marginTop:8}}>Our chef is preparing this for you</div>
+        </div>}
+        {/* Error */}
+        {!loading&&error&&<div style={{padding:"32px 24px"}}>
+          <div style={{background:"#fff0ee",border:`1px solid ${B.coral}40`,borderLeft:`4px solid ${B.coral}`,padding:"16px 20px",marginBottom:20}}>
+            <div style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.22em",textTransform:"uppercase",color:B.coral,marginBottom:8}}>⚠ Error</div>
+            <div style={{fontSize:13,color:B.slate,lineHeight:1.65,wordBreak:"break-word",fontFamily:"monospace"}}>{error}</div>
+          </div>
+          <button onClick={fetchRecipe} style={{background:B.orange,color:B.white,border:"none",padding:"12px 28px",cursor:"pointer",fontFamily:"monospace",fontSize:11,letterSpacing:"0.2em",textTransform:"uppercase",width:"100%"}}>🔄 Try Again</button>
+        </div>}
+        {/* Recipe */}
+        {!loading&&!error&&recipe&&<div style={{padding:"22px 24px 30px"}}>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:18}}>
+            {[{l:"Serves",v:recipe.serves},{l:"Prep",v:recipe.prep},{l:"Cook",v:recipe.cook}].map((m,i)=>(
+              <div key={i} style={{background:B.white,border:`1px solid ${B.mist}`,padding:"8px 14px",textAlign:"center",flex:1,minWidth:80}}>
+                <div style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.2em",textTransform:"uppercase",color:B.warmGrey,marginBottom:3}}>{m.l}</div>
+                <div style={{fontSize:15,fontWeight:700,color:B.dark}}>{m.v}</div>
+              </div>
+            ))}
+            <div style={{background:dc,padding:"8px 14px",textAlign:"center",flex:1,minWidth:80}}>
+              <div style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.2em",textTransform:"uppercase",color:"rgba(255,255,255,0.7)",marginBottom:3}}>Level</div>
+              <div style={{fontSize:14,fontWeight:700,color:B.white}}>{recipe.difficulty}</div>
+            </div>
+          </div>
+          <p style={{fontSize:14,color:B.slate,fontStyle:"italic",lineHeight:1.7,padding:"12px 16px",background:B.white,borderLeft:`3px solid ${B.orange}`,marginBottom:20}}>{recipe.description}</p>
+          <div style={{marginBottom:20}}>
+            <div style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.26em",textTransform:"uppercase",color:B.amber,marginBottom:12,display:"flex",alignItems:"center",gap:10}}>Ingredients<span style={{flex:1,height:1,background:`${B.amber}30`,display:"inline-block"}}/></div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 20px"}}>
+              {recipe.ingredients?.map((ing,i)=>(
+                <div key={i} style={{display:"flex",gap:10,padding:"6px 0",borderBottom:`1px solid ${B.mist}`,alignItems:"baseline"}}>
+                  <span style={{fontFamily:"monospace",fontSize:11,color:B.orange,minWidth:72,flexShrink:0}}>{ing.qty}</span>
+                  <span style={{fontSize:13,color:B.slate}}>{ing.item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style={{marginBottom:20}}>
+            <div style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.26em",textTransform:"uppercase",color:B.amber,marginBottom:12,display:"flex",alignItems:"center",gap:10}}>Method<span style={{flex:1,height:1,background:`${B.amber}30`,display:"inline-block"}}/></div>
+            {recipe.steps?.map((step,i)=>(
+              <div key={i} style={{display:"flex",gap:12,marginBottom:14,alignItems:"flex-start"}}>
+                <div style={{width:26,height:26,borderRadius:"50%",background:B.orange,color:B.white,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"monospace",fontSize:11,fontWeight:700,flexShrink:0,marginTop:1}}>{i+1}</div>
+                <div style={{fontSize:14,color:B.slate,lineHeight:1.65,paddingTop:2}}>{step}</div>
+              </div>
+            ))}
+          </div>
+          {recipe.tip&&<div style={{background:`${B.orange}10`,border:`1px solid ${B.orange}28`,borderLeft:`3px solid ${B.orange}`,padding:"12px 16px",marginBottom:18}}>
+            <div style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.24em",textTransform:"uppercase",color:B.amber,marginBottom:5}}>👨‍🍳 Chef's Tip</div>
+            <div style={{fontSize:13,color:B.slate,lineHeight:1.65}}>{recipe.tip}</div>
+          </div>}
+          {recipe.allergens?.length>0&&<div>
+            <div style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.22em",textTransform:"uppercase",color:B.coral,marginBottom:8}}>⚠ Allergens</div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+              {recipe.allergens.map((a,i)=><span key={i} style={{background:`${B.coral}15`,border:`1px solid ${B.coral}38`,color:B.coral,padding:"3px 11px",fontFamily:"monospace",fontSize:10}}>{a}</span>)}
+            </div>
+          </div>}
+        </div>}
+        <div style={{background:B.dark,padding:"10px 24px",display:"flex",alignItems:"center",gap:8}}>
+          <WaveMark size={20} color={B.orange}/>
+          <span style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.18em",textTransform:"uppercase",color:"rgba(255,255,255,0.22)"}}>Sunwing Family Resorts · Rhodes 2025</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Pill({ item, onSelect }) {
+  const [hov,setHov]=useState(false);
+  return (
+    <span onClick={()=>onSelect(item)} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+      style={{display:"inline-flex",alignItems:"center",gap:5,padding:"5px 12px",margin:"2px 3px 2px 0",
+        background:hov?B.orange:B.white,border:`1px solid ${hov?B.orange:B.mist}`,fontSize:13,
+        color:hov?B.white:B.slate,lineHeight:1.4,borderRadius:2,cursor:"pointer",
+        transition:"all 0.14s",boxShadow:hov?`0 2px 10px ${B.orange}44`:"none",userSelect:"none"}}>
+      {item}<span style={{fontSize:10,opacity:hov?0.85:0.3}}>↗</span>
+    </span>
+  );
+}
+
+function CatBlock({ catKey, items, onSelect }) {
+  if(!items||items.length===0) return null;
+  const conf=CATS.find(c=>c.key===catKey);
+  return (
+    <div style={{marginBottom:22}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10,paddingBottom:8,borderBottom:`2px solid ${conf.color}30`}}>
+        <div style={{width:28,height:28,borderRadius:"50%",background:conf.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>{conf.icon}</div>
+        <span style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.22em",textTransform:"uppercase",color:conf.color,fontWeight:700}}>{conf.label}</span>
+        <span style={{marginLeft:"auto",background:conf.color,color:"white",fontFamily:"monospace",fontSize:10,padding:"2px 8px",borderRadius:10}}>{items.length}</span>
+      </div>
+      <div style={{display:"flex",flexWrap:"wrap"}}>
+        {items.map((item,i)=><Pill key={i} item={item} onSelect={onSelect}/>)}
+      </div>
+    </div>
+  );
+}
+
+function StationsView({ meal, onSelect }) {
+  return (
+    <div>
+      <div style={{background:`${B.orange}15`,border:`1px solid ${B.orange}30`,borderLeft:`4px solid ${B.orange}`,padding:"14px 18px",marginBottom:24,borderRadius:2}}>
+        <div style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.24em",textTransform:"uppercase",color:B.amber,marginBottom:4}}>Always Available · Click any item for its recipe</div>
+        <p style={{fontSize:14,color:B.slate,lineHeight:1.65,margin:0}}>These stations are set up daily and restocked continuously throughout service.</p>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:14}}>
+        {STATIONS[meal].map((st,i)=>(
+          <div key={i} style={{border:`1px solid ${B.mist}`,background:B.white,overflow:"hidden",boxShadow:`0 2px 12px ${B.orange}0d`}}>
+            <div style={{background:`linear-gradient(135deg,${B.dark},#3a1a08)`,padding:"14px 18px",display:"flex",alignItems:"center",gap:10}}>
+              <div style={{width:36,height:36,borderRadius:"50%",background:B.orange,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{st.icon}</div>
+              <div>
+                <div style={{fontSize:14,fontWeight:600,color:B.white}}>{st.name}</div>
+                <div style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.14em",color:B.orange,marginTop:2}}>{st.note}</div>
+              </div>
+            </div>
+            <div style={{padding:"14px 18px"}}>
+              {st.items.map((item,j)=>(
+                <div key={j} onClick={()=>onSelect(item)}
+                  style={{display:"flex",gap:8,padding:"6px 0",borderBottom:`1px solid ${B.mist}`,fontSize:13,color:B.slate,cursor:"pointer",transition:"all 0.14s",alignItems:"center"}}
+                  onMouseEnter={e=>{e.currentTarget.style.color=B.orange;e.currentTarget.style.paddingLeft="6px"}}
+                  onMouseLeave={e=>{e.currentTarget.style.color=B.slate;e.currentTarget.style.paddingLeft="0"}}>
+                  <span style={{color:B.orange,fontSize:11,flexShrink:0}}>›</span>
+                  <span style={{flex:1}}>{item}</span>
+                  <span style={{fontSize:10,opacity:0.3}}>↗</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DayView({ meal, dayKey, onSelect }) {
+  const data=meal==="lunch"?LUNCH[dayKey]:DINNER[dayKey];
+  const theme=meal==="dinner"?DINNER_THEMES[dayKey]:null;
+  const pizza=PIZ[dayKey]||[];
+  return (
+    <div>
+      {theme&&<div style={{display:"flex",alignItems:"center",gap:14,padding:"16px 20px",background:theme.bg,marginBottom:20,borderRadius:2,boxShadow:"0 2px 16px rgba(0,0,0,0.2)"}}>
+        <span style={{fontSize:28}}>{theme.icon}</span>
+        <div>
+          <div style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.28em",textTransform:"uppercase",color:"rgba(255,255,255,0.5)",marginBottom:3}}>Tonight's Theme</div>
+          <div style={{fontSize:18,fontWeight:600,color:"white"}}>{theme.label}</div>
+        </div>
+        <div style={{marginLeft:"auto",opacity:0.12}}><WaveMark size={50} color="white"/></div>
+      </div>}
+      <div style={{background:`${B.orange}12`,border:`1px solid ${B.orange}25`,borderLeft:`3px solid ${B.orange}`,padding:"8px 14px",marginBottom:18,borderRadius:2,fontSize:12,color:B.amber,fontFamily:"monospace",letterSpacing:"0.1em"}}>
+        💡 Click any dish to instantly view its full recipe
+      </div>
+      {CATS.map(cat=><CatBlock key={cat.key} catKey={cat.key} items={cat.key==="pizza"?pizza:data[cat.key]} onSelect={onSelect}/>)}
+    </div>
+  );
+}
+
+function App() {
+  const [meal,setMeal]=useState("lunch");
+  const [view,setView]=useState("stations");
+  const [selectedDish,setSelectedDish]=useState(null);
+  const dayLabel=view==="stations"?"Always-Available Stations":DAYS.find(d=>d.key===view)?.label;
+  const theme=meal==="dinner"&&view!=="stations"?DINNER_THEMES[view]:null;
+  return (
+    <div style={{fontFamily:"'Segoe UI',Arial,sans-serif",background:B.sand,minHeight:"100vh"}}>
+      {selectedDish&&<RecipeModal dish={selectedDish} onClose={()=>setSelectedDish(null)}/>}
+      {/* COVER */}
+      <div style={{background:`linear-gradient(150deg,${B.dark} 0%,#3a1a08 60%,#1C1008 100%)`,overflow:"hidden",position:"relative"}}>
+        <div style={{position:"absolute",right:-20,top:"50%",transform:"translateY(-50%)",opacity:0.04,pointerEvents:"none"}}><WaveMark size={320} color="white"/></div>
+        <div style={{padding:"36px 28px 30px",position:"relative",zIndex:2}}>
+          <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:28}}>
+            <div style={{width:58,height:58,borderRadius:"50%",background:B.orange,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 0 0 3px ${B.orange}44`}}><WaveMark size={34} color="white"/></div>
+            <div>
+              <div style={{fontSize:18,fontWeight:800,color:B.white,letterSpacing:"0.08em",textTransform:"uppercase",lineHeight:1}}>SUNWING</div>
+              <div style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.22em",textTransform:"uppercase",color:B.orange,marginTop:3}}>Family Resorts</div>
+            </div>
+            <div style={{marginLeft:"auto",fontFamily:"monospace",fontSize:10,letterSpacing:"0.22em",textTransform:"uppercase",color:"rgba(255,255,255,0.3)",textAlign:"right"}}>
+              <div>Rhodes</div><div style={{color:B.orange,marginTop:2}}>2025</div>
+            </div>
+          </div>
+          <div style={{borderTop:`1px solid ${B.orange}22`,paddingTop:20}}>
+            <div style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.3em",textTransform:"uppercase",color:B.orange,marginBottom:8}}>F&B Operations · Internal Reference</div>
+            <div style={{fontSize:"clamp(22px,4vw,40px)",fontWeight:300,color:B.white,lineHeight:1.1}}>Weekly <strong style={{color:B.orange,fontWeight:700}}>Buffet Assortment</strong></div>
+            <div style={{fontSize:13,color:"rgba(255,255,255,0.38)",marginTop:6}}>Lunch & Dinner · Complete Menu Guide · Click any dish for its recipe</div>
+          </div>
+        </div>
+      </div>
+      {/* MEAL TABS */}
+      <div style={{background:B.dark,display:"flex",borderBottom:`3px solid ${B.orange}`}}>
+        {[{key:"lunch",label:"🌞  Lunch",sub:"Daily Rotating Buffet"},{key:"dinner",label:"🌙  Dinner",sub:"Themed Nightly Buffet"}].map(m=>(
+          <button key={m.key} onClick={()=>{setMeal(m.key);setView("stations");}}
+            style={{flex:1,padding:"14px 16px",border:"none",cursor:"pointer",transition:"all 0.18s",background:meal===m.key?B.orange:"transparent",color:meal===m.key?B.white:"rgba(255,255,255,0.38)"}}>
+            <div style={{fontSize:15,fontWeight:meal===m.key?700:400}}>{m.label}</div>
+            <div style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.14em",marginTop:2,opacity:0.7}}>{m.sub}</div>
+          </button>
+        ))}
+      </div>
+      {/* DAY NAV */}
+      <div style={{background:"#2a1208",padding:"8px 12px",display:"flex",flexWrap:"wrap",gap:5,position:"sticky",top:0,zIndex:100,boxShadow:"0 3px 16px rgba(28,16,8,0.5)"}}>
+        <button onClick={()=>setView("stations")} style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.14em",textTransform:"uppercase",padding:"7px 13px",border:`1px solid ${view==="stations"?B.orange:`${B.orange}33`}`,cursor:"pointer",borderRadius:2,transition:"all 0.14s",background:view==="stations"?B.orange:"transparent",color:view==="stations"?B.white:`${B.orange}88`}}>Stations</button>
+        {DAYS.map(d=>{const isA=view===d.key;const t=meal==="dinner"?DINNER_THEMES[d.key]:null;return(
+          <button key={d.key} onClick={()=>setView(d.key)} style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",padding:"7px 10px",border:`1px solid ${isA?B.orange:`${B.orange}33`}`,cursor:"pointer",borderRadius:2,transition:"all 0.14s",background:isA?B.orange:"transparent",color:isA?B.white:`${B.orange}88`,display:"flex",flexDirection:"column",alignItems:"center",gap:1}}>
+            <span>{d.key}</span>{t&&<span style={{fontSize:9,opacity:0.9}}>{t.icon}</span>}
+          </button>
+        );})}
+      </div>
+      {/* SECTION BAR */}
+      <div style={{background:`linear-gradient(90deg,${B.dark},#3a1a08)`,padding:"18px 24px 14px",borderBottom:`1px solid ${B.orange}22`,display:"flex",alignItems:"center",gap:14,flexWrap:"wrap"}}>
+        <div style={{flex:1}}>
+          <div style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.26em",textTransform:"uppercase",color:B.orange,marginBottom:4}}>{meal==="lunch"?"Lunch Buffet":"Dinner Buffet"} · {dayLabel}</div>
+          <div style={{fontSize:20,fontWeight:300,color:B.white}}>{view==="stations"?"Always-Available Stations":theme?`${dayLabel} — ${theme.icon} ${theme.label}`:dayLabel}</div>
+        </div>
+        <div style={{opacity:0.12}}><WaveMark size={40} color={B.orange}/></div>
+      </div>
+      {/* CONTENT */}
+      <div style={{maxWidth:900,margin:"0 auto",padding:"26px 18px 80px"}}>
+        {view==="stations"?<StationsView meal={meal} onSelect={setSelectedDish}/>:<DayView meal={meal} dayKey={view} onSelect={setSelectedDish}/>}
+      </div>
+      {/* FOOTER */}
+      <div style={{background:B.dark,borderTop:`3px solid ${B.orange}`,padding:"20px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <div style={{width:28,height:28,borderRadius:"50%",background:B.orange,display:"flex",alignItems:"center",justifyContent:"center"}}><WaveMark size={16} color="white"/></div>
+          <span style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.18em",textTransform:"uppercase",color:"rgba(255,255,255,0.2)"}}>Sunwing Family Resorts</span>
+        </div>
+        <span style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.18em",textTransform:"uppercase",color:"rgba(255,255,255,0.18)"}}>Buffet Assortment 2025 · F&B Operations · Rhodes</span>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
