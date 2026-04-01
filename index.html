@@ -3,273 +3,609 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sunwing Buffet · Helios & Ella</title>
+  <title>Helios & Ella · F&B Operations Portal</title>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-title" content="Helios & Ella"/>
-  <meta name="theme-color" content="#0a0a0a"/>
+  <meta name="theme-color" content="#060604"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Montserrat:wght@200;400;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --gold: #c9a84c;
-      --gold-light: #e8cb7a;
-      --gold-dim: #7a6330;
-      --bg: #0a0a0a;
-      --surface: #141208;
-      --border: #2a2518;
-      --text: #f0e8d0;
-      --muted: #6a6050;
+      --ink:    #060604;
+      --ink2:   #0e0d09;
+      --ink3:   #161410;
+      --gold:   #b8962e;
+      --gold2:  #d4af55;
+      --gold3:  #f0d080;
+      --smoke:  #2a2520;
+      --ash:    #4a4438;
+      --fog:    #8a7e6e;
+      --paper:  #f5f0e8;
+      --paper2: #ede5d5;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body::before {
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── GRAIN OVERLAY ── */
+    body::after {
       content: '';
       position: fixed; inset: 0;
-      background: radial-gradient(ellipse 80% 50% at 50% -10%, #2a1f0018 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 999; opacity: .35;
     }
 
-    .sun-rays {
-      position: fixed; top: -20vh; left: 50%; transform: translateX(-50%);
-      width: 200vw; height: 80vh; pointer-events: none; z-index: 0; opacity: 0.035;
-    }
-    .sun-rays::before {
-      content: ''; position: absolute; inset: 0;
-      background: repeating-conic-gradient(from 0deg at 50% 0%, #c9a84c 0deg 3deg, transparent 3deg 12deg);
-    }
-
-    .page { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
-
-    /* HEADER */
-    header { width: 100%; text-align: center; padding: 52px 24px 28px; }
-
-    .sun-emblem { width: 64px; height: 64px; margin: 0 auto 22px; position: relative; }
-    .sun-circle {
-      width: 34px; height: 34px;
-      background: radial-gradient(circle, var(--gold-light), var(--gold));
-      border-radius: 50%; position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 24px #c9a84c44;
-    }
-    .sun-ring {
-      position: absolute; inset: 0; border: 1px solid var(--gold-dim);
-      border-radius: 50%; opacity: 0.35;
-      animation: breathe 4s ease-in-out infinite;
-    }
-    @keyframes breathe { 0%,100%{transform:scale(1);opacity:.35} 50%{transform:scale(1.12);opacity:.1} }
-    .sun-spokes { position: absolute; inset: 0; }
-    .sun-spokes::before {
-      content: ''; position: absolute; inset: 0;
-      background: repeating-conic-gradient(from 0deg at 50% 50%, var(--gold) 0deg 1.5deg, transparent 1.5deg 30deg);
-      border-radius: 50%; opacity: 0.45;
-      mask-image: radial-gradient(circle, transparent 38%, black 52%, transparent 100%);
-      -webkit-mask-image: radial-gradient(circle, transparent 38%, black 52%, transparent 100%);
+    /* ── AMBIENT GLOW ── */
+    .ambient {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 15% 20%, #b8962e0a 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 85% 80%, #b8962e06 0%, transparent 60%),
+        radial-gradient(ellipse 80% 30% at 50% 50%, #0e0d0900 0%, #060604ff 70%);
     }
 
-    .brand-line {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-weight: 300; font-size: clamp(30px, 8vw, 54px);
-      letter-spacing: 6px; color: var(--gold-light); line-height: 1;
-    }
-    .brand-amp { font-style: italic; color: var(--gold); }
-    .brand-resort {
-      font-size: 9px; letter-spacing: 5px; color: var(--gold-dim);
-      text-transform: uppercase; margin-top: 10px; font-weight: 200;
+    /* ── LAYOUT ── */
+    .page { position: relative; z-index: 1; }
+
+    /* ══════════════════════════════════════
+       TOP BAR
+    ══════════════════════════════════════ */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(6,6,4,.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid #ffffff08;
+      padding: 0 28px;
+      height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
     }
 
-    /* DIVIDER */
-    .divider {
-      width: 100%; max-width: 480px; display: flex; align-items: center;
-      gap: 12px; padding: 0 24px; margin: 16px auto 28px;
-    }
-    .divider-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, var(--gold-dim), transparent); }
-    .divider-diamond { width: 5px; height: 5px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
+    .topbar-left { display: flex; align-items: center; gap: 20px; }
 
-    /* TODAY */
-    .today-banner {
-      width: calc(100% - 48px); max-width: 480px; margin: 0 auto 24px;
-      padding: 14px 20px; background: var(--surface);
-      border: 1px solid var(--border); border-top: 2px solid var(--gold-dim);
-      display: flex; align-items: center; gap: 14px;
-      animation: fadeUp .5s ease both;
+    .topbar-brand {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 15px; letter-spacing: 1px;
+      color: var(--gold2);
     }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-    .today-pulse {
-      width: 8px; height: 8px; background: var(--gold); border-radius: 50%; flex-shrink: 0;
-      box-shadow: 0 0 8px var(--gold); animation: pulse 2.5s ease-in-out infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 8px var(--gold)} 50%{opacity:.3;box-shadow:0 0 2px var(--gold)} }
-    .today-text { flex: 1; }
-    .today-label { font-size: 8px; letter-spacing: 4px; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 3px; }
-    .today-theme { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--text); letter-spacing: 1px; }
-    .today-date { font-size: 9px; color: var(--muted); letter-spacing: 2px; margin-top: 3px; }
-    .today-flag { font-size: 28px; flex-shrink: 0; }
 
-    /* CARDS */
-    .cards { width: calc(100% - 48px); max-width: 480px; display: flex; flex-direction: column; gap: 10px; margin: 0 auto; }
-
-    .card {
-      display: block; text-decoration: none; background: var(--surface);
-      border: 1px solid var(--border); position: relative; overflow: hidden;
-      transition: border-color .2s, transform .15s;
-      animation: fadeUp .5s ease both;
+    .topbar-divider {
+      width: 1px; height: 20px;
+      background: var(--smoke);
     }
-    .card:nth-child(1) { animation-delay: .1s; }
-    .card:nth-child(2) { animation-delay: .2s; }
-    .card::after {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+
+    .topbar-subtitle {
+      font-size: 10px; letter-spacing: 3px;
+      color: var(--ash); text-transform: uppercase;
+    }
+
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+
+    .status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #4caf7d;
+      box-shadow: 0 0 6px #4caf7d88;
+      animation: blink 3s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .status-text { font-size: 10px; color: var(--ash); letter-spacing: 2px; }
+
+    .topbar-time {
+      font-size: 11px; color: var(--fog);
+      letter-spacing: 1px; font-variant-numeric: tabular-nums;
+    }
+
+    /* ══════════════════════════════════════
+       HERO
+    ══════════════════════════════════════ */
+    .hero {
+      padding: 64px 28px 48px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px;
+      animation: rise .8s ease both;
+    }
+
+    .eyebrow-line {
+      width: 32px; height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent);
+    }
+
+    .eyebrow-text {
+      font-size: 9px; letter-spacing: 5px;
+      color: var(--gold); text-transform: uppercase;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(38px, 9vw, 72px);
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--paper);
+      margin-bottom: 6px;
+      animation: rise .8s .1s ease both;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold2);
+    }
+
+    .hero-tagline {
+      font-size: 13px; color: var(--fog);
+      letter-spacing: 1px; line-height: 1.6;
+      margin-top: 16px; max-width: 480px;
+      animation: rise .8s .2s ease both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ══════════════════════════════════════
+       TODAY STRIP
+    ══════════════════════════════════════ */
+    .today-strip {
+      margin: 0 28px 48px;
+      max-width: 844px;
+      margin-left: auto; margin-right: auto;
+      border: 1px solid var(--smoke);
+      border-left: 3px solid var(--gold);
+      background: var(--ink2);
+      display: flex; align-items: stretch;
+      animation: rise .8s .3s ease both;
+      overflow: hidden;
+    }
+
+    .strip-section {
+      padding: 18px 24px;
+      border-right: 1px solid var(--smoke);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .strip-section:last-child { border-right: none; flex: 1; }
+
+    .strip-label {
+      font-size: 8px; letter-spacing: 4px; color: var(--ash);
+      text-transform: uppercase; margin-bottom: 5px;
+    }
+
+    .strip-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px; color: var(--paper); line-height: 1.2;
+    }
+
+    .strip-value.gold { color: var(--gold2); }
+
+    .strip-sub {
+      font-size: 10px; color: var(--fog); margin-top: 3px; letter-spacing: 1px;
+    }
+
+    .strip-flag { font-size: 28px; }
+
+    /* ══════════════════════════════════════
+       SECTION HEADER
+    ══════════════════════════════════════ */
+    .section-header {
+      padding: 0 28px 20px;
+      max-width: 900px; margin: 0 auto;
+      display: flex; align-items: center; gap: 16px;
+    }
+
+    .section-label {
+      font-size: 9px; letter-spacing: 4px; color: var(--ash); text-transform: uppercase;
+    }
+
+    .section-rule {
+      flex: 1; height: 1px;
+      background: linear-gradient(to right, var(--smoke), transparent);
+    }
+
+    /* ══════════════════════════════════════
+       MODULE GRID
+    ══════════════════════════════════════ */
+    .modules {
+      padding: 0 28px 16px;
+      max-width: 900px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      animation: rise .8s .4s ease both;
+    }
+
+    @media (max-width: 520px) {
+      .modules { grid-template-columns: 1fr; }
+    }
+
+    .module {
+      display: block; text-decoration: none;
+      background: var(--ink2);
+      border: 1px solid var(--smoke);
+      position: relative; overflow: hidden;
+      transition: border-color .25s, transform .2s;
+      cursor: pointer;
+    }
+
+    .module::before {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 1px;
       background: linear-gradient(to right, transparent, var(--gold), transparent);
-      opacity: 0; transition: opacity .2s;
+      transform: scaleX(0); transform-origin: center;
+      transition: transform .3s ease;
     }
-    .card:hover { border-color: var(--gold-dim); transform: translateY(-1px); }
-    .card:hover::after { opacity: 1; }
-    .card:active { transform: scale(.99); }
 
-    .card-inner { padding: 22px 20px; display: flex; align-items: center; gap: 16px; }
-    .card-icon {
-      width: 50px; height: 50px; border: 1px solid var(--border);
+    .module:hover { border-color: var(--ash); transform: translateY(-2px); }
+    .module:hover::before { transform: scaleX(1); }
+    .module:active { transform: translateY(0) scale(.99); }
+
+    /* accent bar top */
+    .module-accent {
+      height: 2px;
+      background: linear-gradient(to right, var(--gold), var(--gold2), transparent);
+      opacity: 0;
+      transition: opacity .25s;
+    }
+    .module:hover .module-accent { opacity: 1; }
+
+    .module-inner { padding: 24px 22px 22px; }
+
+    .module-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .module-icon-wrap {
+      width: 44px; height: 44px;
+      border: 1px solid var(--smoke);
+      background: var(--ink3);
       display: flex; align-items: center; justify-content: center;
-      font-size: 24px; flex-shrink: 0; background: #0f0d06;
+      font-size: 20px; flex-shrink: 0;
+      transition: border-color .25s;
     }
-    .card-body { flex: 1; min-width: 0; }
-    .card-tag { font-size: 8px; letter-spacing: 4px; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 4px; }
-    .card-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--gold-light); letter-spacing: 1px; margin-bottom: 5px; }
-    .card-desc { font-size: 11px; color: var(--muted); line-height: 1.6; font-weight: 200; }
-    .card-arrow { color: var(--gold-dim); font-size: 20px; flex-shrink: 0; transition: transform .2s, color .2s; }
-    .card:hover .card-arrow { transform: translateX(4px); color: var(--gold); }
+    .module:hover .module-icon-wrap { border-color: var(--ash); }
 
-    /* WEEK GRID */
-    .week-section {
-      width: calc(100% - 48px); max-width: 480px; margin: 24px auto 0;
-      animation: fadeUp .5s .3s ease both;
+    .module-arrow {
+      font-size: 18px; color: var(--smoke);
+      transition: color .25s, transform .25s;
+      margin-top: 2px;
     }
-    .week-label { font-size: 8px; letter-spacing: 4px; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; text-align: center; }
-    .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-    .week-day {
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
-      padding: 8px 2px; background: var(--surface); border: 1px solid var(--border);
-    }
-    .week-day.active { border-color: var(--gold-dim); background: #1a160a; }
-    .wflag { font-size: 14px; }
-    .wname { font-size: 8px; color: var(--muted); letter-spacing: .5px; }
-    .week-day.active .wname { color: var(--gold); }
+    .module:hover .module-arrow { color: var(--gold); transform: translate(2px, -2px); }
 
-    /* FOOTER */
-    footer { margin-top: auto; padding: 32px 24px 28px; text-align: center; animation: fadeUp .5s .4s ease both; }
-    .footer-name { font-family: 'Cormorant Garamond', serif; font-size: 15px; letter-spacing: 3px; color: var(--gold-dim); margin-bottom: 5px; }
-    .footer-sub { font-size: 9px; letter-spacing: 3px; color: var(--muted); opacity: .55; }
+    .module-tag {
+      font-size: 8px; letter-spacing: 3px; color: var(--ash);
+      text-transform: uppercase; margin-bottom: 5px;
+    }
+
+    .module-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; color: var(--paper);
+      line-height: 1.2; margin-bottom: 8px;
+    }
+
+    .module-desc {
+      font-size: 11px; color: var(--fog);
+      line-height: 1.7; font-weight: 300;
+    }
+
+    .module-footer {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 18px; padding-top: 14px;
+      border-top: 1px solid var(--ink3);
+    }
+
+    .module-stat {
+      font-size: 9px; letter-spacing: 1px; color: var(--ash);
+      padding: 3px 8px; border: 1px solid var(--smoke);
+    }
+
+    /* ══════════════════════════════════════
+       WEEK CALENDAR
+    ══════════════════════════════════════ */
+    .calendar-section {
+      padding: 32px 28px 0;
+      max-width: 900px; margin: 0 auto;
+      animation: rise .8s .5s ease both;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 0;
+    }
+
+    .cal-day {
+      background: var(--ink2);
+      border: 1px solid var(--smoke);
+      padding: 14px 6px 12px;
+      text-align: center;
+      position: relative;
+      transition: border-color .2s;
+      cursor: default;
+    }
+
+    .cal-day.today {
+      border-color: var(--gold);
+      background: #1a160a;
+    }
+
+    .cal-day.today::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+    }
+
+    .cal-flag { font-size: 18px; margin-bottom: 6px; }
+    .cal-name { font-size: 8px; color: var(--ash); letter-spacing: 1px; }
+    .cal-day.today .cal-name { color: var(--gold); font-weight: 500; }
+    .cal-theme { font-size: 7px; color: var(--smoke); margin-top: 3px; letter-spacing: .5px; display: none; }
+    @media (min-width: 600px) { .cal-theme { display: block; color: var(--ash); } }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      margin-top: 56px;
+      border-top: 1px solid var(--smoke);
+      padding: 28px 28px 36px;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      animation: rise .8s .6s ease both;
+    }
+
+    .footer-logo {
+      display: flex; align-items: center; gap: 14px;
+    }
+
+    .footer-logo-line { width: 24px; height: 1px; background: var(--smoke); }
+
+    .footer-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px; color: var(--ash); letter-spacing: 2px;
+    }
+
+    .footer-meta {
+      font-size: 9px; letter-spacing: 3px; color: var(--smoke);
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════════════
+       MICRO DETAILS
+    ══════════════════════════════════════ */
+    .corner-ornament {
+      position: fixed; bottom: 20px; right: 20px;
+      width: 48px; height: 48px;
+      pointer-events: none; opacity: .06; z-index: 2;
+    }
   </style>
 </head>
 <body>
-<div class="sun-rays"></div>
+<div class="ambient"></div>
+
 <div class="page">
 
-  <header>
-    <div class="sun-emblem">
-      <div class="sun-spokes"></div>
-      <div class="sun-ring"></div>
-      <div class="sun-circle"></div>
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-brand">Helios &amp; Ella</div>
+      <div class="topbar-divider"></div>
+      <div class="topbar-subtitle">F&amp;B Operations</div>
     </div>
-    <div class="brand-line">HELIOS <span class="brand-amp">&amp;</span> ELLA</div>
-    <div class="brand-resort">Sunwing Family Resorts · Buffet · Rhodes 2026</div>
+    <div class="topbar-right">
+      <div class="status-dot"></div>
+      <div class="status-text">LIVE</div>
+      <div class="topbar-divider"></div>
+      <div class="topbar-time" id="liveTime">—</div>
+    </div>
   </header>
 
-  <div class="divider">
-    <div class="divider-line"></div>
-    <div class="divider-diamond"></div>
-    <div class="divider-line"></div>
-  </div>
-
-  <div class="today-banner">
-    <div class="today-pulse"></div>
-    <div class="today-text">
-      <div class="today-label">Απόψε</div>
-      <div class="today-theme" id="todayTheme">—</div>
-      <div class="today-date" id="todayDate">—</div>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-line"></div>
+      <div class="eyebrow-text">Sunwing Family Resorts · Rhodes · 2026</div>
     </div>
-    <div class="today-flag" id="todayFlag"></div>
+    <h1 class="hero-title">Kitchen<br/><em>Operations</em><br/>Portal</h1>
+    <p class="hero-tagline">Κεντρικό σύστημα διαχείρισης κουζίνας — μενού, συνταγές, λίστες εργασιών και προγραμματισμός βαρδιών για τα εστιατόρια Helios &amp; Ella.</p>
+  </section>
+
+  <!-- TODAY STRIP -->
+  <div class="today-strip" id="todayStrip">
+    <div class="strip-section">
+      <div class="strip-label">Σήμερα</div>
+      <div class="strip-value" id="stripDay">—</div>
+      <div class="strip-sub" id="stripDate">—</div>
+    </div>
+    <div class="strip-section">
+      <div class="strip-label">Θεματική Βραδιά</div>
+      <div class="strip-value gold" id="stripTheme">—</div>
+      <div class="strip-sub">Dinner Service · 17:30</div>
+    </div>
+    <div class="strip-section" style="padding-left:20px; padding-right:20px;">
+      <div class="strip-flag" id="stripFlag"></div>
+    </div>
+    <div class="strip-section" style="flex:1; background: linear-gradient(to right, transparent, #b8962e08);">
+      <div class="strip-label">Επόμενη Βραδιά</div>
+      <div class="strip-value" id="stripNext" style="font-size:14px; color: var(--fog)">—</div>
+      <div class="strip-sub">Αύριο</div>
+    </div>
   </div>
 
-  <div class="cards">
-    <a href="menu.html" class="card">
-      <div class="card-inner">
-        <div class="card-icon">🍽️</div>
-        <div class="card-body">
-          <div class="card-tag">Εβδομαδιαίο Πρόγραμμα</div>
-          <div class="card-title">Buffet Menu</div>
-          <div class="card-desc">Πλήρες μενού ανά ημέρα — θεματικές βραδιές, σταθμοί, γεύμα &amp; δείπνο</div>
+  <!-- MODULES -->
+  <div class="section-header">
+    <div class="section-label">Modules</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="modules">
+
+    <a href="menu.html" class="module">
+      <div class="module-accent"></div>
+      <div class="module-inner">
+        <div class="module-header">
+          <div class="module-icon-wrap">🍽️</div>
+          <div class="module-arrow">↗</div>
         </div>
-        <div class="card-arrow">›</div>
+        <div class="module-tag">Εβδομαδιαίο Πρόγραμμα</div>
+        <div class="module-title">Buffet Menu</div>
+        <div class="module-desc">Πλήρες μενού ανά ημέρα. Θεματικές βραδιές, σταθμοί, γεύμα &amp; δείπνο με ανά κατηγορία ανάλυση.</div>
+        <div class="module-footer">
+          <div class="module-stat">7 θεματικές</div>
+          <div class="module-stat">Γεύμα + Δείπνο</div>
+        </div>
       </div>
     </a>
 
-    <a href="kitchen.html" class="card">
-      <div class="card-inner">
-        <div class="card-icon">📋</div>
-        <div class="card-body">
-          <div class="card-tag">Διαχείριση Κουζίνας</div>
-          <div class="card-title">Task Manager</div>
-          <div class="card-desc">Λίστες εργασιών ανά σταθμό, mise en place, χρονοδιάγραμμα βάρδιας</div>
+    <a href="recipes.html" class="module">
+      <div class="module-accent"></div>
+      <div class="module-inner">
+        <div class="module-header">
+          <div class="module-icon-wrap">📖</div>
+          <div class="module-arrow">↗</div>
         </div>
-        <div class="card-arrow">›</div>
+        <div class="module-tag">Συνταγολόγιο</div>
+        <div class="module-title">Recipe Cards</div>
+        <div class="module-desc">Υλικά &amp; ποσότητες για 80 άτομα, βήματα προετοιμασίας, χρόνοι μαγειρέματος και αλλεργιογόνα.</div>
+        <div class="module-footer">
+          <div class="module-stat">22 συνταγές</div>
+          <div class="module-stat">EU Allergen Info</div>
+        </div>
       </div>
     </a>
 
-    <a href="recipes.html" class="card">
-      <div class="card-inner">
-        <div class="card-icon">📖</div>
-        <div class="card-body">
-          <div class="card-tag">22 Συνταγές · 7 Θεματικές</div>
-          <div class="card-title">Recipe Cards</div>
-          <div class="card-desc">Υλικά & ποσότητες για 80 άτομα, βήματα προετοιμασίας, χρόνοι & αλλεργιογόνα</div>
+    <a href="kitchen.html" class="module">
+      <div class="module-accent"></div>
+      <div class="module-inner">
+        <div class="module-header">
+          <div class="module-icon-wrap">📋</div>
+          <div class="module-arrow">↗</div>
         </div>
-        <div class="card-arrow">›</div>
+        <div class="module-tag">Διαχείριση Κουζίνας</div>
+        <div class="module-title">Task Manager</div>
+        <div class="module-desc">AI-generated λίστες εργασιών ανά σταθμό. Mise en place, χρονοδιάγραμμα βάρδιας, progress tracking.</div>
+        <div class="module-footer">
+          <div class="module-stat">6 σταθμοί</div>
+          <div class="module-stat">AI Powered</div>
+        </div>
       </div>
     </a>
+
+    <a href="techniques.html" class="module">
+      <div class="module-accent"></div>
+      <div class="module-inner">
+        <div class="module-header">
+          <div class="module-icon-wrap">👨‍🍳</div>
+          <div class="module-arrow">↗</div>
+        </div>
+        <div class="module-tag">Professional Kitchen</div>
+        <div class="module-title">Techniques</div>
+        <div class="module-desc">Θεμελιώδεις τεχνικές επαγγελματικής κουζίνας — stocks, sauces, κρέας, ψάρι, λαχανικά, HACCP.</div>
+        <div class="module-footer">
+          <div class="module-stat">15 τεχνικές</div>
+          <div class="module-stat">6 κατηγορίες</div>
+        </div>
+      </div>
+    </a>
+
   </div>
 
-  <div class="week-section">
-    <div class="week-label">Εβδομαδιαίες Θεματικές Βραδιές</div>
-    <div class="week-grid" id="weekGrid"></div>
+  <!-- WEEK CALENDAR -->
+  <div class="calendar-section">
+    <div class="section-header" style="padding: 28px 0 16px;">
+      <div class="section-label">Εβδομαδιαίο Πρόγραμμα Θεματικών</div>
+      <div class="section-rule"></div>
+    </div>
+    <div class="calendar-grid" id="calGrid"></div>
   </div>
 
+  <!-- FOOTER -->
   <footer>
-    <div class="footer-name">Helios &amp; Ella</div>
-    <div class="footer-sub">F&amp;B Operations · Kitchen Management</div>
+    <div class="footer-logo">
+      <div class="footer-logo-line"></div>
+      <div class="footer-brand">Helios &amp; Ella</div>
+      <div class="footer-logo-line"></div>
+    </div>
+    <div class="footer-meta">Sunwing Family Resorts · F&amp;B Operations · Rhodes 2026</div>
   </footer>
 
 </div>
 
+<!-- CORNER ORNAMENT -->
+<svg class="corner-ornament" viewBox="0 0 48 48" fill="none">
+  <circle cx="24" cy="24" r="22" stroke="#b8962e" stroke-width="1"/>
+  <circle cx="24" cy="24" r="16" stroke="#b8962e" stroke-width=".5"/>
+  <line x1="24" y1="2"  x2="24" y2="46" stroke="#b8962e" stroke-width=".5"/>
+  <line x1="2"  y1="24" x2="46" y2="24" stroke="#b8962e" stroke-width=".5"/>
+  <circle cx="24" cy="24" r="3" fill="#b8962e"/>
+</svg>
+
 <script>
+  // ── DATA ──
   const THEMES = [
-    { day:"ΚΥΡ", name:"Italian Buffet",       flag:"🇮🇹", js:0 },
-    { day:"ΔΕΥ", name:"Greek Buffet",          flag:"🇬🇷", js:1 },
-    { day:"ΤΡΙ", name:"South American Buffet", flag:"🌮",  js:2 },
-    { day:"ΤΕΤ", name:"International Buffet",  flag:"🌍",  js:3 },
-    { day:"ΠΕΜ", name:"Asian Buffet",          flag:"🥢",  js:4 },
-    { day:"ΠΑΡ", name:"BBQ Buffet",            flag:"🔥",  js:5 },
-    { day:"ΣΑΒ", name:"Rhodian Buffet",        flag:"🏛️", js:6 },
+    { js:0, day:"ΚΥΡ", dayFull:"Κυριακή",    name:"Italian Buffet",        flag:"🇮🇹" },
+    { js:1, day:"ΔΕΥ", dayFull:"Δευτέρα",    name:"Greek Buffet",           flag:"🇬🇷" },
+    { js:2, day:"ΤΡΙ", dayFull:"Τρίτη",      name:"South American Buffet",  flag:"🌮"  },
+    { js:3, day:"ΤΕΤ", dayFull:"Τετάρτη",    name:"International Buffet",   flag:"🌍"  },
+    { js:4, day:"ΠΕΜ", dayFull:"Πέμπτη",     name:"Asian Buffet",           flag:"🥢"  },
+    { js:5, day:"ΠΑΡ", dayFull:"Παρασκευή",  name:"BBQ Buffet",             flag:"🔥"  },
+    { js:6, day:"ΣΑΒ", dayFull:"Σάββατο",    name:"Rhodian Buffet",         flag:"🏛️" },
   ];
-  const MONTHS   = ["Ιαν","Φεβ","Μαρ","Απρ","Μαΐ","Ιουν","Ιουλ","Αυγ","Σεπ","Οκτ","Νοε","Δεκ"];
-  const DAYS_GR  = ["Κυριακή","Δευτέρα","Τρίτη","Τετάρτη","Πέμπτη","Παρασκευή","Σάββατο"];
 
-  const now = new Date();
-  const dow = now.getDay();
+  const MONTHS = ["Ιαν","Φεβ","Μαρ","Απρ","Μαΐ","Ιουν","Ιουλ","Αυγ","Σεπ","Οκτ","Νοε","Δεκ"];
+
+  // ── INIT ──
+  const now  = new Date();
+  const dow  = now.getDay();
   const today = THEMES.find(t => t.js === dow);
+  const next  = THEMES.find(t => t.js === (dow + 1) % 7);
 
-  document.getElementById("todayTheme").textContent = today.name;
-  document.getElementById("todayFlag").textContent  = today.flag;
-  document.getElementById("todayDate").textContent  =
-    DAYS_GR[dow] + ", " + now.getDate() + " " + MONTHS[now.getMonth()] + " " + now.getFullYear();
+  document.getElementById("stripDay").textContent   = today.dayFull;
+  document.getElementById("stripDate").textContent  = now.getDate() + " " + MONTHS[now.getMonth()] + " " + now.getFullYear();
+  document.getElementById("stripTheme").textContent = today.name;
+  document.getElementById("stripFlag").textContent  = today.flag;
+  document.getElementById("stripNext").textContent  = next.flag + "  " + next.name;
 
-  const grid  = document.getElementById("weekGrid");
-  [1,2,3,4,5,6,0].forEach(d => {
+  // ── LIVE CLOCK ──
+  function tick() {
+    const d = new Date();
+    const h = String(d.getHours()).padStart(2,'0');
+    const m = String(d.getMinutes()).padStart(2,'0');
+    const s = String(d.getSeconds()).padStart(2,'0');
+    document.getElementById("liveTime").textContent = h + ":" + m + ":" + s;
+  }
+  tick(); setInterval(tick, 1000);
+
+  // ── CALENDAR ──
+  const ORDER = [1,2,3,4,5,6,0];
+  const grid  = document.getElementById("calGrid");
+  ORDER.forEach(d => {
     const t   = THEMES.find(x => x.js === d);
     const div = document.createElement("div");
-    div.className = "week-day" + (d === dow ? " active" : "");
-    div.innerHTML = `<span class="wflag">${t.flag}</span><span class="wname">${t.day}</span>`;
+    div.className = "cal-day" + (d === dow ? " today" : "");
+    div.innerHTML =
+      `<div class="cal-flag">${t.flag}</div>` +
+      `<div class="cal-name">${t.day}</div>` +
+      `<div class="cal-theme">${t.name.split(" ")[0]}</div>`;
     grid.appendChild(div);
   });
 </script>

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kitchen Techniques · Helios & Ella</title>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="theme-color" content="#060604"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink:#060604; --ink2:#0e0d09; --ink3:#161410;
+      --gold:#b8962e; --gold2:#d4af55; --gold3:#f0d080;
+      --smoke:#2a2520; --ash:#4a4438; --fog:#8a7e6e;
+      --paper:#f5f0e8; --paper2:#ede5d5;
+      --green:#3a7a5a; --blue:#2a5a8a; --red:#7a2a2a; --purple:#5a2a7a;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--ink);color:var(--paper);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden;}
+    a{color:var(--gold2);text-decoration:none;}
+
+    /* TOPBAR */
+    .topbar{position:sticky;top:0;z-index:100;background:rgba(6,6,4,.95);backdrop-filter:blur(20px);border-bottom:1px solid #ffffff08;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;}
+    .topbar-left{display:flex;align-items:center;gap:16px;}
+    .topbar-brand{font-family:'Playfair Display',serif;font-size:14px;color:var(--gold2);}
+    .topbar-div{width:1px;height:18px;background:var(--smoke);}
+    .topbar-title{font-size:10px;letter-spacing:3px;color:var(--ash);text-transform:uppercase;}
+    .topbar-back{font-size:11px;color:var(--ash);letter-spacing:2px;cursor:pointer;transition:color .2s;}
+    .topbar-back:hover{color:var(--gold2);}
+
+    /* HERO */
+    .hero{padding:48px 24px 32px;max-width:860px;margin:0 auto;}
+    .hero-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+    .ey-line{width:28px;height:1px;background:linear-gradient(to right,var(--gold),transparent);}
+    .ey-text{font-size:9px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+    .hero-title{font-family:'Playfair Display',serif;font-size:clamp(32px,7vw,56px);font-weight:400;line-height:1.1;color:var(--paper);}
+    .hero-title em{font-style:italic;color:var(--gold2);}
+    .hero-sub{font-size:12px;color:var(--fog);margin-top:12px;line-height:1.7;max-width:500px;}
+
+    /* CATEGORY TABS */
+    .tabs-wrap{overflow-x:auto;padding:0 24px 20px;scrollbar-width:none;}
+    .tabs-wrap::-webkit-scrollbar{display:none;}
+    .tabs{display:flex;gap:6px;width:max-content;}
+    .tab{padding:8px 16px;border:1px solid var(--smoke);background:var(--ink2);color:var(--ash);font-size:10px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap;}
+    .tab.active,.tab:hover{border-color:var(--gold);color:var(--gold);background:#1a1608;}
+
+    /* SEARCH */
+    .search-wrap{padding:0 24px 24px;}
+    .search{width:100%;max-width:860px;padding:10px 16px;background:var(--ink2);border:1px solid var(--smoke);color:var(--paper);font-family:'DM Sans',sans-serif;font-size:12px;outline:none;letter-spacing:1px;}
+    .search:focus{border-color:var(--ash);}
+    .search::placeholder{color:var(--ash);}
+
+    /* GRID */
+    .grid{padding:0 24px 60px;max-width:860px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:10px;}
+
+    /* CARD */
+    .card{background:var(--ink2);border:1px solid var(--smoke);overflow:hidden;transition:border-color .2s;}
+    .card:hover{border-color:var(--ash);}
+    .card-head{padding:18px 20px 16px;cursor:pointer;display:flex;align-items:flex-start;gap:14px;}
+    .card-cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+    .card-info{flex:1;}
+    .card-cat{font-size:8px;letter-spacing:3px;color:var(--ash);text-transform:uppercase;margin-bottom:4px;}
+    .card-name{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold2);line-height:1.2;}
+    .card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+    .tag{font-size:8px;letter-spacing:1px;padding:2px 8px;border:1px solid var(--smoke);color:var(--fog);}
+    .card-chevron{font-size:16px;color:var(--ash);transition:transform .2s;flex-shrink:0;margin-top:2px;}
+    .card-chevron.open{transform:rotate(90deg);}
+
+    /* CARD BODY */
+    .card-body{display:none;border-top:1px solid var(--smoke);}
+    .card-body.open{display:block;}
+    .btabs{display:flex;border-bottom:1px solid var(--smoke);}
+    .btab{flex:1;padding:10px 8px;text-align:center;font-size:9px;letter-spacing:2px;color:var(--ash);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:'DM Sans',sans-serif;background:none;text-transform:uppercase;}
+    .btab:not(:last-child){border-right:1px solid var(--smoke);}
+    .btab.active{color:var(--gold);border-bottom-color:var(--gold);background:#1a1608;}
+    .bpanel{display:none;padding:18px 20px;}
+    .bpanel.active{display:block;}
+
+    /* TECHNIQUE STEPS */
+    .steps{list-style:none;}
+    .step{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--ink3);}
+    .step:last-child{border-bottom:none;}
+    .step-n{width:22px;height:22px;background:var(--gold);color:#000;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+    .step-body{flex:1;}
+    .step-text{font-size:12px;color:var(--paper);line-height:1.65;}
+    .step-note{font-size:10px;color:var(--fog);margin-top:4px;font-style:italic;}
+
+    /* KEY POINTS */
+    .keypoints{list-style:none;}
+    .kp{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--ink3);}
+    .kp:last-child{border-bottom:none;}
+    .kp-bullet{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);flex-shrink:0;margin-top:6px;}
+    .kp-text{font-size:12px;color:var(--paper);line-height:1.6;}
+
+    /* APPLICATIONS */
+    .apps-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    @media(max-width:480px){.apps-grid{grid-template-columns:1fr;}}
+    .app-item{background:var(--ink3);border:1px solid var(--smoke);padding:12px 14px;}
+    .app-dish{font-family:'Playfair Display',serif;font-size:14px;color:var(--gold2);margin-bottom:4px;}
+    .app-detail{font-size:10px;color:var(--fog);line-height:1.5;}
+    .app-temp{font-size:9px;color:var(--gold);margin-top:4px;letter-spacing:1px;}
+
+    /* SECTION DIVIDER */
+    .divider{padding:8px 24px 16px;max-width:860px;margin:0 auto;display:flex;align-items:center;gap:14px;}
+    .div-label{font-size:9px;letter-spacing:4px;color:var(--ash);text-transform:uppercase;white-space:nowrap;}
+    .div-line{flex:1;height:1px;background:linear-gradient(to right,var(--smoke),transparent);}
+
+    .empty{text-align:center;padding:48px 20px;color:var(--ash);font-size:13px;}
+    .count{font-size:10px;color:var(--ash);letter-spacing:2px;}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-brand">Helios &amp; Ella</div>
+    <div class="topbar-div"></div>
+    <div class="topbar-title">Kitchen Techniques</div>
+  </div>
+  <a href="index.html" class="topbar-back">← Portal</a>
+</div>
+
+<div class="hero">
+  <div class="hero-eyebrow">
+    <div class="ey-line"></div>
+    <div class="ey-text">Professional Kitchen · Reference Guide</div>
+  </div>
+  <h1 class="hero-title">Culinary<br/><em>Techniques</em></h1>
+  <p class="hero-sub">Θεμελιώδεις τεχνικές επαγγελματικής κουζίνας — οργανωμένες ανά κατηγορία για γρήγορη αναφορά κατά τη βάρδια.</p>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-cat="all">Όλες</button>
+    <button class="tab" data-cat="stocks">Stocks &amp; Sauces</button>
+    <button class="tab" data-cat="meat">Κρέας &amp; Πουλερικά</button>
+    <button class="tab" data-cat="fish">Ψάρι &amp; Θαλασσινά</button>
+    <button class="tab" data-cat="veg">Λαχανικά &amp; Sides</button>
+    <button class="tab" data-cat="eggs">Αυγά &amp; Πρωινό</button>
+    <button class="tab" data-cat="mise">Mise en Place</button>
+  </div>
+</div>
+
+<div class="search-wrap">
+  <input class="search" id="search" type="text" placeholder="Αναζήτηση τεχνικής..."/>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const DATA = [
+
+// ═══════════════════════════ MISE EN PLACE ═══════════════════════════
+{
+  id:1, cat:"mise", catLabel:"Mise en Place", dotColor:"#b8962e",
+  name:"Μαχαίρι & Κοπές",
+  tags:["Julienne","Brunoise","Chiffonade","Dice"],
+  steps:[
+    {t:"Brunoise (2×2×2mm)", d:"Κόβουμε πρώτα σε λεπτές φέτες, μετά σε λεπτές λωρίδες (julienne), και τέλος σε κύβους. Χρησιμοποιείται για mirepoix σε σάλτσες."},
+    {t:"Small Dice (6×6×6mm)", d:"Ίδια τεχνική με brunoise αλλά μεγαλύτερο μέγεθος. Για σούπες και σαλάτες."},
+    {t:"Julienne (3×3×50mm)", d:"Λεπτές λωρίδες. Κόβουμε πρώτα σε φέτες 3mm, μετά στοιβάζουμε και κόβουμε σε λωρίδες. Για garnish και stir-fry."},
+    {t:"Chiffonade", d:"Για φυλλώδη λαχανικά (βασιλικός, σπανάκι). Στοιβάζουμε τα φύλλα, τυλίγουμε σφιχτά σε ρολό και κόβουμε λεπτές φέτες."},
+    {t:"Tournée", d:"7 επίπεδες κοπές σε σχήμα κορεκτο. Για παρουσίαση λαχανικών (καρότα, πατάτες, κολοκυθάκια)."},
+  ],
+  keypoints:[
+    {t:"Το μαχαίρι πρέπει να είναι ΠΑΝΤΟΤΕ κοφτερό — μειώνει κόπωση και ατυχήματα."},
+    {t:"Σταθερό cutting board — βάζουμε βρεγμένη πετσέτα κάτω."},
+    {t:"Η 'claw grip' (νύχια μέσα, άρθρωση μπροστά) προστατεύει τα δάχτυλα."},
+    {t:"Ομοιόμορφο μέγεθος = ομοιόμορφο μαγείρεμα. Κρίσιμο για buffet."},
+  ],
+  apps:[
+    {d:"Mirepoix", det:"Κρεμμύδι 50% / Καρότο 25% / Σέλινο 25% — βάση για stocks και σάλτσες", tmp:""},
+    {d:"Bouquet Garni", det:"Δεμένη δέσμη από δάφνη, θυμάρι, μαϊντανό — για αρωμάτιση", tmp:""},
+    {d:"Sachet d'épices", det:"Μπαχαρικά σε γάζα — πιπέρι, γαρύφαλλο, δάφνη, θυμάρι", tmp:""},
+    {d:"Πάστα Σκόρδου", det:"Ψιλοκομμένο + αλάτι + πλάτη μαχαιριού — λεία πάστα χωρίς γουδί", tmp:""},
+  ]
+},
+
+{
+  id:2, cat:"mise", catLabel:"Mise en Place", dotColor:"#b8962e",
+  name:"Θερμοκρασίες & HACCP",
+  tags:["Ασφάλεια","Θερμόμετρο","Danger Zone","EU Κανονισμός"],
+  steps:[
+    {t:"Danger Zone: 5°C – 63°C", d:"Σε αυτό το εύρος τα βακτήρια πολλαπλασιάζονται γρήγορα. Κανένα φαγητό δεν μένει σε αυτή τη ζώνη πάνω από 2 ώρες."},
+    {t:"Ψύξη: 0°C – 4°C", d:"Μαγειρεμένα φαγητά ψύχονται γρήγορα (από 63°C → κάτω από 8°C εντός 90 λεπτών). Χρήση blast chiller ή ice bath."},
+    {t:"Ζεστή κρατήση: >63°C", d:"Το buffet πρέπει να κρατά τα ζεστά πάνω από 63°C συνεχώς. Ελέγχουμε με θερμόμετρο κάθε 30 λεπτά."},
+    {t:"Εσωτερικές θερμοκρασίες μαγειρέματος", d:"Κοτόπουλο: 74°C / Κιμάς: 71°C / Χοιρινό: 63°C / Ψάρι: 63°C / Μοσχάρι ολόκληρο: 63°C (medium-rare αποδεκτό)"},
+    {t:"Cross-contamination", d:"Χωριστά cutting boards ανά κατηγορία: κόκκινο=κρέας, μπλε=ψάρι, κίτρινο=κοτόπουλο, πράσινο=λαχανικά, λευκό=αρτοσκευάσματα."},
+  ],
+  keypoints:[
+    {t:"Το θερμόμετρο βυθίζεται στο πιο χοντρό σημείο του κρέατος — όχι κοντά στο κόκαλο."},
+    {t:"Κατεψυγμένα προϊόντα αποψύχονται στο ψυγείο (4°C) — ποτέ σε θερμοκρασία δωματίου."},
+    {t:"Φαγητό που έπεσε στο 'danger zone' δεν ξαναζεσταίνεται περισσότερο από μία φορά."},
+    {t:"Αλλεργιογόνα EU 14: Γλουτένη, Γάλα, Αυγά, Ψάρι, Οστρακοειδή, Ξηροί Καρποί, Σέλινο, Σόγια, Σουσάμι, Λούπινο, Μουστάρδα, Θειώδη, Σουλφίτα, Μαλάκια."},
+  ],
+  apps:[
+    {d:"Καταγραφή Θερμοκρασιών", det:"Κάθε 2 ώρες κατά τη λειτουργία buffet — ελέγχουμε bain marie και hot plates", tmp:"Min: 63°C"},
+    {d:"Blast Chilling", det:"Μεγάλες ποσότητες από 63°C → 3°C σε 90 λεπτά — χρήση αλουμινόχαρτου + ice", tmp:"Target: <4°C"},
+    {d:"Απόψυξη", det:"12-24 ώρες στο ψυγείο για κρέας — ποτέ σε νερό τρεχούμενο αν είναι >2kg", tmp:"4°C"},
+    {d:"Reheating", det:"Ζεσταίνουμε στους 75°C+ γρήγορα — η αργή ζέστανση είναι επικίνδυνη", tmp:"Min: 75°C"},
+  ]
+},
+
+// ═══════════════════════════ STOCKS & SAUCES ═══════════════════════════
+{
+  id:3, cat:"stocks", catLabel:"Stocks & Sauces", dotColor:"#2a5a8a",
+  name:"Ζωμοί (Stocks)",
+  tags:["White Stock","Brown Stock","Fond","Fumet"],
+  steps:[
+    {t:"Λευκός Ζωμός (White Stock)", d:"Κόκαλα και λαχανικά χωρίς προηγούμενο σοτάρισμα. Ξεκινά με κρύο νερό. Βράζουμε αργά, αφαιρούμε το αφρό (scum) στα πρώτα 15 λεπτά. Βοδινός: 6-8 ώρες / Κοτόπουλο: 3-4 ώρες / Ψάρι: 30-45 λεπτά."},
+    {t:"Καστανός Ζωμός (Brown Stock)", d:"Κόκαλα ψήνονται στο φούρνο 200°C μέχρι βαθύ καστανό χρώμα. Tomato paste προστίθεται και καραμελώνει. Ζωμός με βαθύ χρώμα και γεύση. Για demi-glace και σκούρες σάλτσες."},
+    {t:"Fumet (Ζωμός Ψαριού)", d:"Κόκαλα ψαριού και αποφλοιώματα θαλασσινών. ΜΕΓΙΣΤΟΣ χρόνος 45 λεπτά — πέραν αυτού γίνεται πικρός. Σβήνουμε με λευκό κρασί πρώτα."},
+    {t:"Court-Bouillon", d:"Αρωματικό ζεστό ποσάρισμα για ψάρι. Νερό + κρασί + mirepoix + bouquet garni + ξύδι. Δεν χρησιμοποιείται ως βάση άλλης σάλτσας."},
+    {t:"Reduction & Clarification", d:"Η reduction συμπυκνώνει την γεύση και πυκνώνει. Clarification: αυγά + κιμά σχηματίζουν 'raft' που δεσμεύει τα θολωμένα σωματίδια — για consommé."},
+  ],
+  keypoints:[
+    {t:"Ποτέ αλάτι στον ζωμό — αλατίζεται η τελική σάλτσα μετά την reduction."},
+    {t:"Κρύο νερό + αργός βρασμός = καθαρός ζωμός. Δυνατός βρασμός = θολός."},
+    {t:"Ο ζωμός σουρώνεται μέσω fine mesh sieve ή chinois, ποτέ πιέζουμε τα υλικά."},
+    {t:"Ψύχεται γρήγορα, αποθηκεύεται 3-4 ημέρες στο ψυγείο ή 3 μήνες κατεψυγμένο."},
+  ],
+  apps:[
+    {d:"Fond de Veau", det:"Καστανός ζωμός μοσχαριού — βάση για demi-glace και jus", tmp:"6-8 ώρες"},
+    {d:"Fond de Volaille", det:"Λευκός ζωμός κοτόπουλου — βάση για velouté και risotto", tmp:"3-4 ώρες"},
+    {d:"Fumet de Poisson", det:"Ζωμός ψαριού — βάση για σάλτσες θαλασσινών", tmp:"30-45 λεπτά max"},
+    {d:"Dashi", det:"Ιαπωνικός ζωμός από kombu και bonito — για ασιατικά πιάτα", tmp:"15 λεπτά"},
+  ]
+},
+
+{
+  id:4, cat:"stocks", catLabel:"Stocks & Sauces", dotColor:"#2a5a8a",
+  name:"Μητρικές Σάλτσες (Mother Sauces)",
+  tags:["Béchamel","Velouté","Espagnole","Hollandaise","Tomat"],
+  steps:[
+    {t:"Béchamel", d:"Roux (βούτυρο + αλεύρι 1:1 σε βάρος) + ζεστό γάλα. Ανακατεύουμε συνεχώς. Αναλογία: 60g roux / 1L γάλα για μέτρια πυκνότητα. Αρτύζουμε με μοσχοκάρυδο, αλάτι, λευκό πιπέρι."},
+    {t:"Velouté", d:"Roux + λευκός ζωμός (κοτόπουλο, ψάρι, ή μοσχάρι). Σιγοβράζει 20-30 λεπτά να αναπτυχθεί η γεύση. Βάση για supreme sauce, vin blanc sauce."},
+    {t:"Espagnole / Demi-Glace", d:"Brown roux + καστανός ζωμός + mirepoix + tomato paste + bouquet garni. Σιγοβράζει 3-4 ώρες. Demi-glace = Espagnole + ίδια ποσότητα brown stock, reduced 50%."},
+    {t:"Sauce Tomat", d:"Σοτάρουμε mirepoix + σκόρδο, προσθέτουμε ντομάτες + ζωμός + bouquet garni. Σιμποβράζουμε 45-60 λεπτά. Μπλεντάρουμε ή σουρώνουμε."},
+    {t:"Hollandaise", d:"Emulsion από αυγά + λιωμένο βούτυρο. Κρόκοι + νερό + reduction σε bain marie (60°C). Προσθέτουμε βούτυρο σταδιακά ανακατεύοντας. ΚΡΙΤΙΚΟ: θερμοκρασία 63-65°C — πάνω κόβεται."},
+  ],
+  keypoints:[
+    {t:"Roux: το αλεύρι μαγειρεύεται τουλάχιστον 2 λεπτά να εξαφανιστεί η γεύση ωμού."},
+    {t:"Hollandaise σπάει; Αρχίζουμε νέα reduction με 1-2 κρόκους και προσθέτουμε σταδιακά την σπασμένη."},
+    {t:"Liaison (cream+yolks) πυκνώνει χωρίς roux — δεν ξαναβράζει μετά."},
+    {t:"Mounting with butter (monter au beurre): κρύο βούτυρο σε κύβους, ανακατεύουμε στο τέλος για γυαλάδα."},
+  ],
+  apps:[
+    {d:"Mornay", det:"Béchamel + τυρί gruyère/parmesan — για gratin", tmp:""},
+    {d:"Suprême", det:"Velouté κοτόπουλου + κρέμα γάλακτος — για σάλτσα λευκή", tmp:""},
+    {d:"Bordelaise", det:"Demi-glace + κόκκινο κρασί Bordeaux + shallots + μυελός", tmp:""},
+    {d:"Béarnaise", det:"Hollandaise + tarragon + shallots — για steak", tmp:"63-65°C max"},
+  ]
+},
+
+{
+  id:5, cat:"stocks", catLabel:"Stocks & Sauces", dotColor:"#2a5a8a",
+  name:"Pan Sauces & Jus",
+  tags:["Deglazing","Reduction","Jus","Pan drippings"],
+  steps:[
+    {t:"Deglazing (Σβήσιμο)", d:"Αφού ψηθεί το κρέας, αφαιρούμε το λίπος. Ρίχνουμε κρύο ή θερμοκρασίας δωματίου υγρό (κρασί, brandy, ζωμό) στο ζεστό τηγάνι. Ξύνουμε τα καμένα κατακάθια (fond) — αυτά δίνουν την γεύση."},
+    {t:"Reduction", d:"Βράζουμε το υγρό να μειωθεί κατά 50-75%. Η σάλτσα πυκνώνει και εντείνεται η γεύση. Ελέγχουμε consistency με κουτάλι — πρέπει να καλύπτει την πίσω πλευρά."},
+    {t:"Finishing", d:"Σουρώνουμε. Προσθέτουμε κρύο βούτυρο κομμάτι-κομμάτι (monter au beurre) για γυαλάδα. Ελέγχουμε αλατοπίπερο. Σερβίρουμε αμέσως — δεν ξαναζεσταίνουμε μετά το butter mounting."},
+    {t:"Jus Lié", d:"Φυσικός χυμός ψησίματος + λίγο ζωμό, ελαφρά δεμένος με cornstarch ή arrowroot. Πιο ελαφρύ από sauce — για ψητά στο φούρνο."},
+  ],
+  keypoints:[
+    {t:"Το fond (κατακάθια) είναι η ψυχή της pan sauce — δεν το πετάμε ποτέ."},
+    {t:"Κρασί πριν τον ζωμό — το αλκοόλ πρέπει να εξατμιστεί πλήρως."},
+    {t:"Πολύ αλμυρή σάλτσα δεν διορθώνεται. Αραιώνουμε με ζωμό — ποτέ νερό."},
+    {t:"Τo butter mounting γίνεται εκτός φωτιάς ή σε πολύ χαμηλή — ποτέ σε βρασμό."},
+  ],
+  apps:[
+    {d:"Red Wine Jus", det:"Κόκκινο κρασί + fond + demi-glace — για αρνί και μοσχάρι", tmp:""},
+    {d:"Pan Sauce Mustard", det:"Shallots + κρασί + κρέμα + μουστάρδα Dijon — για χοιρινό", tmp:""},
+    {d:"Chimichurri", det:"Μαϊντανός + σκόρδο + ξύδι + λάδι — κρύα σάλτσα χωρίς μαγείρεμα", tmp:""},
+    {d:"Salsa Verde", det:"Ιταλική πράσινη σάλτσα με κάπαρη, αντζούγιες, μαϊντανό", tmp:""},
+  ]
+},
+
+// ═══════════════════════════ ΚΡΕΑΣ ═══════════════════════════
+{
+  id:6, cat:"meat", catLabel:"Κρέας & Πουλερικά", dotColor:"#7a2a2a",
+  name:"Ψήσιμο στη Σχάρα & Grilling",
+  tags:["Maillard","Searing","Marks","Internal Temp"],
+  steps:[
+    {t:"Προθέρμανση", d:"Η σχάρα/grill πρέπει να είναι ΠΟΛΥ ζεστό πριν μπει το κρέας — τουλάχιστον 250°C. Κρύα σχάρα = κολλάει. Ντύνουμε ελαφρά με λάδι ΤΟ ΚΡΕΑΣ, όχι τη σχάρα."},
+    {t:"Searing & Maillard Reaction", d:"Η καστανή κρούστα σχηματίζεται από χημική αντίδραση αμινοξέων + σακχάρων σε >150°C. Για σωστό searing: επιφάνεια ΣΤΕΓΝΗ, χωρίς πολλά κομμάτια μαζί (κατεβάζει θερμοκρασία)."},
+    {t:"Σχεδιασμός Σημαδιών (Grill Marks)", d:"Πρώτο τοποθέτηση: 45° γωνία. Μετά 2 λεπτά: στρίβουμε 90°. Αντίστροφη πλευρά: ίδια διαδικασία. Ποτέ δεν μετακινούμε πρώτα 2 λεπτά."},
+    {t:"Ξεκούραση (Resting)", d:"Μετά το ψήσιμο: κρέας ξεκουράζεται σε ζεστό μέρος. Μικρά κομμάτια: 5 λεπτά. Μεγάλες φέτες: 10-15 λεπτά. Ολόκληρα κρέατα: 20-30 λεπτά. Οι χυμοί ανακατανέμονται."},
+    {t:"Θερμοκρασίες Ψησίματος", d:"Rare: 52°C / Medium-Rare: 57°C / Medium: 63°C / Well Done: 71°C+. Αφαιρούμε 3-5°C νωρίτερα — carryover cooking συνεχίζεται κατά τη ξεκούραση."},
+  ],
+  keypoints:[
+    {t:"Το κρέας σε θερμοκρασία δωματίου πριν ψηθεί — βγαίνει 30 λεπτά νωρίτερα από το ψυγείο."},
+    {t:"Αλατίζουμε λίγο πριν ή αμέσως πριν — το αλάτι νωρίς τραβά υγρασία (osmosis)."},
+    {t:"Marinades με οξύ (χυμός, ξύδι) μαλακώνουν αλλά αν μείνουν πολύ ώρα κάνουν το κρέας μπλαβό."},
+    {t:"Flat top grill: καλύτερο για λεπτά κομμάτια. Charbroiler: για παχύτερα με έντονο char flavor."},
+  ],
+  apps:[
+    {d:"Ribeye / Entrecôte", det:"3-4 cm πάχος / 4 λεπτά ανά πλευρά για medium-rare", tmp:"57°C"},
+    {d:"Chicken Breast", det:"Κτυπημένο στα 2cm / 4-5 λεπτά ανά πλευρά / ολοκλήρωση στο φούρνο", tmp:"74°C"},
+    {d:"Souvlaki / Kebab", det:"Μαρινάρισμα 2-4 ώρες / μέτρια φωτιά / συχνή στροφή", tmp:"74°C"},
+    {d:"Fish Fillet", det:"Δερμάτι κάτω πρώτα / 70% του χρόνου στην μια πλευρά", tmp:"63°C"},
+  ]
+},
+
+{
+  id:7, cat:"meat", catLabel:"Κρέας & Πουλερικά", dotColor:"#7a2a2a",
+  name:"Braising & Stewing (Σιγομαγείρεμα)",
+  tags:["Collagen","Slow Cook","Moist Heat","Τender"],
+  steps:[
+    {t:"Βήμα 1 — Sear", d:"Αλατοπιπερώνουμε. Σοτάρουμε σε δυνατή φωτιά σε παρτίδες — ΟΧΙ ΟΛΑ ΜΑΖΙ. Θέλουμε βαθύ καστανό χρώμα σε όλες τις πλευρές. Αυτό δίνει χρώμα και γεύση στη σάλτσα."},
+    {t:"Βήμα 2 — Aromatics", d:"Στο ίδιο σκεύος σοτάρουμε mirepoix. Προσθέτουμε tomato paste και μαγειρεύουμε 2-3 λεπτά να caramelαρίσει. Σβήνουμε με κρασί να λύσουμε το fond."},
+    {t:"Βήμα 3 — Braising Liquid", d:"Επιστρέφουμε το κρέας. Προσθέτουμε ζωμό μέχρι να καλύπτει 2/3 του κρέατος (braising). Για stew: καλύπτει πλήρως. Bouquet garni. Σκεπάζουμε."},
+    {t:"Βήμα 4 — Μαγείρεμα", d:"Φούρνος 160-165°C ή σιγανή φωτιά. Η γεύση αναπτύσσεται αργά. Κολλαγόνο → ζελατίνη → μεταξένια υφή. ΟΧΙ βράσιμος — μόνο σιγανό trembling."},
+    {t:"Βήμα 5 — Finishing", d:"Αφαιρούμε κρέας. Σουρώνουμε και μειώνουμε τη σάλτσα αν χρειάζεται. Ελέγχουμε γεύση. Ξανά μέσα το κρέας. Σερβίρουμε ή ψύχουμε γρήγορα για επόμενη μέρα."},
+  ],
+  keypoints:[
+    {t:"Tough cuts (σβέρκος, κότσι) είναι ΙΔΑΝΙΚΑ για braising — το κολλαγόνο γίνεται ζελατίνη."},
+    {t:"Καλύτερα την προηγούμενη μέρα — η γεύση ενισχύεται στο ψυγείο."},
+    {t:"Φούρνος αντί φωτιάς = πιο ομοιόμορφη θερμοκρασία = πιο σταθερό αποτέλεσμα."},
+    {t:"Αν η σάλτσα είναι νερουλή: αφαιρούμε κρέας και μειώνουμε σε δυνατή φωτιά."},
+  ],
+  apps:[
+    {d:"Stifado", det:"Beef/κρεμμύδια / κόκκινο κρασί / μπαχάρια / δάφνη / κανέλα", tmp:"160°C / 2.5-3 ώρες"},
+    {d:"Osso Buco", det:"Μοσχαρίσιο κότσι / gremolata στο τέλος / μυελός — highlight", tmp:"165°C / 2 ώρες"},
+    {d:"Coq au Vin", det:"Κοτόπουλο / κόκκινο κρασί / lardons / μανιτάρια / pearl onions", tmp:"165°C / 1.5 ώρες"},
+    {d:"Lamb Shanks", det:"Αρνίσια κότσια / κόκκινο κρασί / δενδρολίβανο / σκόρδο", tmp:"160°C / 3 ώρες"},
+  ]
+},
+
+{
+  id:8, cat:"meat", catLabel:"Κρέας & Πουλερικά", dotColor:"#7a2a2a",
+  name:"Roasting (Ψήσιμο Φούρνου)",
+  tags:["Convection","Basting","Carryover","Resting"],
+  steps:[
+    {t:"Προετοιμασία", d:"Το κρέας σε θερμοκρασία δωματίου. Στεγνό επιφανειακά (paper towel) — η υγρασία εμποδίζει browning. Αλάτι + πιπέρι γενναία. Λίπος πάντα πάνω (self-basting)."},
+    {t:"Searing πριν φούρνο (επιλογή)", d:"Σε δυνατή φωτιά ροδίζουμε παντού πριν φούρνο — για εξωτερική κρούστα. Εναλλακτικά: ξεκινάμε με πολύ ζεστό φούρνο (220°C) τα πρώτα 20 λεπτά."},
+    {t:"Ψήσιμο", d:"Μέτρια θερμοκρασία 160-180°C. Basting κάθε 20-30 λεπτά με τα ζουμιά. Roasting rack κρατά το κρέας από τον πάτο για circulating air."},
+    {t:"Carryover & Resting", d:"Η θερμοκρασία ανεβαίνει 3-8°C μετά τον φούρνο. Αφαιρούμε νωρίτερα. Ξεκουράζουμε σκεπασμένο με αλουμινόχαρτο — ΟΧΙ σφιχτά."},
+    {t:"Pan Gravy", d:"Αφαιρούμε λίπος από τα ζουμιά (fat separator). Deglaze με κρασί ή ζωμό. Προαιρετικά δένουμε με cornstarch slurry. Σουρώνουμε."},
+  ],
+  keypoints:[
+    {t:"Convection φούρνος ψήνει 15-25% πιο γρήγορα — μειώνουμε θερμοκρασία κατά 15°C ή χρόνο."},
+    {t:"Θερμόμετρο κρέατος είναι αναγκαίο — δεν μπορούμε να ξέρουμε 'με το μάτι' για μεγάλα κομμάτια."},
+    {t:"Stuffed roasts παίρνουν περισσότερο χρόνο — η γέμιση πρέπει να φτάσει 74°C."},
+    {t:"Porchetta / μεγάλα χοιρινά: ξεκινά δυνατά (220°C) για crispy skin, μετά χαμηλώνει."},
+  ],
+  apps:[
+    {d:"Oven Baked Lamb", det:"Αρνί / 180°C / σκεπασμένο 2ώρες + ξεσκέπαστο 30 λεπτά", tmp:"75-80°C εσωτ."},
+    {d:"Porchetta", det:"Χοιρινή κοιλιά / herbs / 220°C→160°C / 3.5-4 ώρες", tmp:"70°C εσωτ."},
+    {d:"Roast Chicken", det:"175°C / baste κάθε 20' / στα 74°C αφαιρούμε", tmp:"74°C στο μηρό"},
+    {d:"Turkey Meatloaf", det:"Κιμάς γαλοπούλας / binder / 175°C / water bath για ομοιόμορφο", tmp:"74°C"},
+  ]
+},
+
+{
+  id:9, cat:"meat", catLabel:"Κρέας & Πουλερικά", dotColor:"#7a2a2a",
+  name:"Sautéing & Pan Frying",
+  tags:["High Heat","Quick Cook","Fond","Deglaze"],
+  steps:[
+    {t:"Sauté", d:"Λίγο λίπος, δυνατή φωτιά, μικρά κομμάτια κρέατος. 'Sauter' = πηδάω — συνεχής κίνηση ή toss. Η υψηλή θερμοκρασία δίνει χρώμα. Δεν σκεπάζουμε — η ατμός μαλακώνει αντί να ροδίζει."},
+    {t:"Pan Frying", d:"Μεγαλύτερα κομμάτια, μέτρια-δυνατή φωτιά, λίγο περισσότερο λίπος. Ξεκινά από τη 'presentation side'. Ένα γύρισμα μόνο. Ολοκλήρωση στο φούρνο αν χρειάζεται."},
+    {t:"Deglazing για sauce", d:"Αφαιρούμε κρέας. Shallots σοταρίσμα 30 δευτερόλεπτα. Κρασί ή brandy — καίει αν είναι πολύ ζεστό. Ξύνουμε παντού. Ζωμός + reduction. Butter mounting τελευταίο."},
+    {t:"Breaded Pan Fry (Pané)", d:"Flour → Egg wash → Breadcrumbs. Τηγανίζουμε σε λίπος 170-180°C βάθους 1-2cm. Ανοιξίδωτο φυτικό λάδι. Ξηρό αποτέλεσμα, χρυσή κρούστα."},
+  ],
+  keypoints:[
+    {t:"Το pan πρέπει να είναι ΚΑΥΤΟ πριν μπει το λίπος — και το λίπος ΚΑΥΤΟ πριν το κρέας."},
+    {t:"Overcrowding = steaming αντί browning. Μαγειρεύουμε σε παρτίδες αν χρειάζεται."},
+    {t:"Για Sofrito, Tigania: sauté τεχνική — γρήγορο μαγείρεμα σε δυνατή φωτιά."},
+    {t:"Clarified butter αντέχει πιο υψηλές θερμοκρασίες από κανονικό βούτυρο."},
+  ],
+  apps:[
+    {d:"Chicken Tigania", det:"Κυβάκια κοτόπουλου / δυνατή φωτιά / λεμόνι + μουστάρδα", tmp:"74°C"},
+    {d:"Pork Bekri Meze", det:"Χοιρινό κυβάκια / κρασί / μπαχαρικά / τελικά graviera", tmp:"71°C"},
+    {d:"Saltimbocca", det:"Μοσχάρι / prosciutto + φασκόμηλο / βούτυρο + λευκό κρασί", tmp:"65°C"},
+    {d:"Fried Fish", det:"Αλεύρι + αλάτι / καυτό λάδι / 2-3' ανά πλευρά", tmp:"63°C"},
+  ]
+},
+
+// ═══════════════════════════ ΨΑΡΙ ═══════════════════════════
+{
+  id:10, cat:"fish", catLabel:"Ψάρι & Θαλασσινά", dotColor:"#3a7a5a",
+  name:"Ψήσιμο & Μαγείρεμα Ψαριού",
+  tags:["Delicate","Quick Cook","Doneness","Texture"],
+  steps:[
+    {t:"Αναγνώριση φρεσκάδας", d:"Μάτια: διαυγή, γεμάτα (όχι βυθισμένα). Βράγχια: κόκκινα (όχι καφέ-γκρι). Σάρκα: σφιχτή, επαναφέρεται όταν πιέσεις. Μυρωδιά: θαλασσινή/ουδέτερη (όχι έντονη ψαρίλα)."},
+    {t:"Pan-Seared Fish", d:"Στεγνό φιλέτο (paper towel). Αλάτι τελευταία στιγμή. Λάδι στο καυτό τηγάνι. Δέρμα κάτω — πίεσμα με σπάτουλα τα πρώτα 30 δευτερόλεπτα. 70% χρόνος στην πλευρά δέρματος. Γύρισμα μία φορά."},
+    {t:"Baked Fish", d:"Φούρνος 180-200°C. Λεπτά φιλέτα: 10-15 λεπτά. Χοντρά: 18-25 λεπτά. Με σάλτσα/λαχανικά: en papillote (αλουμινόχαρτο) κρατά υγρασία."},
+    {t:"Doneness Test", d:"Σάρκα αλλάζει από ημιδιαφανής → αδιαφανής λευκή. Ξεχωρίζει σε 'flakes' στο πιρούνι. Θερμόμετρο: 63°C. ΜΕΓΙΣΤΟΣ ΚΙΝΔΥΝΟΣ: παραψήσιμο = στεγνό, σκληρό ψάρι."},
+    {t:"Shallow Poaching (Ποσέ)", d:"Φιλέτο σε court-bouillon ή aromatized liquid. Υγρό πρέπει να trembles — ΟΧΙ βράσιμος. Σκεπάζουμε με parchment (cartouche). Το υγρό γίνεται βάση της σάλτσας."},
+  ],
+  keypoints:[
+    {t:"Ψάρι μαγειρεύεται ΓΡΗΓΟΡΑ — 10 λεπτά ανά 2.5cm πάχος είναι ο γενικός κανόνας."},
+    {t:"Delicate fish (πλατύψαρο, γλώσσα): λιγότερη φωτιά, πιο απαλός χειρισμός."},
+    {t:"Oily fish (σολομός, τόνος): αντέχει πιο δυνατή φωτιά, μπορεί να σερβιριστεί medium."},
+    {t:"Marinades με χυμό λεμονιού: max 30 λεπτά — πέραν αυτού 'μαγειρεύει' χημικά (ceviche effect)."},
+  ],
+  apps:[
+    {d:"Spetsiota Fish", det:"Ψάρι / ντομάτα / κρεμμύδια / σκόρδο / μαϊντανός / φούρνος", tmp:"63°C"},
+    {d:"Savoro", det:"Τηγανητό + ξίδι + σκόρδο + δενδρολίβανο + σταφίδες", tmp:"63°C"},
+    {d:"Salmon Teriyaki", det:"Μαρινάρισμα 30' / φούρνος 200°C / glaze στα τελευταία 5'", tmp:"60°C (medium)"},
+    {d:"Cod Livornese", det:"Σάλτσα ντομάτας + ελιές + κάπαρη / ποσέ ή φούρνος", tmp:"63°C"},
+  ]
+},
+
+{
+  id:11, cat:"fish", catLabel:"Ψάρι & Θαλασσινά", dotColor:"#3a7a5a",
+  name:"Θαλασσινά (Shellfish)",
+  tags:["Shrimps","Mussels","Squid","Live","HACCP"],
+  steps:[
+    {t:"Γαρίδες", d:"Ξεφλουδίζουμε και αφαιρούμε 'vein' (εντερικό νήμα). Ανάποδη 'C' = ωμή. 'O' = ψημένη. Μαγειρεύεται σε 2-3 λεπτά σε δυνατή φωτιά. Παραψήσιμο = λαστιχένια υφή."},
+    {t:"Μύδια", d:"Πριν μαγειρεμό: ξύνουμε + αφαιρούμε beard. Κλειστά = φρέσκα, ανοιχτά που δεν κλείνουν = πετάμε. Μετά μαγείρεμα: ανοιχτά = καλά, κλειστά που δεν άνοιξαν = πετάμε."},
+    {t:"Καλαμάρι", d:"Δύο επιλογές υφής: γρήγορο (2-3 λεπτά σε πολύ δυνατή φωτιά = τρυφερό) ή αργό (45+ λεπτά σε stew = μαλακό). Ενδιάμεσα = σκληρό σαν λάστιχο."},
+    {t:"Γαρίδες Saganaki", d:"Σάλτσα ντομάτας πρώτα. Γαρίδες μπαίνουν τελευταίες (2-3 λεπτά). Σβήνουμε με ούζο — αφήνουμε να εξατμιστεί το αλκοόλ. Φέτα τελευταία."},
+    {t:"Mussels Marinière", d:"Shallots + λευκό κρασί σε δυνατή φωτιά. Μύδια μέσα, σκεπάζουμε. 3-4 λεπτά. Τινάζουμε το σκεύος. Σερβίρουμε με broth. Κρέμα + μαϊντανός για variation."},
+  ],
+  keypoints:[
+    {t:"Θαλασσινά: ποτέ μαγειρεμένα μαζί με ωμά στο ίδιο σκεύος — cross contamination."},
+    {t:"Φρέσκα vs κατεψυγμένα: κατεψυγμένα συχνά καλύτερης ποιότητας από 'φρέσκα' που πάγωσαν-ξεπάγωσαν."},
+    {t:"Αλλεργία θαλασσινών: ξεχωριστά σκεύη, χέρια, επιφάνειες — ένα από τα πιο επικίνδυνα αλλεργιογόνα."},
+    {t:"Calamares Tempura: παγωμένος κουρκουτάς (σόδα + αλεύρι + παγωμένο νερό) = πιο τραγανό."},
+  ],
+  apps:[
+    {d:"Shrimps Saganaki", det:"Γαρίδες / σάλτσα ντομάτας / ούζο / φέτα / μαϊντανός", tmp:"εσωτ. ροζ→λευκό"},
+    {d:"Mussels in White Wine", det:"Shallots / λευκό κρασί / κρέμα / μαϊντανός / 4 λεπτά", tmp:"ανοίγουν=έτοιμα"},
+    {d:"Calamares Tempura", det:"Παγωμένος κουρκουτάς / λάδι 180°C / 2-3 λεπτά", tmp:"180°C λάδι"},
+    {d:"Cajun Shrimps", det:"Cajun spice / βούτυρο + σκόρδο / δυνατή φωτιά / lime", tmp:"2-3 λεπτά"},
+  ]
+},
+
+// ═══════════════════════════ ΛΑΧΑΝΙΚΑ ═══════════════════════════
+{
+  id:12, cat:"veg", catLabel:"Λαχανικά & Sides", dotColor:"#5a2a7a",
+  name:"Τεχνικές Μαγειρέματος Λαχανικών",
+  tags:["Blanching","Roasting","Glazing","Al Dente"],
+  steps:[
+    {t:"Blanching & Shocking", d:"Βρασμός σε αλατισμένο νερό (1% αλάτι) → αμέσως σε ice bath. Σταματά το μαγείρεμα, διατηρεί χρώμα (χλωροφύλλη). Πράσινα λαχανικά: 1-3 λεπτά μόνο."},
+    {t:"Roasted Vegetables", d:"Κομμάτια ίδιου μεγέθους. Ελαιόλαδο + αλάτι + πιπέρι. ΜΗΝ ΣΥΣΣΩΡΕΥΟΥΜΕ — single layer. Φούρνος 200-220°C. Γυρίζουμε στα μισά. Θέλουμε caramelization, όχι steaming."},
+    {t:"Sautéed Greens", d:"Σκόρδο σε ζεστό λάδι 30 δευτερόλεπτα. Λαχανικά μέσα. Δυνατή φωτιά. Κίνηση συνεχής. Σβήνουμε με λεμόνι ή λευκό κρασί. Ολόκληρη διαδικασία: 3-5 λεπτά."},
+    {t:"Glazed Vegetables", d:"Λαχανικά + νερό που τα καλύπτει μόλις + βούτυρο + ζάχαρη + αλάτι. Βράζουμε. Το νερό εξατμίζεται και τα λαχανικά glaze αρουν με βούτυρο+ζάχαρη. Γυαλερά αποτέλεσμα."},
+    {t:"Stir-Fry", d:"Wok ή μεγάλο τηγάνι ΠΟΛΥ ζεστό. Λάδι υψηλού σημείου καπνού. Πρώτα τα πιο σκληρά, τελευταία τα μαλακά. Συνεχής κίνηση. 2-4 λεπτά total. Umami από soy sauce στο τέλος."},
+  ],
+  keypoints:[
+    {t:"Υπερβολικό μαγείρεμα χάνει θρεπτικά συστατικά, χρώμα και υφή — al dente πάντα προτιμότερο."},
+    {t:"Αλατισμένο νερό για βράσιμο: 10g αλάτι/L — το αλάτι αυξάνει σημείο βρασμού ελάχιστα αλλά βελτιώνει γεύση."},
+    {t:"Root vegetables: ξεκινούν από κρύο νερό. Πράσινα: βρέχουν σε βραστό νερό."},
+    {t:"Caramelization: λαχανικά (πατάτες, καρότα) σε 180°C+ — φυσικά σάκχαρα καραμελώνουν."},
+  ],
+  apps:[
+    {d:"Briam", det:"Ανακατεμένα λαχανικά / ελαιόλαδο / ντομάτα / single layer φούρνου", tmp:"200°C / 45-60'"},
+    {d:"Roasted Potatoes", det:"Βράσιμο 5' πρώτα / στέγνωμα / ζεστό λάδι φούρνου / 45 λεπτά", tmp:"220°C"},
+    {d:"Stir-fried Rice", det:"Κρύο ρύζι (προηγούμενης μέρας) / wok / αυγό / soy / λαχανικά", tmp:"Max heat"},
+    {d:"Glazed Carrots", det:"Carrots + βούτυρο + ζάχαρη + νερό / σιγοβρασμός / reduction", tmp:""},
+  ]
+},
+
+{
+  id:13, cat:"veg", catLabel:"Λαχανικά & Sides", dotColor:"#5a2a7a",
+  name:"Ρύζι, Δημητριακά & Όσπρια",
+  tags:["Pilaf","Risotto","Legumes","Ratio"],
+  steps:[
+    {t:"Pilaf Method (Ρύζι)", d:"Σοτάρουμε ρύζι σε λίπος 1-2 λεπτά (κόκκοι γίνονται διαφανείς). Προσθέτουμε ζεστό ζωμό (αναλογία 1:1.5 για long grain). Βρασμός → χαμηλώνουμε → σκεπάζουμε 18 λεπτά. Ξεκουράζουμε 5 λεπτά."},
+    {t:"Risotto", d:"Soffritto (shallots+βούτυρο). Τοστάρουμε Arborio/Carnaroli. Κρασί σβήνει — εξατμίζεται. Ζεστός ζωμός λίγο-λίγο ανακατεύοντας συνεχώς. 18-20 λεπτά. Al dente. Mantecatura: βούτυρο+parmesan εκτός φωτιάς."},
+    {t:"Pasta Al Dente", d:"Πολύ νερό (1L/100g) + 10g αλάτι/L. Δυνατός βρασμός. Αναδεύουμε στα πρώτα 2 λεπτά. 1-2 λεπτά λιγότερο από packaging αν τελειώνει σε σάλτσα. Κρατάμε 1 κούπα pasta water."},
+    {t:"Legumes (Όσπρια)", d:"Μουλιάζουν 8-12 ώρες (εκτός lentils και split peas). Ξεπλένουμε, νέο νερό, ΟΧΙ αλάτι στην αρχή (σκληραίνει). Αλάτι στα τελευταία 10 λεπτά. Μαγείρεμα ανάλογα με τύπο: φακές 20', ρεβίθια 1.5-2 ώρες."},
+    {t:"Polenta", d:"Αναλογία 1:4 (polenta:νερό). Νερό ζεσταίνεται με αλάτι. Ρίχνουμε polenta σαν βροχή ανακατεύοντας. Χαμηλή φωτιά 35-45 λεπτά με συχνό ανακάτεμα. Βούτυρο+parmesan τελευταίο."},
+  ],
+  keypoints:[
+    {t:"Risotto: ο συνεχής ανάδευση απελευθερώνει άμυλο → κρεμώδης υφή χωρίς κρέμα."},
+    {t:"Pasta water: αμυλούχο, αλμυρό νερό — τέλειο για να δέσει σάλτσα και pasta μαζί."},
+    {t:"Basmati: ξεπλένεται πριν μαγείρεμα. Jasmine: δεν ξεπλένεται (κολλητό αποτέλεσμα)."},
+    {t:"Όσπρια: baking soda μαλακώνει πιο γρήγορα αλλά αλλάζει γεύση — χρήση με προσοχή."},
+  ],
+  apps:[
+    {d:"Pilaf με Herbs", det:"Long grain / ζωμός / shallots / βούτυρο / μαϊντανός", tmp:"1:1.5 ratio"},
+    {d:"Risotto Bianco", det:"Arborio / λευκό κρασί / ζωμός / parmesan / mantecatura", tmp:"Al dente ~18'"},
+    {d:"Pastitsio Pasta", det:"Penne / béchamel / κιμάς / κανέλα — assembly+ψήσιμο", tmp:"180°C / 45'"},
+    {d:"Giant Beans / Gigantes", det:"Μουλιάζουν → βράζουν → φούρνος με σάλτσα ντομάτας", tmp:"180°C / 1 ώρα"},
+  ]
+},
+
+// ═══════════════════════════ ΑΥΓΑ ═══════════════════════════
+{
+  id:14, cat:"eggs", catLabel:"Αυγά & Πρωινό", dotColor:"#b8962e",
+  name:"Τεχνικές Αυγών",
+  tags:["Scrambled","Poached","Omelette","Fried","Coagulation"],
+  steps:[
+    {t:"Scrambled Eggs (Μεγάλος Όγκος)", d:"Αυγά + αλάτι + λίγο γάλα ή κρέμα. Χαμηλή φωτιά + βούτυρο. Συνεχές ανακάτεμα με spatula. Αφαιρούμε από φωτιά ενώ φαίνονται λίγο υγρά — carryover τα τελειώνει. Για buffet: bain marie, ανανέωση κάθε 20 λεπτά."},
+    {t:"Fried Eggs", d:"Βούτυρο σε μέτρια φωτιά. Αυγό: sunny side up (ποτέ γυρίζουμε) ή over easy (γυρίζουμε 30 δευτερόλεπτα). Δεν σκεπάζουμε για sunny side — σκεπάζουμε για over medium/hard."},
+    {t:"Poached Eggs", d:"Νερό σιγοβρασμός + λίγο ξύδι (σφίγγει το ασπράδι). Δημιουργούμε vortex. Φρέσκο αυγό σε ramekin πρώτα. Μέσα αβίαστα. 3 λεπτά για runny. Μεγάλοι όγκοι: poach σε παρτίδες, ice bath, ζεστάνουμε à la minute."},
+    {t:"Omelette", d:"2-3 αυγά ανά omelette. Βούτυρο αφρίζει (όχι καίει). Αυγά μέσα. Τίναγμα + ξύστρα. Γεμίζουμε πριν τελειώσει. Κυλάμε στο πιάτο — δεν αναποδογυρίζουμε. Χρόνος: 90 δευτερόλεπτα."},
+    {t:"Eggs Benedict (Buffet)", d:"Hollandaise: φτιάχνεται αμέσως πριν σέρβις, bain marie 60°C. Poached eggs: μαζικά, ice bath, ζεσταίνονται σε ζεστό νερό à la minute. English muffin + ham + egg + sauce."},
+  ],
+  keypoints:[
+    {t:"Αυγά πήζουν στους 70-80°C. Πάνω από αυτό γίνονται watery και rubber."},
+    {t:"Φρέσκα αυγά ποσάρονται καλύτερα — παλιά αυγά 'διαχέουν' στο νερό."},
+    {t:"Hollandaise: η πιο συχνά αποτυχημένη σάλτσα σε μεγάλους όγκους. Ποτέ πάνω από 65°C."},
+    {t:"Ομελέτα buffet: δεν μπορεί να φυλαχθεί — μαγειρεύεται live (action station)."},
+  ],
+  apps:[
+    {d:"Scrambled Buffet", det:"Μεγάλη ποσότητα / bain marie / ανανέωση κάθε 20'", tmp:"Bain marie 70°C"},
+    {d:"Frittata", det:"Αυγά + λαχανικά / ξεκινά stovetop / τελειώνει φούρνο 180°C", tmp:"180°C / 10-12'"},
+    {d:"Shakshuka", det:"Σάλτσα ντομάτας + πιπεριές + μπαχαρικά / αυγά poach στη σάλτσα", tmp:"Runny yolks"},
+    {d:"Egg Fried Rice", det:"Κρύο ρύζι / scramble πρώτα αυγά / ρύζι + soy + λαχανικά", tmp:"Max heat"},
+  ]
+},
+
+// ═══════════════════════════ STOCKS - SOUPS ═══════════════════════════
+{
+  id:15, cat:"stocks", catLabel:"Stocks & Sauces", dotColor:"#2a5a8a",
+  name:"Σούπες",
+  tags:["Consommé","Cream Soup","Bisque","Velouté","Purée"],
+  steps:[
+    {t:"Clear Soups (Διαυγείς)", d:"Βάση: καλά clarified stock ή consommé. Garnish μπαίνει τελευταίο — δεν βράζει μαζί. Consommé: clarification με αυγά+κιμά+ξύδι — raft δεσμεύει τα θολά."},
+    {t:"Cream Soups", d:"Aromatic base → ζωμός → κυρίως υλικό (μαγειρεμένο) → μπλεντάρισμα → σούρωμα → κρέμα γάλακτος. Υφή: βελούδινη. Liaison (αυγό+κρέμα) στο τέλος για πλούτο."},
+    {t:"Purée Soups", d:"Παρόμοια με cream αλλά χωρίς σούρωμα — η υφή κρατά κομμάτια. Αμυλούχα λαχανικά (κολοκύθα, πατάτα, όσπρια) δίνουν φυσική δέση χωρίς roux."},
+    {t:"Bisque", d:"Βάση από κελύφη οστρακοειδών (γαρίδες, αστακός). Σοτάρουμε κελύφη, flambé με cognac, mirepoix, tomato paste, ζωμός. Μπλεντάρουμε όλα, σουρώνουμε, κρέμα, καρύκευμα."},
+    {t:"Asian Broths", d:"Dashi (kombu+katsuobushi): 15 λεπτά, ποτέ βρασμός. Tom Kha Gai: βράζουμε αρωματικά (galangal, lemongrass, kaffir lime) → σουρώνουμε → coconut milk + κοτόπουλο."},
+  ],
+  keypoints:[
+    {t:"Σούπα buffet: κρατείται σε bain marie 75°C+. Γεμίζεται κάθε 30 λεπτά — ποτέ ανακατεύουμε παλιό με νέο."},
+    {t:"Over-blending = foam αντί λεία υφή. Μπλεντάρουμε σε παρτίδες, 70% γεμάτο."},
+    {t:"Αρτύζουμε ΠΑΝΤΑ στο τέλος — το μαγείρεμα εντείνει γεύσεις."},
+    {t:"Garnish σούπας: σημαντικό για εμφάνιση και υφή — herbs, cream swirl, croutons, ελαιόλαδο."},
+  ],
+  apps:[
+    {d:"Pumpkin Soup", det:"Κολοκύθα / ζωμός / κρέμα / κουρκουμάς / garnish seeds", tmp:""},
+    {d:"Tom Kha Gai", det:"Coconut milk / galangal / lemongrass / kaffir lime / κοτόπουλο", tmp:"Ποτέ βρασμός"},
+    {d:"Fish Soup / Kakavia", det:"Ζωμός ψαριού / λαχανικά / σαφράν / λεμόνι", tmp:""},
+    {d:"Minestrone", det:"Soffritto / ζωμός / λαχανικά εποχής / pasta / pesto", tmp:""},
+  ]
+},
+
+];
+
+// ─── APP LOGIC ───────────────────────────────────────────────
+let activeCat = "all";
+let searchTerm = "";
+let openCards = {};
+let activeTabs = {};
+
+function getFiltered() {
+  return DATA.filter(r => {
+    const matchCat = activeCat === "all" || r.cat === activeCat;
+    const q = searchTerm.toLowerCase();
+    const matchSearch = !q || r.name.toLowerCase().includes(q) || r.tags.some(t => t.toLowerCase().includes(q));
+    return matchCat && matchSearch;
+  });
+}
+
+function renderAll() {
+  const grid = document.getElementById("grid");
+  const filtered = getFiltered();
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty">Δεν βρέθηκαν τεχνικές</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(r => {
+    const isOpen = openCards[r.id];
+    const activeTab = activeTabs[r.id] || "steps";
+
+    return `
+    <div class="card" id="card-${r.id}">
+      <div class="card-head" onclick="toggleCard(${r.id})">
+        <div class="card-cat-dot" style="background:${r.dotColor}"></div>
+        <div class="card-info">
+          <div class="card-cat">${r.catLabel}</div>
+          <div class="card-name">${r.name}</div>
+          <div class="card-tags">${r.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        </div>
+        <div class="card-chevron ${isOpen ? 'open' : ''}">›</div>
+      </div>
+      <div class="card-body ${isOpen ? 'open' : ''}">
+        <div class="btabs">
+          <button class="btab ${activeTab==='steps'?'active':''}" onclick="switchTab(${r.id},'steps',this)">Τεχνική</button>
+          <button class="btab ${activeTab==='key'?'active':''}" onclick="switchTab(${r.id},'key',this)">Key Points</button>
+          <button class="btab ${activeTab==='apps'?'active':''}" onclick="switchTab(${r.id},'apps',this)">Εφαρμογές</button>
+        </div>
+        <div class="bpanel ${activeTab==='steps'?'active':''}" id="steps-${r.id}">
+          <ul class="steps">
+            ${r.steps.map((s,i) => `
+              <li class="step">
+                <div class="step-n">${i+1}</div>
+                <div class="step-body">
+                  <div class="step-text"><strong>${s.t}</strong> — ${s.d}</div>
+                  ${s.note ? `<div class="step-note">${s.note}</div>` : ''}
+                </div>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+        <div class="bpanel ${activeTab==='key'?'active':''}" id="key-${r.id}">
+          <ul class="keypoints">
+            ${r.keypoints.map(k => `
+              <li class="kp">
+                <div class="kp-bullet"></div>
+                <div class="kp-text">${k.t}</div>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+        <div class="bpanel ${activeTab==='apps'?'active':''}" id="apps-${r.id}">
+          <div class="apps-grid">
+            ${r.apps.map(a => `
+              <div class="app-item">
+                <div class="app-dish">${a.d}</div>
+                <div class="app-detail">${a.det}</div>
+                ${a.tmp ? `<div class="app-temp">⏱ ${a.tmp}</div>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(id) {
+  openCards[id] = !openCards[id];
+  renderAll();
+}
+
+function switchTab(id, tab, btn) {
+  activeTabs[id] = tab;
+  ['steps','key','apps'].forEach(t => {
+    const el = document.getElementById(`${t}-${id}`);
+    if (el) el.classList.toggle('active', t === tab);
+  });
+  btn.parentElement.querySelectorAll('.btab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+document.getElementById("tabs").addEventListener("click", e => {
+  const btn = e.target.closest('.tab');
+  if (!btn) return;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  activeCat = btn.dataset.cat;
+  renderAll();
+});
+
+document.getElementById("search").addEventListener("input", e => {
+  searchTerm = e.target.value;
+  renderAll();
+});
+
+renderAll();
+</script>
+</body>
+</html>
