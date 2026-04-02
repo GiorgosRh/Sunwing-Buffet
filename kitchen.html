@@ -89,6 +89,36 @@
     .reset-btn:hover{border-color:var(--ash);color:var(--paper);}
 
     .no-tasks{text-align:center;padding:32px;color:var(--ash);font-size:12px;}
+
+    /* SHIFT ASSIGNMENT PANEL */
+    .shift-add-toggle{width:100%;padding:10px;border:1px dashed var(--ash);background:transparent;color:var(--ash);font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;margin-bottom:12px;transition:all .15s;}
+    .shift-add-toggle:hover,.shift-add-toggle.open{border-color:var(--gold);color:var(--gold);}
+    .shift-form{background:var(--ink3);border:1px solid var(--smoke);padding:14px;margin-bottom:16px;}
+    .sf-row{margin-bottom:8px;}
+    .sf-row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .sf-input,.sf-select{width:100%;padding:10px 12px;background:var(--ink2);border:1px solid var(--smoke);color:var(--paper);font-family:'DM Sans',sans-serif;font-size:12px;outline:none;}
+    .sf-input::placeholder{color:var(--ash);}
+    .sf-input:focus,.sf-select:focus{border-color:var(--gold);}
+    .sf-select{-webkit-appearance:none;appearance:none;cursor:pointer;}
+    .sf-select option{background:var(--ink2);}
+    .sf-submit{width:100%;padding:10px;background:var(--gold);border:none;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500;transition:background .15s;margin-top:4px;}
+    .sf-submit:hover{background:var(--gold2);}
+    .shift-group{margin-bottom:22px;}
+    .shift-group-hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--smoke);padding-bottom:8px;margin-bottom:10px;}
+    .shift-group-name{font-family:'Playfair Display',serif;font-size:16px;color:var(--paper);}
+    .shift-group-name.unassigned{color:var(--fog);font-style:italic;}
+    .shift-group-count{font-size:9px;color:var(--ash);}
+    .shift-task{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;margin-bottom:5px;background:var(--ink2);border:1px solid var(--smoke);transition:all .15s;}
+    .shift-task.done{opacity:.5;background:var(--ink3);}
+    .shift-task-check{width:18px;height:18px;border:1px solid var(--ash);background:transparent;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--low);cursor:pointer;transition:all .15s;}
+    .shift-task.done .shift-task-check{background:var(--low);border-color:var(--low);color:#000;}
+    .shift-task-body{flex:1;cursor:pointer;}
+    .shift-task-text{font-size:12px;color:var(--paper);line-height:1.5;}
+    .shift-task.done .shift-task-text{text-decoration:line-through;color:var(--ash);}
+    .shift-task-meta{font-size:9px;color:var(--ash);margin-top:3px;letter-spacing:1px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+    .shift-del{background:none;border:none;color:var(--ash);font-size:16px;cursor:pointer;padding:0 4px;flex-shrink:0;line-height:1;transition:color .15s;}
+    .shift-del:hover{color:var(--high);}
+    .shift-empty{text-align:center;padding:32px;color:var(--ash);font-size:12px;line-height:1.8;}
   </style>
 </head>
 <body>
@@ -108,6 +138,7 @@
   <div class="svc-row">
     <button class="svc-btn active" id="btn-dinner" onclick="setService('dinner')">🌙 ΔΕΙΠΝΟ</button>
     <button class="svc-btn" id="btn-lunch" onclick="setService('lunch')">☀️ ΓΕΥΜΑ</button>
+    <button class="svc-btn" id="btn-shift" onclick="setService('shift')">📋 ΒΑΡΔΙΑ</button>
   </div>
 
   <!-- DAYS -->
@@ -116,7 +147,7 @@
   <div class="day-theme-bar" id="themeBar"></div>
 
   <!-- STATIONS -->
-  <div class="day-label">ΣΤΑΘΜΟΣ</div>
+  <div class="day-label" id="stationLabel">ΣΤΑΘΜΟΣ</div>
   <div class="station-grid" id="stationGrid"></div>
 
   <!-- PROGRESS -->
@@ -126,6 +157,37 @@
       <span id="progressText">0/0 εργασίες</span>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+
+  <!-- SHIFT ASSIGNMENT PANEL -->
+  <div id="shiftPanel" style="display:none;">
+    <button class="shift-add-toggle" id="shiftAddToggle" onclick="toggleShiftForm()">+ Νέα Εργασία Βάρδιας</button>
+    <div class="shift-form" id="shiftForm" style="display:none;">
+      <div class="sf-row">
+        <input class="sf-input" id="sf-text" placeholder="Περιγραφή εργασίας..." />
+      </div>
+      <div class="sf-row sf-row-2">
+        <input class="sf-input" id="sf-assignee" placeholder="Ανατίθεται σε..." />
+        <input class="sf-input" id="sf-dur" placeholder="Διάρκεια (π.χ. 30')" />
+      </div>
+      <div class="sf-row sf-row-2">
+        <select class="sf-select" id="sf-station">
+          <option value="all">👨‍🍳 Όλοι</option>
+          <option value="hot">🍳 Hot Kitchen</option>
+          <option value="grill">🔥 Grill / Action</option>
+          <option value="fish">🐟 Fish Station</option>
+          <option value="veg">🥦 Veg / Garnish</option>
+          <option value="soup">🍝 Soup &amp; Pasta</option>
+        </select>
+        <select class="sf-select" id="sf-pri">
+          <option value="med">NORMAL</option>
+          <option value="high">URGENT</option>
+          <option value="low">FLEX</option>
+        </select>
+      </div>
+      <button class="sf-submit" onclick="addShiftTask()">✓ Προσθήκη Εργασίας</button>
+    </div>
+    <div id="shiftTaskList"></div>
   </div>
 
   <!-- TASKS OUTPUT -->
@@ -631,19 +693,126 @@ function saveChecked() {
 }
 
 // ═══════════════════════════════════════════════════════
+// SHIFT TASK ASSIGNMENT
+// ═══════════════════════════════════════════════════════
+let shiftTasks = [];
+
+function shiftKey() { return `shift_tasks_${dayKey}`; }
+function loadShiftTasks() {
+  try { shiftTasks = JSON.parse(localStorage.getItem(shiftKey()) || "[]"); } catch { shiftTasks = []; }
+}
+function saveShiftTasks() {
+  try { localStorage.setItem(shiftKey(), JSON.stringify(shiftTasks)); } catch {}
+}
+
+function toggleShiftForm() {
+  const form = document.getElementById("shiftForm");
+  const btn = document.getElementById("shiftAddToggle");
+  const isOpen = form.style.display !== "none";
+  form.style.display = isOpen ? "none" : "block";
+  btn.classList.toggle("open", !isOpen);
+  btn.textContent = isOpen ? "+ Νέα Εργασία Βάρδιας" : "✕ Κλείσιμο Φόρμας";
+}
+
+function addShiftTask() {
+  const text = document.getElementById("sf-text").value.trim();
+  if (!text) { document.getElementById("sf-text").focus(); return; }
+  const task = {
+    id: Date.now().toString(),
+    text,
+    assignee: document.getElementById("sf-assignee").value.trim() || "Αδιάθετη",
+    dur: document.getElementById("sf-dur").value.trim(),
+    station: document.getElementById("sf-station").value,
+    pri: document.getElementById("sf-pri").value,
+    done: false
+  };
+  shiftTasks.push(task);
+  saveShiftTasks();
+  ["sf-text","sf-assignee","sf-dur"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("sf-station").value = "all";
+  document.getElementById("sf-pri").value = "med";
+  renderShiftPanel();
+}
+
+function toggleShiftTask(id) {
+  const task = shiftTasks.find(t => t.id === id);
+  if (!task) return;
+  task.done = !task.done;
+  saveShiftTasks();
+  renderShiftPanel();
+}
+
+function deleteShiftTask(id) {
+  shiftTasks = shiftTasks.filter(t => t.id !== id);
+  saveShiftTasks();
+  renderShiftPanel();
+}
+
+function renderShiftPanel() {
+  const total = shiftTasks.length;
+  const done = shiftTasks.filter(t => t.done).length;
+  document.getElementById("progressText").textContent = `${done}/${total} εργασίες`;
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  const fill = document.getElementById("progressFill");
+  fill.style.width = pct + "%";
+  fill.classList.toggle("done", pct === 100);
+  document.getElementById("completeBanner").classList.toggle("show", total > 0 && done === total);
+
+  if (!shiftTasks.length) {
+    document.getElementById("shiftTaskList").innerHTML = '<div class="shift-empty">Δεν υπάρχουν εργασίες βάρδιας για αυτή τη μέρα.<br>Πατήστε «+ Νέα Εργασία Βάρδιας» για να προσθέσετε.</div>';
+    return;
+  }
+
+  const stLbl = { all:"Όλοι", hot:"Hot Kitchen", grill:"Grill/Action", fish:"Fish Station", veg:"Veg/Garnish", soup:"Soup & Pasta" };
+  const priLbl = { high:"URGENT", med:"NORMAL", low:"FLEX" };
+
+  const groups = {};
+  shiftTasks.forEach(t => {
+    const k = t.assignee || "Αδιάθετη";
+    if (!groups[k]) groups[k] = [];
+    groups[k].push(t);
+  });
+
+  document.getElementById("shiftTaskList").innerHTML = Object.entries(groups).map(([name, tasks]) => `
+    <div class="shift-group">
+      <div class="shift-group-hdr">
+        <div class="shift-group-name ${name === "Αδιάθετη" ? "unassigned" : ""}">
+          ${name === "Αδιάθετη" ? name : "👤 " + name}
+        </div>
+        <div class="shift-group-count">${tasks.filter(t => t.done).length}/${tasks.length}</div>
+      </div>
+      ${tasks.map(t => `
+        <div class="shift-task ${t.done ? "done" : ""}">
+          <div class="shift-task-check" onclick="toggleShiftTask('${t.id}')">${t.done ? "✓" : ""}</div>
+          <div class="shift-task-body" onclick="toggleShiftTask('${t.id}')">
+            <div class="shift-task-text">${t.text}</div>
+            <div class="shift-task-meta">
+              <span>${stLbl[t.station] || t.station}</span>
+              ${t.dur ? `<span>⏱ ${t.dur}</span>` : ""}
+              <span class="task-pri ${t.pri}" style="font-size:8px;padding:1px 5px;border:1px solid;display:inline;">${priLbl[t.pri] || t.pri}</span>
+            </div>
+          </div>
+          <button class="shift-del" onclick="deleteShiftTask('${t.id}')" title="Διαγραφή">×</button>
+        </div>
+      `).join("")}
+    </div>
+  `).join("");
+}
+
+// ═══════════════════════════════════════════════════════
 // RENDER
 // ═══════════════════════════════════════════════════════
 function setService(s) {
   service = s;
   document.querySelectorAll(".svc-btn").forEach(b => b.classList.remove("active"));
   document.getElementById("btn-" + s).classList.add("active");
-  loadChecked();
+  if (s === "shift") { loadShiftTasks(); } else { loadChecked(); }
   render();
 }
 
 function setDay(key) {
   dayKey = key;
-  loadChecked();
+  if (service === "shift") { loadShiftTasks(); } else { loadChecked(); }
   render();
 }
 
@@ -747,13 +916,28 @@ function renderTasks() {
 
 function render() {
   buildDayGrid();
-  buildStationGrid();
-  renderTasks();
-  updateProgress();
-  checkComplete();
+  const isShift = service === "shift";
+  document.getElementById("stationLabel").style.display = isShift ? "none" : "";
+  document.getElementById("stationGrid").style.display = isShift ? "none" : "";
+  document.getElementById("shiftPanel").style.display = isShift ? "block" : "none";
+  document.getElementById("tasksOutput").style.display = isShift ? "none" : "";
+  if (isShift) {
+    renderShiftPanel();
+  } else {
+    buildStationGrid();
+    renderTasks();
+    updateProgress();
+    checkComplete();
+  }
 }
 
 function resetChecks() {
+  if (service === "shift") {
+    shiftTasks.forEach(t => t.done = false);
+    saveShiftTasks();
+    renderShiftPanel();
+    return;
+  }
   checked = {};
   saveChecked();
   render();
