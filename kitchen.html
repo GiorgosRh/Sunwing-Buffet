@@ -119,9 +119,41 @@
     .shift-del{background:none;border:none;color:var(--ash);font-size:16px;cursor:pointer;padding:0 4px;flex-shrink:0;line-height:1;transition:color .15s;}
     .shift-del:hover{color:var(--high);}
     .shift-empty{text-align:center;padding:32px;color:var(--ash);font-size:12px;line-height:1.8;}
+
+    /* ADMIN MODAL */
+    .admin-overlay{position:fixed;inset:0;background:rgba(6,6,4,.85);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .admin-modal{background:var(--ink2);border:1px solid var(--gold);max-width:320px;width:100%;padding:28px 24px;}
+    .admin-modal-icon{font-size:24px;text-align:center;margin-bottom:12px;}
+    .admin-modal-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold2);text-align:center;margin-bottom:6px;letter-spacing:1px;}
+    .admin-modal-sub{font-size:11px;color:var(--fog);text-align:center;margin-bottom:20px;line-height:1.6;}
+    .admin-pin-input{width:100%;padding:12px;background:var(--ink);border:1px solid var(--smoke);color:var(--paper);font-family:'DM Sans',sans-serif;font-size:18px;letter-spacing:6px;text-align:center;outline:none;margin-bottom:8px;}
+    .admin-pin-input:focus{border-color:var(--gold);}
+    .admin-error{font-size:11px;color:var(--high);text-align:center;min-height:18px;margin-bottom:12px;letter-spacing:1px;}
+    .admin-modal-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .admin-btn-cancel{padding:10px;border:1px solid var(--smoke);background:transparent;color:var(--ash);font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;transition:all .15s;}
+    .admin-btn-cancel:hover{border-color:var(--ash);color:var(--paper);}
+    .admin-btn-confirm{padding:10px;border:none;background:var(--gold);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;font-weight:500;transition:background .15s;}
+    .admin-btn-confirm:hover{background:var(--gold2);}
+    .admin-setup-note{font-size:10px;color:var(--ash);text-align:center;margin-top:12px;line-height:1.5;}
   </style>
 </head>
 <body>
+
+<!-- ADMIN MODAL -->
+<div class="admin-overlay" id="adminModal" style="display:none;">
+  <div class="admin-modal">
+    <div class="admin-modal-icon">🔐</div>
+    <div class="admin-modal-title" id="adminModalTitle">ΕΠΑΛΗΘΕΥΣΗ ADMIN</div>
+    <div class="admin-modal-sub" id="adminModalSub">Εισάγετε τον κωδικό admin για να συνεχίσετε.</div>
+    <input class="admin-pin-input" id="adminPinInput" type="password" placeholder="••••" maxlength="30" autocomplete="off" />
+    <div class="admin-error" id="adminError"></div>
+    <div class="admin-modal-btns">
+      <button class="admin-btn-cancel" onclick="closeAdminModal()">Ακύρωση</button>
+      <button class="admin-btn-confirm" onclick="confirmAdminPin()">Επιβεβαίωση</button>
+    </div>
+    <div class="admin-setup-note" id="adminSetupNote" style="display:none;">Πρώτη ρύθμιση: ο κωδικός που θα πληκτρολογήσετε θα οριστεί ως κωδικός admin.</div>
+  </div>
+</div>
 
 <div class="topbar">
   <div class="topbar-left">
@@ -931,16 +963,69 @@ function render() {
   }
 }
 
-function resetChecks() {
-  if (service === "shift") {
-    shiftTasks.forEach(t => t.done = false);
-    saveShiftTasks();
-    renderShiftPanel();
+// ═══════════════════════════════════════════════════════
+// ADMIN PIN (SHA-256 hashed, stored in localStorage)
+// ═══════════════════════════════════════════════════════
+const ADMIN_KEY = "helios_admin_hash";
+let pendingAdminAction = null;
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+function requireAdmin(action) {
+  pendingAdminAction = action;
+  const hasPin = !!localStorage.getItem(ADMIN_KEY);
+  document.getElementById("adminModalTitle").textContent = hasPin ? "ΕΠΑΛΗΘΕΥΣΗ ADMIN" : "ΟΡΙΣΜΟΣ ΚΩΔΙΚΟΥ";
+  document.getElementById("adminModalSub").textContent = hasPin
+    ? "Εισάγετε τον κωδικό admin για να συνεχίσετε."
+    : "Δεν έχει οριστεί κωδικός admin ακόμα.";
+  document.getElementById("adminSetupNote").style.display = hasPin ? "none" : "";
+  document.getElementById("adminPinInput").value = "";
+  document.getElementById("adminError").textContent = "";
+  document.getElementById("adminModal").style.display = "flex";
+  setTimeout(() => document.getElementById("adminPinInput").focus(), 50);
+}
+
+async function confirmAdminPin() {
+  const pin = document.getElementById("adminPinInput").value;
+  if (!pin) { document.getElementById("adminPinInput").focus(); return; }
+  const hash = await sha256(pin);
+  const stored = localStorage.getItem(ADMIN_KEY);
+  if (!stored) {
+    localStorage.setItem(ADMIN_KEY, hash);
+    closeAdminModal();
+    if (pendingAdminAction) { pendingAdminAction(); pendingAdminAction = null; }
     return;
   }
-  checked = {};
-  saveChecked();
-  render();
+  if (hash === stored) {
+    closeAdminModal();
+    if (pendingAdminAction) { pendingAdminAction(); pendingAdminAction = null; }
+  } else {
+    document.getElementById("adminError").textContent = "✕ Λάθος κωδικός. Προσπαθήστε ξανά.";
+    document.getElementById("adminPinInput").value = "";
+    document.getElementById("adminPinInput").focus();
+  }
+}
+
+function closeAdminModal() {
+  document.getElementById("adminModal").style.display = "none";
+  pendingAdminAction = null;
+}
+
+function resetChecks() {
+  requireAdmin(() => {
+    if (service === "shift") {
+      shiftTasks.forEach(t => t.done = false);
+      saveShiftTasks();
+      renderShiftPanel();
+    } else {
+      checked = {};
+      saveChecked();
+      render();
+    }
+  });
 }
 
 // INIT — detect today's day
@@ -949,6 +1034,11 @@ const dayMap = { 1:"MON", 2:"TUE", 3:"WED", 4:"THU", 5:"FRI", 6:"SAT", 0:"SUN" }
 dayKey = dayMap[jsDay] || "MON";
 loadChecked();
 render();
+
+document.getElementById("adminPinInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") confirmAdminPin();
+  if (e.key === "Escape") closeAdminModal();
+});
 </script>
 </body>
 </html>
