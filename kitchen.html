@@ -121,7 +121,7 @@
     .shift-empty{text-align:center;padding:32px;color:var(--ash);font-size:12px;line-height:1.8;}
 
     /* ADMIN MODAL */
-    .admin-overlay{position:fixed;inset:0;background:rgba(6,6,4,.85);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .admin-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(6,6,4,.85);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;}
     .admin-modal{background:var(--ink2);border:1px solid var(--gold);max-width:320px;width:100%;padding:28px 24px;}
     .admin-modal-icon{font-size:24px;text-align:center;margin-bottom:12px;}
     .admin-modal-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold2);text-align:center;margin-bottom:6px;letter-spacing:1px;}
@@ -969,9 +969,14 @@ function render() {
 const ADMIN_KEY = "helios_admin_hash";
 let pendingAdminAction = null;
 
-async function sha256(text) {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+function hashPin(str) {
+  // FNV-1a 32-bit hash — synchronous, no secure context needed
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h.toString(16).padStart(8, "0");
 }
 
 function requireAdmin(action) {
@@ -988,10 +993,10 @@ function requireAdmin(action) {
   setTimeout(() => document.getElementById("adminPinInput").focus(), 50);
 }
 
-async function confirmAdminPin() {
+function confirmAdminPin() {
   const pin = document.getElementById("adminPinInput").value;
   if (!pin) { document.getElementById("adminPinInput").focus(); return; }
-  const hash = await sha256(pin);
+  const hash = hashPin(pin);
   const stored = localStorage.getItem(ADMIN_KEY);
   if (!stored) {
     localStorage.setItem(ADMIN_KEY, hash);
