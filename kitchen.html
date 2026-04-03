@@ -778,9 +778,11 @@ function toggleShiftTask(id) {
 }
 
 function deleteShiftTask(id) {
-  shiftTasks = shiftTasks.filter(t => t.id !== id);
-  saveShiftTasks();
-  renderShiftPanel();
+  requireAdmin(() => {
+    shiftTasks = shiftTasks.filter(t => t.id !== id);
+    saveShiftTasks();
+    renderShiftPanel();
+  });
 }
 
 function renderShiftPanel() {
@@ -984,6 +986,7 @@ function hashPin(str) {
 }
 
 function requireAdmin(action) {
+  adminModalMode = "auth";
   pendingAdminAction = action;
   const hasPin = !!localStorage.getItem(ADMIN_KEY);
   document.getElementById("adminModalTitle").textContent = hasPin ? "ΕΠΑΛΗΘΕΥΣΗ ADMIN" : "ΟΡΙΣΜΟΣ ΚΩΔΙΚΟΥ";
