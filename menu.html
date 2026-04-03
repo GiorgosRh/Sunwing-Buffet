@@ -16,6 +16,8 @@
   button{font-family:'Segoe UI',Arial,sans-serif}
   @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .theme-toggle-btn{background:none;border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.7);padding:4px 9px;cursor:pointer;font-size:15px;line-height:1;transition:all .15s;font-family:inherit;}
+  .theme-toggle-btn:hover{border-color:#F7941D;color:#F7941D;}
 </style>
 </head>
 <body>
@@ -336,8 +338,11 @@ function App() {
               <div style={{fontSize:18,fontWeight:800,color:B.white,letterSpacing:"0.08em",textTransform:"uppercase",lineHeight:1}}>SUNWING</div>
               <div style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.22em",textTransform:"uppercase",color:B.orange,marginTop:3}}>Family Resorts</div>
             </div>
-            <div style={{marginLeft:"auto",fontFamily:"monospace",fontSize:10,letterSpacing:"0.22em",textTransform:"uppercase",color:"rgba(255,255,255,0.3)",textAlign:"right"}}>
-              <div>Rhodes</div><div style={{color:B.orange,marginTop:2}}>2025</div>
+            <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:12}}>
+              <button id="themeToggle" className="theme-toggle-btn" onClick={()=>{if(window.toggleTheme)window.toggleTheme();}} title="Εναλλαγή θέματος">🌙</button>
+              <div style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.22em",textTransform:"uppercase",color:"rgba(255,255,255,0.3)",textAlign:"right"}}>
+                <div>Rhodes</div><div style={{color:B.orange,marginTop:2}}>2025</div>
+              </div>
             </div>
           </div>
           <div style={{borderTop:`1px solid ${B.orange}22`,paddingTop:20}}>

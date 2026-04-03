@@ -24,6 +24,18 @@
       --paper2: #ede5d5;
     }
 
+    body.light {
+      --ink:#faf8f4; --ink2:#f0ebe0; --ink3:#e8e2d5;
+      --gold:#7a5c16; --gold2:#9a7820; --gold3:#b89030;
+      --smoke:#d5ccc0; --ash:#5a5040; --fog:#7a6e5e;
+      --paper:#1a1510; --paper2:#2a2015;
+      --high:#c01818; --med:#b07000; --low:#148014;
+    }
+    body.light .topbar{background:rgba(250,248,244,.97)!important;border-bottom-color:#d5ccc0!important;}
+    body.light .grain{display:none;}
+    .theme-toggle-btn{background:none;border:1px solid var(--smoke);color:var(--ash);padding:4px 9px;cursor:pointer;font-size:15px;line-height:1;transition:all .15s;font-family:inherit;}
+    .theme-toggle-btn:hover{border-color:var(--gold);color:var(--gold2);}
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html { scroll-behavior: smooth; }
@@ -415,7 +427,10 @@
       <div class="status-dot"></div>
       <div class="status-text">LIVE</div>
       <div class="topbar-divider"></div>
-      <div class="topbar-time" id="liveTime">—</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" title="Εναλλαγή θέματος">🌙</button>
+        <div class="topbar-time" id="liveTime">—</div>
+      </div>
     </div>
   </header>
 
@@ -611,6 +626,20 @@
     document.getElementById("liveTime").textContent = h + ":" + m + ":" + s;
   }
   tick(); setInterval(tick, 1000);
+
+  // ── THEME TOGGLE ──
+  function toggleTheme() {
+    const isLight = document.body.classList.toggle("light");
+    localStorage.setItem("helios_theme", isLight ? "light" : "dark");
+    document.getElementById("themeToggle").textContent = isLight ? "☀️" : "🌙";
+  }
+  (function(){
+    if (localStorage.getItem("helios_theme") === "light") {
+      document.body.classList.add("light");
+      const btn = document.getElementById("themeToggle");
+      if (btn) btn.textContent = "☀️";
+    }
+  })();
 
   // ── CALENDAR ──
   const ORDER = [1,2,3,4,5,6,0];
