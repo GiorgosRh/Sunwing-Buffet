@@ -1080,7 +1080,7 @@ function updatePinBtn() {
 function resetChecks() {
   requireAdmin(() => {
     if (service === "shift") {
-      shiftTasks.forEach(t => t.done = false);
+      shiftTasks = [];
       saveShiftTasks();
       renderShiftPanel();
     } else {
