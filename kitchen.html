@@ -1021,11 +1021,13 @@ function confirmAdminPin() {
     if (!stored) {
       localStorage.setItem(ADMIN_KEY, hash);
       updatePinBtn();
+      const action = pendingAdminAction;
       closeAdminModal();
-      if (pendingAdminAction) { pendingAdminAction(); pendingAdminAction = null; }
+      if (action) action();
     } else if (hash === stored) {
+      const action = pendingAdminAction;
       closeAdminModal();
-      if (pendingAdminAction) { pendingAdminAction(); pendingAdminAction = null; }
+      if (action) action();
     } else {
       document.getElementById("adminError").textContent = "✕ Λάθος κωδικός. Προσπαθήστε ξανά.";
       document.getElementById("adminPinInput").value = "";
@@ -1046,7 +1048,6 @@ function confirmAdminPin() {
     localStorage.setItem(ADMIN_KEY, hash);
     updatePinBtn();
     closeAdminModal();
-    // brief visual feedback
     const btn = document.getElementById("pinBtn");
     btn.style.color = "var(--low)";
     btn.querySelector("#pinBtnLabel").textContent = "Κωδικός αποθηκεύτηκε ✓";
