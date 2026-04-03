@@ -87,6 +87,8 @@
     /* RESET */
     .reset-btn{width:100%;padding:10px;border:1px solid var(--smoke);background:transparent;color:var(--ash);font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;margin-top:10px;transition:all .15s;}
     .reset-btn:hover{border-color:var(--ash);color:var(--paper);}
+    .pin-btn{width:100%;padding:8px;border:none;background:transparent;color:var(--ash);font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:1px;cursor:pointer;margin-top:6px;transition:color .15s;opacity:.6;}
+    .pin-btn:hover{color:var(--gold);opacity:1;}
 
     .no-tasks{text-align:center;padding:32px;color:var(--ash);font-size:12px;}
 
@@ -232,6 +234,7 @@
   </div>
 
   <button class="reset-btn" onclick="resetChecks()">↺ Επαναφορά Λίστας</button>
+  <button class="pin-btn" id="pinBtn" onclick="openPinManager()">🔑 <span id="pinBtnLabel">Ορισμός Κωδικού Admin</span></button>
 
 </div>
 
@@ -968,6 +971,7 @@ function render() {
 // ═══════════════════════════════════════════════════════
 const ADMIN_KEY = "helios_admin_hash";
 let pendingAdminAction = null;
+let adminModalMode = "auth"; // "auth" | "change-verify" | "change-new"
 
 function hashPin(str) {
   // FNV-1a 32-bit hash — synchronous, no secure context needed
@@ -993,30 +997,81 @@ function requireAdmin(action) {
   setTimeout(() => document.getElementById("adminPinInput").focus(), 50);
 }
 
+function showModal(title, sub, setupNote) {
+  document.getElementById("adminModalTitle").textContent = title;
+  document.getElementById("adminModalSub").textContent = sub;
+  document.getElementById("adminSetupNote").style.display = setupNote ? "" : "none";
+  document.getElementById("adminSetupNote").textContent = setupNote || "";
+  document.getElementById("adminPinInput").value = "";
+  document.getElementById("adminError").textContent = "";
+  document.getElementById("adminModal").style.display = "flex";
+  setTimeout(() => document.getElementById("adminPinInput").focus(), 50);
+}
+
 function confirmAdminPin() {
   const pin = document.getElementById("adminPinInput").value;
   if (!pin) { document.getElementById("adminPinInput").focus(); return; }
   const hash = hashPin(pin);
   const stored = localStorage.getItem(ADMIN_KEY);
-  if (!stored) {
+
+  if (adminModalMode === "auth") {
+    if (!stored) {
+      localStorage.setItem(ADMIN_KEY, hash);
+      updatePinBtn();
+      closeAdminModal();
+      if (pendingAdminAction) { pendingAdminAction(); pendingAdminAction = null; }
+    } else if (hash === stored) {
+      closeAdminModal();
+      if (pendingAdminAction) { pendingAdminAction(); pendingAdminAction = null; }
+    } else {
+      document.getElementById("adminError").textContent = "✕ Λάθος κωδικός. Προσπαθήστε ξανά.";
+      document.getElementById("adminPinInput").value = "";
+      document.getElementById("adminPinInput").focus();
+    }
+
+  } else if (adminModalMode === "change-verify") {
+    if (hash === stored) {
+      adminModalMode = "change-new";
+      showModal("ΝΕΟΣ ΚΩΔΙΚΟΣ", "Πληκτρολογήστε τον νέο κωδικό admin.", null);
+    } else {
+      document.getElementById("adminError").textContent = "✕ Λάθος κωδικός. Προσπαθήστε ξανά.";
+      document.getElementById("adminPinInput").value = "";
+      document.getElementById("adminPinInput").focus();
+    }
+
+  } else if (adminModalMode === "change-new") {
     localStorage.setItem(ADMIN_KEY, hash);
+    updatePinBtn();
     closeAdminModal();
-    if (pendingAdminAction) { pendingAdminAction(); pendingAdminAction = null; }
-    return;
-  }
-  if (hash === stored) {
-    closeAdminModal();
-    if (pendingAdminAction) { pendingAdminAction(); pendingAdminAction = null; }
-  } else {
-    document.getElementById("adminError").textContent = "✕ Λάθος κωδικός. Προσπαθήστε ξανά.";
-    document.getElementById("adminPinInput").value = "";
-    document.getElementById("adminPinInput").focus();
+    // brief visual feedback
+    const btn = document.getElementById("pinBtn");
+    btn.style.color = "var(--low)";
+    btn.querySelector("#pinBtnLabel").textContent = "Κωδικός αποθηκεύτηκε ✓";
+    setTimeout(() => { btn.style.color = ""; updatePinBtn(); }, 2000);
   }
 }
 
 function closeAdminModal() {
   document.getElementById("adminModal").style.display = "none";
   pendingAdminAction = null;
+  adminModalMode = "auth";
+}
+
+function openPinManager() {
+  const hasPin = !!localStorage.getItem(ADMIN_KEY);
+  if (!hasPin) {
+    adminModalMode = "auth";
+    showModal("ΟΡΙΣΜΟΣ ΚΩΔΙΚΟΥ", "Δεν έχει οριστεί κωδικός admin ακόμα.", "Πληκτρολογήστε τον κωδικό που θέλετε να ορίσετε.");
+    document.getElementById("adminModal").style.display = "flex";
+  } else {
+    adminModalMode = "change-verify";
+    showModal("ΑΛΛΑΓΗ ΚΩΔΙΚΟΥ", "Εισάγετε πρώτα τον τρέχοντα κωδικό admin.", null);
+  }
+}
+
+function updatePinBtn() {
+  const hasPin = !!localStorage.getItem(ADMIN_KEY);
+  document.getElementById("pinBtnLabel").textContent = hasPin ? "Αλλαγή Κωδικού Admin" : "Ορισμός Κωδικού Admin";
 }
 
 function resetChecks() {
@@ -1039,6 +1094,7 @@ const dayMap = { 1:"MON", 2:"TUE", 3:"WED", 4:"THU", 5:"FRI", 6:"SAT", 0:"SUN" }
 dayKey = dayMap[jsDay] || "MON";
 loadChecked();
 render();
+updatePinBtn();
 
 document.getElementById("adminPinInput").addEventListener("keydown", e => {
   if (e.key === "Enter") confirmAdminPin();
