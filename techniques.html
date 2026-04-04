@@ -130,8 +130,9 @@
     <div class="topbar-title">Kitchen Techniques</div>
   </div>
   <div style="display:flex;align-items:center;gap:12px;">
-    <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" title="Εναλλαγή θέματος">🌙</button>
-    <a href="index.html" class="topbar-back">← Portal</a>
+    <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" data-i18n-title="theme.title">🌙</button>
+    <button class="lang-btn theme-toggle-btn" onclick="toggleLang()">EN</button>
+    <a href="index.html" class="topbar-back" data-i18n="nav.back">← Portal</a>
   </div>
 </div>
 
@@ -141,12 +142,12 @@
     <div class="ey-text">Professional Kitchen · Reference Guide</div>
   </div>
   <h1 class="hero-title">Culinary<br/><em>Techniques</em></h1>
-  <p class="hero-sub">Θεμελιώδεις τεχνικές επαγγελματικής κουζίνας — οργανωμένες ανά κατηγορία για γρήγορη αναφορά κατά τη βάρδια.</p>
+  <p class="hero-sub" data-i18n="tech.hero.sub">Θεμελιώδεις τεχνικές επαγγελματικής κουζίνας — οργανωμένες ανά κατηγορία για γρήγορη αναφορά κατά τη βάρδια.</p>
 </div>
 
 <div class="tabs-wrap">
   <div class="tabs" id="tabs">
-    <button class="tab active" data-cat="all">Όλες</button>
+    <button class="tab active" data-cat="all" data-i18n="tech.tab.all">Όλες</button>
     <button class="tab" data-cat="stocks">Stocks &amp; Sauces</button>
     <button class="tab" data-cat="meat">Κρέας &amp; Πουλερικά</button>
     <button class="tab" data-cat="fish">Ψάρι &amp; Θαλασσινά</button>
@@ -157,7 +158,7 @@
 </div>
 
 <div class="search-wrap">
-  <input class="search" id="search" type="text" placeholder="Αναζήτηση τεχνικής..."/>
+  <input class="search" id="search" type="text" data-i18n-ph="tech.search"/>
 </div>
 
 <div class="grid" id="grid"></div>
@@ -567,7 +568,7 @@ function renderAll() {
   const filtered = getFiltered();
 
   if (!filtered.length) {
-    grid.innerHTML = '<div class="empty">Δεν βρέθηκαν τεχνικές</div>';
+    grid.innerHTML = `<div class="empty">${t("tech.empty")}</div>`;
     return;
   }
 
@@ -588,9 +589,9 @@ function renderAll() {
       </div>
       <div class="card-body ${isOpen ? 'open' : ''}">
         <div class="btabs">
-          <button class="btab ${activeTab==='steps'?'active':''}" onclick="switchTab(${r.id},'steps',this)">Τεχνική</button>
-          <button class="btab ${activeTab==='key'?'active':''}" onclick="switchTab(${r.id},'key',this)">Key Points</button>
-          <button class="btab ${activeTab==='apps'?'active':''}" onclick="switchTab(${r.id},'apps',this)">Εφαρμογές</button>
+          <button class="btab ${activeTab==='steps'?'active':''}" onclick="switchTab(${r.id},'steps',this)">${t("tech.btab.tech")}</button>
+          <button class="btab ${activeTab==='key'?'active':''}" onclick="switchTab(${r.id},'key',this)">${t("tech.btab.keys")}</button>
+          <button class="btab ${activeTab==='apps'?'active':''}" onclick="switchTab(${r.id},'apps',this)">${t("tech.btab.apps")}</button>
         </div>
         <div class="bpanel ${activeTab==='steps'?'active':''}" id="steps-${r.id}">
           <ul class="steps">
@@ -676,5 +677,6 @@ function toggleTheme() {
   }
 })();
 </script>
+<script src="i18n.js"></script>
 </body>
 </html>

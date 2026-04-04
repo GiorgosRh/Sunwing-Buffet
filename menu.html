@@ -348,7 +348,8 @@ function App() {
               <div style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.22em",textTransform:"uppercase",color:B.orange,marginTop:3}}>Family Resorts</div>
             </div>
             <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:12}}>
-              <button id="themeToggle" className="theme-toggle-btn" onClick={()=>{if(window.toggleTheme)window.toggleTheme();}} title="Εναλλαγή θέματος">🌙</button>
+              <button id="themeToggle" className="theme-toggle-btn" onClick={()=>{if(window.toggleTheme)window.toggleTheme();}} data-i18n-title="theme.title">🌙</button>
+              <button className="lang-btn theme-toggle-btn" onClick={()=>{if(window.toggleLang)window.toggleLang();}}>EN</button>
               <div style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.22em",textTransform:"uppercase",color:"rgba(255,255,255,0.3)",textAlign:"right"}}>
                 <div>Rhodes</div><div style={{color:B.orange,marginTop:2}}>2025</div>
               </div>
@@ -422,5 +423,6 @@ window.toggleTheme = function() {
   }
 })();
 </script>
+<script src="i18n.js"></script>
 </body>
 </html>

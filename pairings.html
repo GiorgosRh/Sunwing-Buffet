@@ -171,8 +171,9 @@
     <div class="topbar-title">Flavor Pairings</div>
   </div>
   <div style="display:flex;align-items:center;gap:12px;">
-    <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" title="Εναλλαγή θέματος">🌙</button>
-    <a href="index.html" class="topbar-back">← Portal</a>
+    <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" data-i18n-title="theme.title">🌙</button>
+    <button class="lang-btn theme-toggle-btn" onclick="toggleLang()">EN</button>
+    <a href="index.html" class="topbar-back" data-i18n="nav.back">← Portal</a>
   </div>
 </div>
 
@@ -182,22 +183,22 @@
     <div class="ey-text">World Cuisine · Flavor Reference</div>
   </div>
   <h1>Flavor <em>Pairings</em></h1>
-  <p class="hero-sub">Συνδυασμοί γεύσεων και υλικών από κουζίνες όλου του κόσμου — οργανωμένοι ανά κουζίνα, εποχή, μπαχαρικά και αντικαταστάσεις.</p>
+  <p class="hero-sub" data-i18n="pair.hero.sub">Συνδυασμοί γεύσεων και υλικών από κουζίνες όλου του κόσμου — οργανωμένοι ανά κουζίνα, εποχή, μπαχαρικά και αντικαταστάσεις.</p>
 </div>
 
 <div class="main-tabs-wrap">
   <div class="main-tabs" id="mainTabs">
-    <button class="mtab active" data-panel="cuisines-protein">🥩 Κρέας ανά Κουζίνα</button>
-    <button class="mtab" data-panel="cuisines-veg">🥦 Λαχανικά ανά Κουζίνα</button>
-    <button class="mtab" data-panel="seasonal">🌿 Εποχιακά Pairings</button>
-    <button class="mtab" data-panel="spices">🌶️ Spice Blends</button>
-    <button class="mtab" data-panel="sauces">🫙 Universal Sauces</button>
-    <button class="mtab" data-panel="substitutions">🔄 Αντικαταστάσεις</button>
+    <button class="mtab active" data-panel="cuisines-protein" data-i18n="pair.tab.meat">🥩 Κρέας ανά Κουζίνα</button>
+    <button class="mtab" data-panel="cuisines-veg" data-i18n="pair.tab.veg">🥦 Λαχανικά ανά Κουζίνα</button>
+    <button class="mtab" data-panel="seasonal" data-i18n="pair.tab.seasonal">🌿 Εποχιακά Pairings</button>
+    <button class="mtab" data-panel="spices" data-i18n="pair.tab.spice">🌶️ Spice Blends</button>
+    <button class="mtab" data-panel="sauces" data-i18n="pair.tab.sauces">🫙 Universal Sauces</button>
+    <button class="mtab" data-panel="substitutions" data-i18n="pair.tab.subs">🔄 Αντικαταστάσεις</button>
   </div>
 </div>
 
 <div class="search-wrap">
-  <input class="search" id="searchInput" type="text" placeholder="Αναζήτηση υλικού ή κουζίνας..."/>
+  <input class="search" id="searchInput" type="text" data-i18n-ph="pair.search"/>
 </div>
 
 <div class="content">
@@ -618,7 +619,7 @@ function renderCuisines(data, containerId) {
     !q || c.name.toLowerCase().includes(q) ||
     c.pairings.some(p => p.ing.toLowerCase().includes(q) || p.pairs.toLowerCase().includes(q))
   );
-  if (!filtered.length) { container.innerHTML='<div class="empty">Δεν βρέθηκαν αποτελέσματα</div>'; return; }
+  if (!filtered.length) { container.innerHTML=`<div class="empty">${t("pair.empty")}</div>`; return; }
 
   container.innerHTML = filtered.map(c => {
     const key = containerId + c.name;
@@ -736,7 +737,7 @@ function renderSubs() {
         <div class="sub-mob-item">
           <div class="sub-mob-from">${r.from} → ${r.to}</div>
           <div class="sub-mob-why">${r.why}</div>
-          <div class="sub-mob-why" style="margin-top:3px;font-style:italic">Κράτα: ${r.keep}</div>
+          <div class="sub-mob-why" style="margin-top:3px;font-style:italic">${t("pair.keep")} ${r.keep}</div>
         </div>
       `).join('')}
     </div>
@@ -786,5 +787,6 @@ function toggleTheme() {
   }
 })();
 </script>
+<script src="i18n.js"></script>
 </body>
 </html>

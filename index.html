@@ -394,6 +394,7 @@
       pointer-events: none; opacity: .06; z-index: 2;
     }
   </style>
+  <script src="i18n.js"></script>
 </head>
 <body>
 <div class="page">
@@ -410,7 +411,8 @@
       <div class="status-text">LIVE</div>
       <div class="topbar-divider"></div>
       <div style="display:flex;align-items:center;gap:12px;">
-        <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" title="Εναλλαγή θέματος">🌙</button>
+        <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" data-i18n-title="theme.title">🌙</button>
+        <button class="lang-btn theme-toggle-btn" onclick="toggleLang()">EN</button>
         <div class="topbar-time" id="liveTime">—</div>
       </div>
     </div>
@@ -423,28 +425,28 @@
       <div class="eyebrow-text">Sunwing Family Resorts · Rhodes · 2026</div>
     </div>
     <h1 class="hero-title">Kitchen<br/><em>Operations</em><br/>Portal</h1>
-    <p class="hero-tagline">Κεντρικό σύστημα διαχείρισης κουζίνας — μενού, συνταγές, λίστες εργασιών και προγραμματισμός βαρδιών για τα εστιατόρια Helios &amp; Ella.</p>
+    <p class="hero-tagline" data-i18n="index.tagline">Κεντρικό σύστημα διαχείρισης κουζίνας — μενού, συνταγές, λίστες εργασιών και προγραμματισμός βαρδιών για τα εστιατόρια Helios &amp; Ella.</p>
   </section>
 
   <!-- TODAY STRIP -->
   <div class="today-strip" id="todayStrip">
     <div class="strip-section">
-      <div class="strip-label">Σήμερα</div>
+      <div class="strip-label" data-i18n="index.today">Σήμερα</div>
       <div class="strip-value" id="stripDay">—</div>
       <div class="strip-sub" id="stripDate">—</div>
     </div>
     <div class="strip-section">
-      <div class="strip-label">Θεματική Βραδιά</div>
+      <div class="strip-label" data-i18n="index.tonight">Θεματική Βραδιά</div>
       <div class="strip-value gold" id="stripTheme">—</div>
-      <div class="strip-sub">Dinner Service · 17:30</div>
+      <div class="strip-sub" data-i18n="index.dinner.sub">Dinner Service · 17:30</div>
     </div>
     <div class="strip-section" style="padding-left:20px; padding-right:20px;">
       <div class="strip-flag" id="stripFlag"></div>
     </div>
     <div class="strip-section" style="flex:1; background: linear-gradient(to right, transparent, #b8962e08);">
-      <div class="strip-label">Επόμενη Βραδιά</div>
+      <div class="strip-label" data-i18n="index.next">Επόμενη Βραδιά</div>
       <div class="strip-value" id="stripNext" style="font-size:14px; color: var(--fog)">—</div>
-      <div class="strip-sub">Αύριο</div>
+      <div class="strip-sub" data-i18n="index.tomorrow">Αύριο</div>
     </div>
   </div>
 
@@ -463,12 +465,12 @@
           <div class="module-icon-wrap">🍽️</div>
           <div class="module-arrow">↗</div>
         </div>
-        <div class="module-tag">Εβδομαδιαίο Πρόγραμμα</div>
+        <div class="module-tag" data-i18n="mod.menu.tag">Εβδομαδιαίο Πρόγραμμα</div>
         <div class="module-title">Buffet Menu</div>
-        <div class="module-desc">Πλήρες μενού ανά ημέρα. Θεματικές βραδιές, σταθμοί, γεύμα &amp; δείπνο με ανά κατηγορία ανάλυση.</div>
+        <div class="module-desc" data-i18n="mod.menu.desc">Πλήρες μενού ανά ημέρα. Θεματικές βραδιές, σταθμοί, γεύμα &amp; δείπνο με ανά κατηγορία ανάλυση.</div>
         <div class="module-footer">
-          <div class="module-stat">7 θεματικές</div>
-          <div class="module-stat">Γεύμα + Δείπνο</div>
+          <div class="module-stat" data-i18n="mod.menu.stat1">7 θεματικές</div>
+          <div class="module-stat" data-i18n="mod.menu.stat2">Γεύμα + Δείπνο</div>
         </div>
       </div>
     </a>
@@ -480,11 +482,11 @@
           <div class="module-icon-wrap">📖</div>
           <div class="module-arrow">↗</div>
         </div>
-        <div class="module-tag">Συνταγολόγιο</div>
+        <div class="module-tag" data-i18n="mod.recipes.tag">Συνταγολόγιο</div>
         <div class="module-title">Recipe Cards</div>
-        <div class="module-desc">Υλικά &amp; ποσότητες για 80 άτομα, βήματα προετοιμασίας, χρόνοι μαγειρέματος και αλλεργιογόνα.</div>
+        <div class="module-desc" data-i18n="mod.recipes.desc">Υλικά &amp; ποσότητες για 80 άτομα, βήματα προετοιμασίας, χρόνοι μαγειρέματος και αλλεργιογόνα.</div>
         <div class="module-footer">
-          <div class="module-stat">22 συνταγές</div>
+          <div class="module-stat" data-i18n="mod.recipes.stat1">22 συνταγές</div>
           <div class="module-stat">EU Allergen Info</div>
         </div>
       </div>
@@ -497,11 +499,11 @@
           <div class="module-icon-wrap">📋</div>
           <div class="module-arrow">↗</div>
         </div>
-        <div class="module-tag">Διαχείριση Κουζίνας</div>
+        <div class="module-tag" data-i18n="mod.tasks.tag">Διαχείριση Κουζίνας</div>
         <div class="module-title">Task Manager</div>
-        <div class="module-desc">AI-generated λίστες εργασιών ανά σταθμό. Mise en place, χρονοδιάγραμμα βάρδιας, progress tracking.</div>
+        <div class="module-desc" data-i18n="mod.tasks.desc">AI-generated λίστες εργασιών ανά σταθμό. Mise en place, χρονοδιάγραμμα βάρδιας, progress tracking.</div>
         <div class="module-footer">
-          <div class="module-stat">6 σταθμοί</div>
+          <div class="module-stat" data-i18n="mod.tasks.stat1">6 σταθμοί</div>
           <div class="module-stat">AI Powered</div>
         </div>
       </div>
@@ -516,10 +518,10 @@
         </div>
         <div class="module-tag">Professional Kitchen</div>
         <div class="module-title">Techniques</div>
-        <div class="module-desc">Θεμελιώδεις τεχνικές επαγγελματικής κουζίνας — stocks, sauces, κρέας, ψάρι, λαχανικά, HACCP.</div>
+        <div class="module-desc" data-i18n="mod.tech.desc">Θεμελιώδεις τεχνικές επαγγελματικής κουζίνας — stocks, sauces, κρέας, ψάρι, λαχανικά, HACCP.</div>
         <div class="module-footer">
-          <div class="module-stat">15 τεχνικές</div>
-          <div class="module-stat">6 κατηγορίες</div>
+          <div class="module-stat" data-i18n="mod.tech.stat1">15 τεχνικές</div>
+          <div class="module-stat" data-i18n="mod.tech.stat2">6 κατηγορίες</div>
         </div>
       </div>
     </a>
@@ -533,10 +535,10 @@
         </div>
         <div class="module-tag">World Cuisine · Flavor Reference</div>
         <div class="module-title">Flavor Pairings</div>
-        <div class="module-desc">Συνδυασμοί γεύσεων από κουζίνες όλου του κόσμου — ανά κουζίνα, εποχή, spice blends και αντικαταστάσεις.</div>
+        <div class="module-desc" data-i18n="mod.pair.desc">Συνδυασμοί γεύσεων από κουζίνες όλου του κόσμου — ανά κουζίνα, εποχή, spice blends και αντικαταστάσεις.</div>
         <div class="module-footer">
-          <div class="module-stat">24 κουζίνες</div>
-          <div class="module-stat">4 εποχές</div>
+          <div class="module-stat" data-i18n="mod.pair.stat1">24 κουζίνες</div>
+          <div class="module-stat" data-i18n="mod.pair.stat2">4 εποχές</div>
         </div>
       </div>
     </a>
@@ -546,7 +548,7 @@
   <!-- WEEK CALENDAR -->
   <div class="calendar-section">
     <div class="section-header" style="padding: 28px 0 16px;">
-      <div class="section-label">Εβδομαδιαίο Πρόγραμμα Θεματικών</div>
+      <div class="section-label" data-i18n="index.calendar">Εβδομαδιαίο Πρόγραμμα Θεματικών</div>
       <div class="section-rule"></div>
     </div>
     <div class="calendar-grid" id="calGrid"></div>

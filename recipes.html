@@ -164,6 +164,7 @@
       vertical-align: middle;
     }
   </style>
+  <script src="i18n.js"></script>
 </head>
 <body>
 
@@ -172,18 +173,19 @@
   <div class="nav-title">Recipe Cards</div>
   <div class="nav-count" id="countDisplay">— συνταγές</div>
   <div style="display:flex;align-items:center;gap:8px;">
-<button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" title="Εναλλαγή θέματος">🌙</button>
+    <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" data-i18n-title="theme.title">🌙</button>
+    <button class="lang-btn theme-toggle-btn" onclick="toggleLang()">EN</button>
   </div>
 </nav>
 
 <header>
   <div class="page-title">RECIPE CARDS</div>
-  <div class="page-sub">Buffet · 80 Άτομα · Sunwing Rhodes 2026</div>
+  <div class="page-sub" data-i18n="recipes.subtitle">Buffet · 80 Άτομα · Sunwing Rhodes 2026</div>
 </header>
 
 <div class="filter-wrap">
   <div class="filter-tabs" id="filterTabs">
-    <button class="tab active" data-filter="all">🍽️ Όλες</button>
+    <button class="tab active" data-filter="all" data-i18n="recipes.filter.all">🍽️ Όλες</button>
     <button class="tab" data-filter="greek">🇬🇷 Greek</button>
     <button class="tab" data-filter="southamerican">🌮 South American</button>
     <button class="tab" data-filter="international">🌍 International</button>
@@ -195,7 +197,7 @@
 </div>
 
 <div class="search-wrap">
-  <input class="search-input" id="searchInput" type="text" placeholder="Αναζήτηση συνταγής..."/>
+  <input class="search-input" id="searchInput" type="text" data-i18n-ph="recipes.search"/>
 </div>
 
 <div class="recipe-grid" id="recipeGrid"></div>
@@ -887,10 +889,10 @@ function getFiltered() {
 function renderAll() {
   const grid = document.getElementById("recipeGrid");
   const filtered = getFiltered();
-  document.getElementById("countDisplay").textContent = filtered.length + " συνταγές";
+  document.getElementById("countDisplay").textContent = filtered.length + " " + t("recipes.count");
 
   if (!filtered.length) {
-    grid.innerHTML = '<div class="empty">Δεν βρέθηκαν συνταγές</div>';
+    grid.innerHTML = `<div class="empty">${t("recipes.empty")}</div>`;
     return;
   }
 
@@ -900,21 +902,21 @@ function renderAll() {
         <div class="card-flag">${r.flag}</div>
         <div class="card-info">
           <div class="card-theme">${r.themeLabel}</div>
-          <div class="card-name">${r.name}${r._imported ? '<span class="imported-badge">IMPORTED</span>' : ''}</div>
+          <div class="card-name">${r.name}${r._imported ? `<span class="imported-badge">${t("recipes.imported")}</span>` : ''}</div>
           <div class="card-meta">
-            <span class="meta-pill time">⏱ Σύνολο: ${r.totalTime} λεπτά</span>
-            <span class="meta-pill time">🔪 Prep: ${r.prepTime} λεπτά</span>
-            <span class="meta-pill portions">👥 ${r.portions} άτομα</span>
+            <span class="meta-pill time">${t("recipes.total.label")} ${r.totalTime} ${t("recipes.min")}</span>
+            <span class="meta-pill time">${t("recipes.prep.label")} ${r.prepTime} ${t("recipes.min")}</span>
+            <span class="meta-pill portions">${t("recipes.portions.lbl")} ${r.portions} ${t("recipes.people")}</span>
           </div>
         </div>
-        <button class="export-btn" onclick="exportRecipe(${r.id},event)" title="Λήψη συνταγής">⬇</button>
+        <button class="export-btn" onclick="exportRecipe(${r.id},event)" title="${t("recipes.download")}">⬇</button>
         <div class="card-toggle ${openCards.has(r.id) ? 'open' : ''}" id="toggle-${r.id}">›</div>
       </div>
       <div class="card-body ${openCards.has(r.id) ? 'open' : ''}" id="body-${r.id}">
         <div class="body-tabs">
-          <button class="body-tab active" onclick="switchTab(${r.id}, 'ing', this)">Υλικά</button>
-          <button class="body-tab" onclick="switchTab(${r.id}, 'steps', this)">Βήματα</button>
-          <button class="body-tab" onclick="switchTab(${r.id}, 'timing', this)">Χρόνοι</button>
+          <button class="body-tab active" onclick="switchTab(${r.id}, 'ing', this)">${t("recipes.tab.ing")}</button>
+          <button class="body-tab" onclick="switchTab(${r.id}, 'steps', this)">${t("recipes.tab.steps")}</button>
+          <button class="body-tab" onclick="switchTab(${r.id}, 'timing', this)">${t("recipes.tab.timing")}</button>
         </div>
         <div class="body-panel active" id="ing-${r.id}">
           <ul class="ingredients-list">
@@ -945,25 +947,25 @@ function renderAll() {
         <div class="body-panel" id="timing-${r.id}">
           <div class="timing-grid">
             <div class="timing-item">
-              <div class="timing-label">ΠΡΟΕΤΟΙΜΑΣΙΑ</div>
-              <div class="timing-value">${r.prepTime}<span class="timing-unit"> λεπτά</span></div>
+              <div class="timing-label">${t("recipes.prep")}</div>
+              <div class="timing-value">${r.prepTime}<span class="timing-unit"> ${t("recipes.min")}</span></div>
             </div>
             <div class="timing-item">
-              <div class="timing-label">ΜΑΓΕΙΡΕΜΑ</div>
-              <div class="timing-value">${r.cookTime}<span class="timing-unit"> λεπτά</span></div>
+              <div class="timing-label">${t("recipes.cook")}</div>
+              <div class="timing-value">${r.cookTime}<span class="timing-unit"> ${t("recipes.min")}</span></div>
             </div>
             <div class="timing-item">
-              <div class="timing-label">ΣΥΝΟΛΟ</div>
-              <div class="timing-value">${r.totalTime}<span class="timing-unit"> λεπτά</span></div>
+              <div class="timing-label">${t("recipes.total")}</div>
+              <div class="timing-value">${r.totalTime}<span class="timing-unit"> ${t("recipes.min")}</span></div>
             </div>
             <div class="timing-item">
-              <div class="timing-label">ΜΕΡΙΔΕΣ</div>
-              <div class="timing-value">${r.portions}<span class="timing-unit"> άτομα</span></div>
+              <div class="timing-label">${t("recipes.portions")}</div>
+              <div class="timing-value">${r.portions}<span class="timing-unit"> ${t("recipes.people")}</span></div>
             </div>
             <div class="timing-note">📌 ${r.notes}</div>
             ${r.allergens.length ? `
               <div class="timing-note" style="border-color:#5a1a1a">
-                ⚠️ <strong style="color:#e05050">Αλλεργιογόνα:</strong><br/>
+                ⚠️ <strong style="color:#e05050">${t("recipes.allergens")}</strong><br/>
                 <div class="allergen-row" style="margin-top:6px">
                   ${r.allergens.map(a => `<span class="allergen-tag">${a}</span>`).join('')}
                 </div>

@@ -149,6 +149,7 @@
     .admin-btn-confirm:hover{background:var(--gold2);}
     .admin-setup-note{font-size:10px;color:var(--ash);text-align:center;margin-top:12px;line-height:1.5;}
   </style>
+  <script src="i18n.js"></script>
 </head>
 <body>
 
@@ -161,10 +162,10 @@
     <input class="admin-pin-input" id="adminPinInput" type="password" placeholder="••••" maxlength="30" autocomplete="off" />
     <div class="admin-error" id="adminError"></div>
     <div class="admin-modal-btns">
-      <button class="admin-btn-cancel" onclick="closeAdminModal()">Ακύρωση</button>
-      <button class="admin-btn-confirm" onclick="confirmAdminPin()">Επιβεβαίωση</button>
+      <button class="admin-btn-cancel" onclick="closeAdminModal()" data-i18n="admin.cancel">Ακύρωση</button>
+      <button class="admin-btn-confirm" onclick="confirmAdminPin()" data-i18n="admin.confirm">Επιβεβαίωση</button>
     </div>
-    <div class="admin-setup-note" id="adminSetupNote" style="display:none;">Πρώτη ρύθμιση: ο κωδικός που θα πληκτρολογήσετε θα οριστεί ως κωδικός admin.</div>
+    <div class="admin-setup-note" id="adminSetupNote" style="display:none;" data-i18n="admin.setup">Πρώτη ρύθμιση: ο κωδικός που θα πληκτρολογήσετε θα οριστεί ως κωδικός admin.</div>
   </div>
 </div>
 
@@ -175,8 +176,9 @@
     <div class="topbar-title">Task Manager</div>
   </div>
   <div style="display:flex;align-items:center;gap:12px;">
-    <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" title="Εναλλαγή θέματος">🌙</button>
-    <a href="index.html" class="topbar-back">← Portal</a>
+    <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" data-i18n-title="theme.title">🌙</button>
+    <button class="lang-btn theme-toggle-btn" onclick="toggleLang()">EN</button>
+    <a href="index.html" class="topbar-back" data-i18n="nav.back">← Portal</a>
   </div>
 </div>
 
@@ -184,24 +186,24 @@
 
   <!-- SERVICE -->
   <div class="svc-row">
-    <button class="svc-btn active" id="btn-dinner" onclick="setService('dinner')">🌙 ΔΕΙΠΝΟ</button>
-    <button class="svc-btn" id="btn-lunch" onclick="setService('lunch')">☀️ ΓΕΥΜΑ</button>
-    <button class="svc-btn" id="btn-shift" onclick="setService('shift')">📋 ΒΑΡΔΙΑ</button>
+    <button class="svc-btn active" id="btn-dinner" onclick="setService('dinner')" data-i18n="kitchen.btn.dinner">🌙 ΔΕΙΠΝΟ</button>
+    <button class="svc-btn" id="btn-lunch" onclick="setService('lunch')" data-i18n="kitchen.btn.lunch">☀️ ΓΕΥΜΑ</button>
+    <button class="svc-btn" id="btn-shift" onclick="setService('shift')" data-i18n="kitchen.btn.shift">📋 ΒΑΡΔΙΑ</button>
   </div>
 
   <!-- DAYS -->
-  <div class="day-label">ΗΜΕΡΑ</div>
+  <div class="day-label" data-i18n="kitchen.day">ΗΜΕΡΑ</div>
   <div class="day-grid" id="dayGrid"></div>
   <div class="day-theme-bar" id="themeBar"></div>
 
   <!-- STATIONS -->
-  <div class="day-label" id="stationLabel">ΣΤΑΘΜΟΣ</div>
+  <div class="day-label" id="stationLabel" data-i18n="kitchen.station">ΣΤΑΘΜΟΣ</div>
   <div class="station-grid" id="stationGrid"></div>
 
   <!-- PROGRESS -->
   <div class="progress-wrap">
     <div class="progress-top">
-      <span>ΠΡΟΟΔΟΣ</span>
+      <span data-i18n="kitchen.progress">ΠΡΟΟΔΟΣ</span>
       <span id="progressText">0/0 εργασίες</span>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
@@ -209,18 +211,18 @@
 
   <!-- SHIFT ASSIGNMENT PANEL -->
   <div id="shiftPanel" style="display:none;">
-    <button class="shift-add-toggle" id="shiftAddToggle" onclick="toggleShiftForm()">+ Νέα Εργασία Βάρδιας</button>
+    <button class="shift-add-toggle" id="shiftAddToggle" onclick="toggleShiftForm()" data-i18n="kitchen.shift.add">+ Νέα Εργασία Βάρδιας</button>
     <div class="shift-form" id="shiftForm" style="display:none;">
       <div class="sf-row">
-        <input class="sf-input" id="sf-text" placeholder="Περιγραφή εργασίας..." />
+        <input class="sf-input" id="sf-text" data-i18n-ph="kitchen.sf.text" />
       </div>
       <div class="sf-row sf-row-2">
-        <input class="sf-input" id="sf-assignee" placeholder="Ανατίθεται σε..." />
-        <input class="sf-input" id="sf-dur" placeholder="Διάρκεια (π.χ. 30')" />
+        <input class="sf-input" id="sf-assignee" data-i18n-ph="kitchen.sf.assignee" />
+        <input class="sf-input" id="sf-dur" data-i18n-ph="kitchen.sf.dur" />
       </div>
       <div class="sf-row sf-row-2">
         <select class="sf-select" id="sf-station">
-          <option value="all">👨‍🍳 Όλοι</option>
+          <option value="all" data-i18n="kitchen.sf.all">👨‍🍳 Όλοι</option>
           <option value="hot">🍳 Hot Kitchen</option>
           <option value="grill">🔥 Grill / Action</option>
           <option value="fish">🐟 Fish Station</option>
@@ -233,7 +235,7 @@
           <option value="low">FLEX</option>
         </select>
       </div>
-      <button class="sf-submit" onclick="addShiftTask()">✓ Προσθήκη Εργασίας</button>
+      <button class="sf-submit" onclick="addShiftTask()" data-i18n="kitchen.sf.submit">✓ Προσθήκη Εργασίας</button>
     </div>
     <div id="shiftTaskList"></div>
   </div>
@@ -244,11 +246,11 @@
   <!-- COMPLETE -->
   <div class="complete-banner" id="completeBanner">
     <div class="complete-icon">✅</div>
-    <div class="complete-text">MISE EN PLACE COMPLETE</div>
+    <div class="complete-text" data-i18n="kitchen.complete">MISE EN PLACE COMPLETE</div>
   </div>
 
-  <button class="reset-btn" onclick="resetChecks()">↺ Επαναφορά Λίστας</button>
-  <button class="pin-btn" id="pinBtn" onclick="openPinManager()">🔑 <span id="pinBtnLabel">Ορισμός Κωδικού Admin</span></button>
+  <button class="reset-btn" onclick="resetChecks()" data-i18n="kitchen.reset">↺ Επαναφορά Λίστας</button>
+  <button class="pin-btn" id="pinBtn" onclick="openPinManager()">🔑 <span id="pinBtnLabel" data-i18n="kitchen.pin.set">Ορισμός Κωδικού Admin</span></button>
 
 </div>
 
@@ -769,7 +771,7 @@ function addShiftTask() {
   const task = {
     id: Date.now().toString(),
     text,
-    assignee: document.getElementById("sf-assignee").value.trim() || "Αδιάθετη",
+    assignee: document.getElementById("sf-assignee").value.trim() || t("kitchen.unassigned"),
     dur: document.getElementById("sf-dur").value.trim(),
     station: document.getElementById("sf-station").value,
     pri: document.getElementById("sf-pri").value,
@@ -802,7 +804,7 @@ function deleteShiftTask(id) {
 function renderShiftPanel() {
   const total = shiftTasks.length;
   const done = shiftTasks.filter(t => t.done).length;
-  document.getElementById("progressText").textContent = `${done}/${total} εργασίες`;
+  document.getElementById("progressText").textContent = `${done}/${total} ${t("kitchen.tasks")}`;
   const pct = total > 0 ? Math.round(done / total * 100) : 0;
   const fill = document.getElementById("progressFill");
   fill.style.width = pct + "%";
@@ -810,7 +812,7 @@ function renderShiftPanel() {
   document.getElementById("completeBanner").classList.toggle("show", total > 0 && done === total);
 
   if (!shiftTasks.length) {
-    document.getElementById("shiftTaskList").innerHTML = '<div class="shift-empty">Δεν υπάρχουν εργασίες βάρδιας για αυτή τη μέρα.<br>Πατήστε «+ Νέα Εργασία Βάρδιας» για να προσθέσετε.</div>';
+    document.getElementById("shiftTaskList").innerHTML = `<div class="shift-empty">${t("kitchen.shift.empty")}</div>`;
     return;
   }
 
@@ -819,7 +821,7 @@ function renderShiftPanel() {
 
   const groups = {};
   shiftTasks.forEach(t => {
-    const k = t.assignee || "Αδιάθετη";
+    const k = t.assignee || t("kitchen.unassigned");
     if (!groups[k]) groups[k] = [];
     groups[k].push(t);
   });
@@ -827,8 +829,8 @@ function renderShiftPanel() {
   document.getElementById("shiftTaskList").innerHTML = Object.entries(groups).map(([name, tasks]) => `
     <div class="shift-group">
       <div class="shift-group-hdr">
-        <div class="shift-group-name ${name === "Αδιάθετη" ? "unassigned" : ""}">
-          ${name === "Αδιάθετη" ? name : "👤 " + name}
+        <div class="shift-group-name ${name === t("kitchen.unassigned") ? "unassigned" : ""}">
+          ${name === t("kitchen.unassigned") ? name : "👤 " + name}
         </div>
         <div class="shift-group-count">${tasks.filter(t => t.done).length}/${tasks.length}</div>
       </div>
@@ -919,7 +921,7 @@ function updateProgress() {
   const sections = getFilteredSections();
   const total = sections.reduce((a, s) => a + s.tasks.length, 0);
   const done = sections.reduce((a, s) => a + s.tasks.filter((_, i) => checked[`${s.time}-${i}`]).length, 0);
-  document.getElementById("progressText").textContent = `${done}/${total} εργασίες`;
+  document.getElementById("progressText").textContent = `${done}/${total} ${t("kitchen.tasks")}`;
   const pct = total > 0 ? Math.round(done / total * 100) : 0;
   const fill = document.getElementById("progressFill");
   fill.style.width = pct + "%";
@@ -936,7 +938,7 @@ function checkComplete() {
 function renderTasks() {
   const sections = getFilteredSections();
   if (!sections.length) {
-    document.getElementById("tasksOutput").innerHTML = '<div class="no-tasks">Δεν υπάρχουν εργασίες για αυτόν τον σταθμό αυτή τη μέρα.</div>';
+    document.getElementById("tasksOutput").innerHTML = `<div class="no-tasks">${t("kitchen.no.tasks")}</div>`;
     return;
   }
   document.getElementById("tasksOutput").innerHTML = sections.map(section => `
@@ -1003,10 +1005,10 @@ function requireAdmin(action) {
   adminModalMode = "auth";
   pendingAdminAction = action;
   const hasPin = !!localStorage.getItem(ADMIN_KEY);
-  document.getElementById("adminModalTitle").textContent = hasPin ? "ΕΠΑΛΗΘΕΥΣΗ ADMIN" : "ΟΡΙΣΜΟΣ ΚΩΔΙΚΟΥ";
+  document.getElementById("adminModalTitle").textContent = hasPin ? t("admin.title.auth") : t("admin.title.set");
   document.getElementById("adminModalSub").textContent = hasPin
-    ? "Εισάγετε τον κωδικό admin για να συνεχίσετε."
-    : "Δεν έχει οριστεί κωδικός admin ακόμα.";
+    ? t("admin.sub.auth")
+    : t("admin.sub.set");
   document.getElementById("adminSetupNote").style.display = hasPin ? "none" : "";
   document.getElementById("adminPinInput").value = "";
   document.getElementById("adminError").textContent = "";
@@ -1043,7 +1045,7 @@ function confirmAdminPin() {
       closeAdminModal();
       if (action) action();
     } else {
-      document.getElementById("adminError").textContent = "✕ Λάθος κωδικός. Προσπαθήστε ξανά.";
+      document.getElementById("adminError").textContent = t("admin.wrong");
       document.getElementById("adminPinInput").value = "";
       document.getElementById("adminPinInput").focus();
     }
@@ -1051,9 +1053,9 @@ function confirmAdminPin() {
   } else if (adminModalMode === "change-verify") {
     if (hash === stored) {
       adminModalMode = "change-new";
-      showModal("ΝΕΟΣ ΚΩΔΙΚΟΣ", "Πληκτρολογήστε τον νέο κωδικό admin.", null);
+      showModal(t("admin.title.new"), t("admin.sub.new"), null);
     } else {
-      document.getElementById("adminError").textContent = "✕ Λάθος κωδικός. Προσπαθήστε ξανά.";
+      document.getElementById("adminError").textContent = t("admin.wrong");
       document.getElementById("adminPinInput").value = "";
       document.getElementById("adminPinInput").focus();
     }
@@ -1064,7 +1066,7 @@ function confirmAdminPin() {
     closeAdminModal();
     const btn = document.getElementById("pinBtn");
     btn.style.color = "var(--low)";
-    btn.querySelector("#pinBtnLabel").textContent = "Κωδικός αποθηκεύτηκε ✓";
+    btn.querySelector("#pinBtnLabel").textContent = t("kitchen.pin.saved");
     setTimeout(() => { btn.style.color = ""; updatePinBtn(); }, 2000);
   }
 }
@@ -1079,17 +1081,17 @@ function openPinManager() {
   const hasPin = !!localStorage.getItem(ADMIN_KEY);
   if (!hasPin) {
     adminModalMode = "auth";
-    showModal("ΟΡΙΣΜΟΣ ΚΩΔΙΚΟΥ", "Δεν έχει οριστεί κωδικός admin ακόμα.", "Πληκτρολογήστε τον κωδικό που θέλετε να ορίσετε.");
+    showModal(t("admin.title.set"), t("admin.sub.set"), t("admin.sub.set2"));
     document.getElementById("adminModal").style.display = "flex";
   } else {
     adminModalMode = "change-verify";
-    showModal("ΑΛΛΑΓΗ ΚΩΔΙΚΟΥ", "Εισάγετε πρώτα τον τρέχοντα κωδικό admin.", null);
+    showModal(t("admin.title.verify"), t("admin.sub.verify"), null);
   }
 }
 
 function updatePinBtn() {
   const hasPin = !!localStorage.getItem(ADMIN_KEY);
-  document.getElementById("pinBtnLabel").textContent = hasPin ? "Αλλαγή Κωδικού Admin" : "Ορισμός Κωδικού Admin";
+  document.getElementById("pinBtnLabel").textContent = hasPin ? t("kitchen.pin.change") : t("kitchen.pin.set");
 }
 
 function resetChecks() {
