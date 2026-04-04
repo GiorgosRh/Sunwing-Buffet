@@ -144,6 +144,25 @@
     .allergen-tag { font-size: 9px; letter-spacing: 1px; padding: 3px 8px; border: 1px solid #5a1a1a; color: #e05050; }
 
     .empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; }
+
+    /* IMPORT / EXPORT */
+    .import-btn {
+      background: none; border: 1px solid var(--border); color: var(--muted);
+      padding: 4px 9px; cursor: pointer; font-size: 13px; line-height: 1;
+      transition: all .15s; font-family: inherit;
+    }
+    .import-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .export-btn {
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      font-size: 15px; padding: 4px 6px; line-height: 1; transition: color .15s;
+      flex-shrink: 0;
+    }
+    .export-btn:hover { color: var(--gold); }
+    .imported-badge {
+      font-size: 8px; letter-spacing: 2px; color: var(--gold-dim);
+      border: 1px solid var(--gold-dim); padding: 1px 5px; margin-left: 6px;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body>
@@ -152,7 +171,9 @@
   <a href="index.html" class="nav-back">←</a>
   <div class="nav-title">Recipe Cards</div>
   <div class="nav-count" id="countDisplay">— συνταγές</div>
-  <div style="display:flex;align-items:center;gap:12px;">
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button class="import-btn" onclick="document.getElementById('recipeFileInput').click()" title="Εισαγωγή συνταγής">📂 Εισαγωγή</button>
+    <input type="file" id="recipeFileInput" accept=".html" style="display:none" onchange="handleImport(event)"/>
     <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" title="Εναλλαγή θέματος">🌙</button>
   </div>
 </nav>
@@ -844,16 +865,23 @@ const RECIPES = [
 
 ];
 
+// ─── IMPORTED RECIPES ────────────────────────
+const IMPORT_KEY = "helios_imported_recipes";
+let importedRecipes = [];
+try { importedRecipes = JSON.parse(localStorage.getItem(IMPORT_KEY) || "[]"); } catch(e) {}
+
+function allRecipes() { return [...RECIPES, ...importedRecipes]; }
+
 // ─── APP LOGIC ───────────────────────────────
 let activeFilter = "all";
 let searchTerm = "";
 let openCards = new Set();
 
 function getFiltered() {
-  return RECIPES.filter(r => {
+  return allRecipes().filter(r => {
     const matchFilter = activeFilter === "all" || r.theme === activeFilter;
     const q = searchTerm.toLowerCase();
-    const matchSearch = !q || r.name.toLowerCase().includes(q) || r.themeLabel.toLowerCase().includes(q);
+    const matchSearch = !q || r.name.toLowerCase().includes(q) || (r.themeLabel||"").toLowerCase().includes(q);
     return matchFilter && matchSearch;
   });
 }
@@ -874,13 +902,14 @@ function renderAll() {
         <div class="card-flag">${r.flag}</div>
         <div class="card-info">
           <div class="card-theme">${r.themeLabel}</div>
-          <div class="card-name">${r.name}</div>
+          <div class="card-name">${r.name}${r._imported ? '<span class="imported-badge">IMPORTED</span>' : ''}</div>
           <div class="card-meta">
             <span class="meta-pill time">⏱ Σύνολο: ${r.totalTime} λεπτά</span>
             <span class="meta-pill time">🔪 Prep: ${r.prepTime} λεπτά</span>
             <span class="meta-pill portions">👥 ${r.portions} άτομα</span>
           </div>
         </div>
+        <button class="export-btn" onclick="exportRecipe(${r.id},event)" title="Λήψη συνταγής">⬇</button>
         <div class="card-toggle ${openCards.has(r.id) ? 'open' : ''}" id="toggle-${r.id}">›</div>
       </div>
       <div class="card-body ${openCards.has(r.id) ? 'open' : ''}" id="body-${r.id}">
@@ -983,6 +1012,93 @@ document.getElementById("searchInput").addEventListener("input", e => {
 });
 
 renderAll();
+
+// ── EXPORT ──
+function exportRecipe(id, event) {
+  event.stopPropagation();
+  const r = allRecipes().find(x => x.id === id);
+  if (!r) return;
+  const data = JSON.stringify(r, null, 2);
+  const safeName = r.name.replace(/[^\w\u0370-\u03FF\u1F00-\u1FFF ]/g, '_').trim();
+  const html = `<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>${r.name} · Recipe Card</title>
+<style>
+  body{font-family:Georgia,serif;max-width:680px;margin:40px auto;padding:20px;color:#1a1510;background:#faf8f4;}
+  h1{font-size:28px;margin-bottom:4px;}
+  .meta{font-size:12px;color:#6a5e48;margin-bottom:24px;}
+  h2{font-size:14px;letter-spacing:2px;color:#7a5c16;border-bottom:1px solid #c8bfa8;padding-bottom:4px;margin-top:24px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  td{padding:6px 4px;border-bottom:1px solid #e5dfd0;}
+  td:last-child{text-align:right;font-weight:bold;color:#7a5c16;}
+  ol{padding-left:20px;} li{margin-bottom:10px;font-size:13px;line-height:1.6;}
+  .allergen{display:inline-block;border:1px solid #c01818;color:#c01818;font-size:11px;padding:2px 7px;margin:2px;}
+  .info{display:flex;gap:20px;font-size:12px;}
+  .info span{background:#ede8dc;padding:4px 10px;border-radius:2px;}
+</style>
+</head>
+<body>
+<div style="font-size:11px;color:#9a7820;letter-spacing:2px;margin-bottom:6px;">${r.flag} ${r.themeLabel||''}</div>
+<h1>${r.name}</h1>
+<div class="info">
+  <span>⏱ Prep: ${r.prepTime} λεπτά</span>
+  <span>🔥 Cook: ${r.cookTime} λεπτά</span>
+  <span>👥 ${r.portions} μερίδες</span>
+</div>
+<h2>ΥΛΙΚΑ</h2>
+<table>${r.ingredients.map(i=>`<tr><td>${i.name}${i.note?'<br><small style="color:#9a8870">'+i.note+'</small>':''}</td><td>${i.qty}</td></tr>`).join('')}</table>
+<h2>ΕΚΤΕΛΕΣΗ</h2>
+<ol>${r.steps.map(s=>`<li>${s.text}${s.time?'<br><small style="color:#9a7820">'+s.time+'</small>':''}</li>`).join('')}</ol>
+${r.notes?`<h2>ΣΗΜΕΙΩΣΕΙΣ</h2><p style="font-size:13px;line-height:1.6">${r.notes}</p>`:''}
+${r.allergens&&r.allergens.length?`<h2>ΑΛΛΕΡΓΙΟΓΟΝΑ</h2>${r.allergens.map(a=>`<span class="allergen">${a}</span>`).join('')}`:''}
+<script type="application/json" id="recipe-data">${data}<\/script>
+</body></html>`;
+  const blob = new Blob([html], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = safeName + '.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ── IMPORT ──
+function handleImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      let recipe = null;
+      const text = ev.target.result;
+      // Extract embedded JSON from exported HTML
+      const match = text.match(/<script type="application\/json" id="recipe-data">([\s\S]*?)<\/script>/);
+      if (match) {
+        recipe = JSON.parse(match[1]);
+      } else {
+        recipe = JSON.parse(text); // try plain JSON fallback
+      }
+      if (!recipe || !recipe.name || !recipe.ingredients || !recipe.steps) {
+        alert('Μη έγκυρο αρχείο συνταγής.');
+        return;
+      }
+      // Assign new unique ID
+      const maxId = Math.max(0, ...allRecipes().map(r => r.id));
+      recipe.id = maxId + 1;
+      recipe._imported = true;
+      importedRecipes.push(recipe);
+      localStorage.setItem(IMPORT_KEY, JSON.stringify(importedRecipes));
+      renderAll();
+      alert('✓ Η συνταγή "' + recipe.name + '" προστέθηκε!');
+    } catch(err) {
+      alert('Σφάλμα ανάγνωσης αρχείου.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
 
 // ── THEME TOGGLE ──
 function toggleTheme() {
