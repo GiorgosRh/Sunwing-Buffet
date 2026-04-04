@@ -208,6 +208,7 @@
   <div style="display:flex;align-items:center;gap:8px;">
     <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" data-i18n-title="theme.title">🌙</button>
     <button class="lang-btn theme-toggle-btn" onclick="toggleLang()">EN</button>
+    <button id="clearImportedBtn" class="theme-toggle-btn" onclick="clearImportedRecipes()" title="Διαγραφή imported συνταγών" style="display:none">🗑️</button>
   </div>
 </nav>
 
@@ -1065,6 +1066,7 @@ document.getElementById("searchInput").addEventListener("input", e => {
 });
 
 renderAll();
+updateClearBtn();
 
 // ── DOWNLOAD PIN ──
 const ADMIN_KEY = "helios_admin_hash";
@@ -1205,6 +1207,20 @@ function handleImport(e) {
   };
   reader.readAsText(file);
   e.target.value = '';
+}
+
+// ── CLEAR IMPORTED ──
+function clearImportedRecipes() {
+  if (!importedRecipes.length) { alert('Δεν υπάρχουν imported συνταγές.'); return; }
+  if (!confirm('Να διαγραφούν όλες οι imported συνταγές (' + importedRecipes.length + ');')) return;
+  importedRecipes = [];
+  localStorage.removeItem(IMPORT_KEY);
+  updateClearBtn();
+  renderAll();
+}
+function updateClearBtn() {
+  const btn = document.getElementById('clearImportedBtn');
+  if (btn) btn.style.display = importedRecipes.length ? 'inline-flex' : 'none';
 }
 
 // ── THEME TOGGLE ──
