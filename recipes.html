@@ -163,6 +163,39 @@
       border: 1px solid var(--gold-dim); padding: 1px 5px; margin-left: 6px;
       vertical-align: middle;
     }
+    /* DOWNLOAD PIN MODAL */
+    .dl-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.75); z-index: 200;
+      align-items: center; justify-content: center;
+    }
+    .dl-modal {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 28px 24px; width: 280px; text-align: center;
+    }
+    .dl-modal-icon { font-size: 26px; margin-bottom: 10px; }
+    .dl-modal-title { font-size: 11px; letter-spacing: 3px; color: var(--gold); margin-bottom: 6px; }
+    .dl-modal-sub { font-size: 11px; color: var(--muted); margin-bottom: 16px; line-height: 1.5; }
+    .dl-pin-input {
+      width: 100%; padding: 10px; background: var(--surface2);
+      border: 1px solid var(--border); color: var(--text);
+      font-size: 18px; text-align: center; letter-spacing: 6px;
+      outline: none; font-family: monospace; margin-bottom: 8px;
+    }
+    .dl-pin-input:focus { border-color: var(--gold-dim); }
+    .dl-error { font-size: 11px; color: #e05050; min-height: 16px; margin-bottom: 10px; }
+    .dl-btns { display: flex; gap: 8px; }
+    .dl-btn-cancel {
+      flex: 1; padding: 9px; border: 1px solid var(--border);
+      background: transparent; color: var(--muted); cursor: pointer;
+      font-size: 10px; letter-spacing: 2px; font-family: inherit;
+    }
+    .dl-btn-confirm {
+      flex: 1; padding: 9px; border: none;
+      background: var(--gold-dim); color: #000; cursor: pointer;
+      font-size: 10px; letter-spacing: 2px; font-family: inherit; font-weight: 600;
+    }
+    .dl-btn-confirm:hover { background: var(--gold); }
   </style>
   <script src="i18n.js"></script>
 </head>
@@ -198,6 +231,21 @@
 
 <div class="search-wrap">
   <input class="search-input" id="searchInput" type="text" data-i18n-ph="recipes.search"/>
+</div>
+
+<!-- DOWNLOAD PIN MODAL -->
+<div class="dl-overlay" id="dlModal">
+  <div class="dl-modal">
+    <div class="dl-modal-icon">🔐</div>
+    <div class="dl-modal-title">ΕΠΑΛΗΘΕΥΣΗ</div>
+    <div class="dl-modal-sub">Εισάγετε τον κωδικό admin για να κατεβάσετε τη συνταγή.</div>
+    <input class="dl-pin-input" id="dlPinInput" type="password" maxlength="20" placeholder="••••" onkeydown="if(event.key==='Enter')confirmDlPin()"/>
+    <div class="dl-error" id="dlError"></div>
+    <div class="dl-btns">
+      <button class="dl-btn-cancel" onclick="closeDlModal()">Ακύρωση</button>
+      <button class="dl-btn-confirm" onclick="confirmDlPin()">Επιβεβαίωση</button>
+    </div>
+  </div>
 </div>
 
 <div class="recipe-grid" id="recipeGrid"></div>
@@ -1018,9 +1066,63 @@ document.getElementById("searchInput").addEventListener("input", e => {
 
 renderAll();
 
+// ── DOWNLOAD PIN ──
+const ADMIN_KEY = "helios_admin_hash";
+let downloadUnlocked = false; // resets on page refresh
+let pendingDownloadId = null;
+
+function hashPin(str) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h.toString(16).padStart(8, "0");
+}
+
+function openDlModal(id) {
+  pendingDownloadId = id;
+  document.getElementById("dlPinInput").value = "";
+  document.getElementById("dlError").textContent = "";
+  document.getElementById("dlModal").style.display = "flex";
+  setTimeout(() => document.getElementById("dlPinInput").focus(), 50);
+}
+
+function closeDlModal() {
+  document.getElementById("dlModal").style.display = "none";
+  pendingDownloadId = null;
+}
+
+function confirmDlPin() {
+  const pin = document.getElementById("dlPinInput").value;
+  const stored = localStorage.getItem(ADMIN_KEY);
+  if (!stored) {
+    // No PIN set — unlock freely
+    downloadUnlocked = true;
+    closeDlModal();
+    doExport(pendingDownloadId);
+    return;
+  }
+  if (hashPin(pin) === stored) {
+    downloadUnlocked = true;
+    const id = pendingDownloadId;
+    closeDlModal();
+    doExport(id);
+  } else {
+    document.getElementById("dlError").textContent = "✕ Λάθος κωδικός.";
+    document.getElementById("dlPinInput").value = "";
+    document.getElementById("dlPinInput").focus();
+  }
+}
+
 // ── EXPORT ──
 function exportRecipe(id, event) {
   event.stopPropagation();
+  if (!downloadUnlocked) { openDlModal(id); return; }
+  doExport(id);
+}
+
+function doExport(id) {
   const r = allRecipes().find(x => x.id === id);
   if (!r) return;
   const data = JSON.stringify(r, null, 2);
