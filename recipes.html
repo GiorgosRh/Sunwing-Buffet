@@ -18,17 +18,10 @@
       --border: #c8bfa8; --text: #1a1510; --muted: #6a5e48;
       --gold: #7a5c16; --gold-light: #5a3e08; --gold-dim: #9a7820;
       --red: #c01818;
+      background: #f5f0e8 !important;
+      color: #1a1510;
     }
-    body.light nav { background: #ede8dc; border-bottom-color: #c8bfa8; }
-    body.light .tab { background: #e5dfd0; }
-    body.light .tab.active { background: #d8d0be; }
-    body.light .search-input { background: #e5dfd0; color: #1a1510; }
-    body.light .recipe-card { background: #ede8dc; }
-    body.light .body-tab.active { background: #d8d0be; }
-    body.light .timing-item,
-    body.light .timing-note { background: #ddd8cc; }
-    body.light .ing-item { border-bottom-color: #c8bfa8; }
-    body.light .step-item { border-bottom-color: #c8bfa8; }
+    body.light .search-input { color: #1a1510; }
     .theme-toggle-btn{background:none;border:1px solid var(--smoke);color:var(--ash);padding:4px 9px;cursor:pointer;font-size:15px;line-height:1;transition:all .15s;font-family:inherit;}
     .theme-toggle-btn:hover{border-color:var(--gold);color:var(--gold2);}
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,7 +32,7 @@
 
     /* NAV */
     nav {
-      background: #0f0d06; border-bottom: 1px solid var(--border);
+      background: var(--surface); border-bottom: 1px solid var(--border);
       padding: 12px 20px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100;
     }
     .nav-back { font-size: 18px; color: var(--gold-dim); cursor: pointer; }
@@ -110,7 +103,7 @@
       transition: all .15s; font-family: 'Montserrat', sans-serif; background: none; border-right: 1px solid var(--border);
     }
     .body-tab:last-child { border-right: none; }
-    .body-tab.active { color: var(--gold); border-bottom-color: var(--gold); background: #1a1608; }
+    .body-tab.active { color: var(--gold); border-bottom-color: var(--gold); background: var(--surface2); }
 
     .body-panel { display: none; padding: 16px 18px; }
     .body-panel.active { display: block; }
@@ -119,7 +112,7 @@
     .ingredients-list { list-style: none; }
     .ing-item {
       display: flex; justify-content: space-between; align-items: baseline;
-      padding: 7px 0; border-bottom: 1px solid #1a1608; gap: 12px;
+      padding: 7px 0; border-bottom: 1px solid var(--border); gap: 12px;
     }
     .ing-item:last-child { border-bottom: none; }
     .ing-name { font-size: 12px; color: var(--text); }
@@ -128,7 +121,7 @@
 
     /* STEPS */
     .steps-list { list-style: none; counter-reset: steps; }
-    .step-item { display: flex; gap: 14px; padding: 10px 0; border-bottom: 1px solid #1a1608; }
+    .step-item { display: flex; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .step-item:last-child { border-bottom: none; }
     .step-num {
       width: 24px; height: 24px; background: var(--gold-dim); color: #000;
@@ -140,11 +133,11 @@
 
     /* TIMING */
     .timing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .timing-item { background: #0f0d06; border: 1px solid var(--border); padding: 12px; }
+    .timing-item { background: var(--surface2); border: 1px solid var(--border); padding: 12px; }
     .timing-label { font-size: 8px; letter-spacing: 3px; color: var(--muted); margin-bottom: 4px; }
     .timing-value { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--gold-light); }
     .timing-unit { font-size: 10px; color: var(--muted); }
-    .timing-note { grid-column: 1/-1; font-size: 11px; color: var(--muted); line-height: 1.6; padding: 10px; background: #0f0d06; border: 1px solid var(--border); }
+    .timing-note { grid-column: 1/-1; font-size: 11px; color: var(--muted); line-height: 1.6; padding: 10px; background: var(--surface2); border: 1px solid var(--border); }
 
     /* ALLERGENS */
     .allergen-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
