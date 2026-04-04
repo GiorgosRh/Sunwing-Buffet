@@ -756,13 +756,30 @@ function saveShiftTasks() {
   try { localStorage.setItem(shiftKey(), JSON.stringify(shiftTasks)); } catch {}
 }
 
+let shiftSessionUnlocked = false; // resets on page refresh
+
 function toggleShiftForm() {
+  if (!shiftSessionUnlocked) {
+    requireAdmin(() => {
+      shiftSessionUnlocked = true;
+      openShiftForm();
+    });
+    return;
+  }
   const form = document.getElementById("shiftForm");
   const btn = document.getElementById("shiftAddToggle");
   const isOpen = form.style.display !== "none";
   form.style.display = isOpen ? "none" : "block";
   btn.classList.toggle("open", !isOpen);
-  btn.textContent = isOpen ? "+ Νέα Εργασία Βάρδιας" : "✕ Κλείσιμο Φόρμας";
+  btn.textContent = isOpen ? t("kitchen.shift.add") : "✕ " + (currentLang === "en" ? "Close" : "Κλείσιμο");
+}
+
+function openShiftForm() {
+  const form = document.getElementById("shiftForm");
+  const btn = document.getElementById("shiftAddToggle");
+  form.style.display = "block";
+  btn.classList.add("open");
+  btn.textContent = "✕ " + (currentLang === "en" ? "Close" : "Κλείσιμο");
 }
 
 function addShiftTask() {
