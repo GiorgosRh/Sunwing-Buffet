@@ -1054,7 +1054,7 @@ function exportRecipe(id, event) {
 <ol>${r.steps.map(s=>`<li>${s.text}${s.time?'<br><small style="color:#9a7820">'+s.time+'</small>':''}</li>`).join('')}</ol>
 ${r.notes?`<h2>ΣΗΜΕΙΩΣΕΙΣ</h2><p style="font-size:13px;line-height:1.6">${r.notes}</p>`:''}
 ${r.allergens&&r.allergens.length?`<h2>ΑΛΛΕΡΓΙΟΓΟΝΑ</h2>${r.allergens.map(a=>`<span class="allergen">${a}</span>`).join('')}`:''}
-<script type="application/json" id="recipe-data">${data}<\/script>
+<div id="recipe-data" style="display:none">${encodeURIComponent(data)}</div>
 </body></html>`;
   const blob = new Blob([html], {type:'text/html'});
   const a = document.createElement('a');
@@ -1073,12 +1073,12 @@ function handleImport(e) {
     try {
       let recipe = null;
       const text = ev.target.result;
-      // Extract embedded JSON from exported HTML
-      const match = text.match(/<script type="application\/json" id="recipe-data">([\s\S]*?)<\/script>/);
+      // Extract embedded data from exported HTML
+      const match = text.match(/<div id="recipe-data"[^>]*>([^<]+)<\/div>/);
       if (match) {
-        recipe = JSON.parse(match[1]);
+        recipe = JSON.parse(decodeURIComponent(match[1]));
       } else {
-        recipe = JSON.parse(text); // try plain JSON fallback
+        recipe = JSON.parse(text); // plain JSON fallback
       }
       if (!recipe || !recipe.name || !recipe.ingredients || !recipe.steps) {
         alert('Μη έγκυρο αρχείο συνταγής.');
