@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Sunwing — Weekly Buffet Assortment 2025</title>
+<title>Weekly Buffet Assortment 2025</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
@@ -40,13 +40,6 @@ const B = {
   mint:"#3A8A6A", mist:"#F0E4D4", warmGrey:"#8A7060",
 };
 
-const WaveMark = ({ size=48, color="white" }) => (
-  <svg width={size} height={size*0.5} viewBox="0 0 120 60" fill="none">
-    <path d="M10 15 Q35 5 60 15 Q85 25 110 15" stroke={color} strokeWidth="7" strokeLinecap="round" fill="none"/>
-    <path d="M10 30 Q35 20 60 30 Q85 40 110 30" stroke={color} strokeWidth="7" strokeLinecap="round" fill="none"/>
-    <path d="M10 45 Q35 35 60 45 Q85 55 110 45" stroke={color} strokeWidth="7" strokeLinecap="round" fill="none"/>
-  </svg>
-);
 
 const DINNER_THEMES = {
   MON:{label:"Greek Buffet",         color:"#1a4a8b",bg:"linear-gradient(135deg,#1a4a8b,#0d2a5a)",icon:"🇬🇷"},
@@ -136,7 +129,7 @@ function RecipeModal({ dish, onClose }) {
         body: JSON.stringify({
           model:"claude-sonnet-4-20250514",
           max_tokens:1000,
-          system:`You are a professional hotel chef at Sunwing Family Resorts in Rhodes, Greece.
+          system:`You are a professional hotel chef at a resort in Rhodes, Greece.
 Return ONLY a valid JSON object, no markdown, no code fences, no extra text:
 {"emoji":"one emoji","serves":"~20 guests","prep":"XX min","cook":"XX min","difficulty":"Easy|Medium|Advanced","description":"One appetising sentence.","ingredients":[{"qty":"amount","item":"ingredient"}],"steps":["step1","step2"],"tip":"One chef tip.","allergens":["Gluten"]}`,
           messages:[{role:"user",content:`Buffet-scale recipe for: ${dish}`}]
@@ -165,7 +158,7 @@ Return ONLY a valid JSON object, no markdown, no code fences, no extra text:
               {loading?"⏳":error?"⚠️":recipe?.emoji||"🍽️"}
             </div>
             <div style={{flex:1,minWidth:0}}>
-              <div style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.26em",textTransform:"uppercase",color:B.orange,marginBottom:2}}>Recipe Card · Sunwing Resorts</div>
+              <div style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.26em",textTransform:"uppercase",color:B.orange,marginBottom:2}}>Recipe Card</div>
               <div style={{fontSize:17,fontWeight:700,color:B.white,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{dish}</div>
             </div>
             <button onClick={onClose} style={{background:"rgba(255,255,255,0.1)",border:"none",color:B.white,width:34,height:34,borderRadius:"50%",cursor:"pointer",fontSize:18,display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
@@ -232,8 +225,7 @@ Return ONLY a valid JSON object, no markdown, no code fences, no extra text:
           </div>}
         </div>}
         <div style={{background:B.dark,padding:"10px 24px",display:"flex",alignItems:"center",gap:8}}>
-          <WaveMark size={20} color={B.orange}/>
-          <span style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.18em",textTransform:"uppercase",color:"rgba(255,255,255,0.22)"}}>Sunwing Family Resorts · Rhodes 2025</span>
+          <span style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.18em",textTransform:"uppercase",color:"rgba(255,255,255,0.22)"}}>Rhodes 2025</span>
         </div>
       </div>
     </div>
@@ -318,7 +310,6 @@ function DayView({ meal, dayKey, onSelect }) {
           <div style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.28em",textTransform:"uppercase",color:"rgba(255,255,255,0.5)",marginBottom:3}}>Tonight's Theme</div>
           <div style={{fontSize:18,fontWeight:600,color:"white"}}>{theme.label}</div>
         </div>
-        <div style={{marginLeft:"auto",opacity:0.12}}><WaveMark size={50} color="white"/></div>
       </div>}
       <div style={{background:`${B.orange}12`,border:`1px solid ${B.orange}25`,borderLeft:`3px solid ${B.orange}`,padding:"8px 14px",marginBottom:18,borderRadius:2,fontSize:12,color:B.amber,fontFamily:"monospace",letterSpacing:"0.1em"}}>
         💡 Click any dish to instantly view its full recipe
@@ -339,14 +330,8 @@ function App() {
       {selectedDish&&<RecipeModal dish={selectedDish} onClose={()=>setSelectedDish(null)}/>}
       {/* COVER */}
       <div style={{background:`linear-gradient(150deg,${B.dark} 0%,#3a1a08 60%,#1C1008 100%)`,overflow:"hidden",position:"relative"}}>
-        <div style={{position:"absolute",right:-20,top:"50%",transform:"translateY(-50%)",opacity:0.04,pointerEvents:"none"}}><WaveMark size={320} color="white"/></div>
         <div style={{padding:"36px 28px 30px",position:"relative",zIndex:2}}>
           <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:28}}>
-            <div style={{width:58,height:58,borderRadius:"50%",background:B.orange,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 0 0 3px ${B.orange}44`}}><WaveMark size={34} color="white"/></div>
-            <div>
-              <div style={{fontSize:18,fontWeight:800,color:B.white,letterSpacing:"0.08em",textTransform:"uppercase",lineHeight:1}}>SUNWING</div>
-              <div style={{fontFamily:"monospace",fontSize:9,letterSpacing:"0.22em",textTransform:"uppercase",color:B.orange,marginTop:3}}>Family Resorts</div>
-            </div>
             <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:12}}>
               <button id="themeToggle" className="theme-toggle-btn" onClick={()=>{if(window.toggleTheme)window.toggleTheme();}} data-i18n-title="theme.title">🌙</button>
               <button className="lang-btn theme-toggle-btn" onClick={()=>{if(window.toggleLang)window.toggleLang();}}>EN</button>
@@ -387,7 +372,6 @@ function App() {
           <div style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.26em",textTransform:"uppercase",color:B.orange,marginBottom:4}}>{meal==="lunch"?"Lunch Buffet":"Dinner Buffet"} · {dayLabel}</div>
           <div style={{fontSize:20,fontWeight:300,color:B.white}}>{view==="stations"?"Always-Available Stations":theme?`${dayLabel} — ${theme.icon} ${theme.label}`:dayLabel}</div>
         </div>
-        <div style={{opacity:0.12}}><WaveMark size={40} color={B.orange}/></div>
       </div>
       {/* CONTENT */}
       <div style={{maxWidth:900,margin:"0 auto",padding:"26px 18px 80px"}}>
@@ -396,8 +380,7 @@ function App() {
       {/* FOOTER */}
       <div style={{background:B.dark,borderTop:`3px solid ${B.orange}`,padding:"20px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:28,height:28,borderRadius:"50%",background:B.orange,display:"flex",alignItems:"center",justifyContent:"center"}}><WaveMark size={16} color="white"/></div>
-          <span style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.18em",textTransform:"uppercase",color:"rgba(255,255,255,0.2)"}}>Sunwing Family Resorts</span>
+          <span style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.18em",textTransform:"uppercase",color:"rgba(255,255,255,0.2)"}}>F&B Operations</span>
         </div>
         <span style={{fontFamily:"monospace",fontSize:10,letterSpacing:"0.18em",textTransform:"uppercase",color:"rgba(255,255,255,0.18)"}}>Buffet Assortment 2025 · F&B Operations · Rhodes</span>
       </div>

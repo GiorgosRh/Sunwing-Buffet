@@ -71,7 +71,7 @@ const I18N = {
     "admin.wrong":         "✕ Λάθος κωδικός. Προσπαθήστε ξανά.",
 
     // Recipes
-    "recipes.subtitle":    "Buffet · Sunwing Rhodes 2026",
+    "recipes.subtitle":    "Buffet · Rhodes 2026",
     "recipes.filter.all":  "🍽️ Όλες",
     "recipes.search":      "Αναζήτηση συνταγής...",
     "recipes.empty":       "Δεν βρέθηκαν συνταγές",
@@ -185,7 +185,7 @@ const I18N = {
     "admin.wrong":         "✕ Wrong PIN. Please try again.",
 
     // Recipes
-    "recipes.subtitle":    "Buffet · Sunwing Rhodes 2026",
+    "recipes.subtitle":    "Buffet · Rhodes 2026",
     "recipes.filter.all":  "🍽️ All",
     "recipes.search":      "Search recipe...",
     "recipes.empty":       "No recipes found",
